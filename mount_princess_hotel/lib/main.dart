@@ -1,6 +1,25 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  // initilize firebase in our app
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // for web need to provide with more info.
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+      options: const FirebaseOptions(
+        apiKey: "AIzaSyDeeGl_DD6VtuhK4cVdrBugzwEp7KaOA3s",
+        appId: "1:102907477996:web:3554a298c3e3201804cac9",
+        messagingSenderId: "102907477996",
+        projectId: "mount-princess-hotel",
+        storageBucket: "mount-princess-hotel.appspot.com",
+      ),
+    );
+  } else {
+    await Firebase.initializeApp();
+  }
   runApp(const MyApp());
 }
 
@@ -57,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
+      _counter = _counter + 11;
     });
   }
 

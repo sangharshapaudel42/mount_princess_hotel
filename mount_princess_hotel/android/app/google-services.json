@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "102907477996",
+    "project_id": "mount-princess-hotel",
+    "storage_bucket": "mount-princess-hotel.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:102907477996:android:e841821f4edd050e04cac9",
+        "android_client_info": {
+          "package_name": "com.example.mount_princess_hotel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "102907477996-q2hkfub36s19v08mvvsgqvi3b8f9j9ea.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5Sde9Ie4DyR3GoVYgvZ6jLFE560d5hHM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "102907477996-q2hkfub36s19v08mvvsgqvi3b8f9j9ea.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
