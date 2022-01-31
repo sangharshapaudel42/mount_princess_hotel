@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mount_princess_hotel/resources/auth_method.dart';
 
-import 'package:mount_princess_hotel/screens/home_screen.dart';
+import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
 
 class AdminHome extends StatefulWidget {
   const AdminHome({Key? key}) : super(key: key);
@@ -25,7 +25,7 @@ class _AdminHomeState extends State<AdminHome> {
                   await AuthMethods().signOut();
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder: (context) => const HomePage(),
+                      builder: (context) => const BookingPage(),
                     ),
                   );
                 },

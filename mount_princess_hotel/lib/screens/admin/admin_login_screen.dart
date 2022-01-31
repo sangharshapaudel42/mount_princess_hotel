@@ -112,7 +112,8 @@ class _LoginState extends State<Login> {
                         )
                       : Text(
                           'Log in',
-                          style: GoogleFonts.roboto(fontSize: 25),
+                          style: GoogleFonts.roboto(
+                              fontSize: 25, color: Colors.white),
                         ),
                   width: double.infinity,
                   alignment: Alignment.center,

@@ -3,9 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:mount_princess_hotel/utils/colors.dart';
-import 'package:mount_princess_hotel/screens/login_screen.dart';
-import 'package:mount_princess_hotel/screens/home_screen.dart';
+import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
+import 'package:mount_princess_hotel/screens/admin/admin_home_page.dart';
 
 void main() async {
   // initilize firebase in our app
@@ -48,7 +47,7 @@ class MyApp extends StatelessWidget {
             // Checking if the snapshot has any data or not
             if (snapshot.hasData) {
               // if snapshot has data which means user is logged in then we go to 'adminHomePage'
-
+              return const AdminHome();
             } else if (snapshot.hasError) {
               return Center(
                 child: Text('${snapshot.error}'),
@@ -63,7 +62,7 @@ class MyApp extends StatelessWidget {
           }
 
           // if the connection hasnot been made (i.e. non-login)
-          return const HomePage();
+          return const BookingPage();
         },
       ),
     );
