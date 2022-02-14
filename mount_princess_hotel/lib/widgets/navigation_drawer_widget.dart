@@ -6,6 +6,7 @@ import 'package:mount_princess_hotel/utils/colors.dart';
 import 'package:mount_princess_hotel/screens/customer/aboutUs.dart';
 import 'package:mount_princess_hotel/screens/customer/contactUs.dart';
 import 'package:mount_princess_hotel/screens/customer/rooms_screen.dart';
+import 'package:mount_princess_hotel/screens/customer/rooms_detail.dart';
 import 'package:mount_princess_hotel/screens/customer/gallery_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/packages_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/menus_screen.dart';
@@ -116,7 +117,7 @@ class NavigationDrawerWidget extends StatelessWidget {
         break;
       case 2:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const Rooms(),
+          builder: (context) => RoomDetailPage(),
         ));
         break;
       case 3:

@@ -37,6 +37,8 @@ dependencies:
   flutter_svg: ^1.0.3
   google_fonts: ^2.0.0
   image_picker: ^0.8.4+4
+  path_provider: ^2.0.8
+  provider: ^6.0.2
 
 dev_dependencies:
   flutter_lints: ^1.0.0
@@ -54,6 +56,14 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/logo.svg
+    - assets/images/burger.jpg
+    - assets/images/breakfast.jpg
+    - assets/images/desert.jpg
+    - assets/images/breakfast.png
+    - assets/images/hotel_image.jpg
+    - assets/text/about_us.txt
+    - assets/images/single_room.jfif
+    - assets/images/standard_room.jpg
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

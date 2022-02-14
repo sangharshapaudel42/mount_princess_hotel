@@ -5,12 +5,16 @@ class TextFieldInput extends StatelessWidget {
   final bool isPass;
   final String hintText;
   final TextInputType textInputType;
+  final IconData icon;
+  final Color color;
   const TextFieldInput({
     Key? key,
     required this.textEditingController,
     this.isPass = false,
     required this.hintText,
     required this.textInputType,
+    required this.icon,
+    required this.color,
   }) : super(key: key);
 
   @override
@@ -18,14 +22,17 @@ class TextFieldInput extends StatelessWidget {
     final inputBorder = OutlineInputBorder(
       borderSide: Divider.createBorderSide(context),
     );
-
+    // final focusedBorder = OutlineInputBorder(
+    //   borderSide: BorderSide(color: Colors.blue, width: 5.0),
+    // );
     return TextField(
       controller: textEditingController,
       style: const TextStyle(fontSize: 20),
       decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: Colors.grey.shade700, size: 25),
         hintText: hintText,
         hintStyle: const TextStyle(fontSize: 20),
-        fillColor: Colors.white,
+        fillColor: color,
         border: inputBorder,
         focusedBorder: inputBorder,
         enabledBorder: inputBorder,

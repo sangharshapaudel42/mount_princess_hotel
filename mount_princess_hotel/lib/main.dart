@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
 import 'package:mount_princess_hotel/screens/admin/admin_home_page.dart';
+import 'package:mount_princess_hotel/utils/colors.dart';
 
 void main() async {
   // initilize firebase in our app
@@ -57,7 +58,9 @@ class MyApp extends StatelessWidget {
           // means connection to future hasnt been made yet
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                backgroundColor: backgroundColor,
+              ),
             );
           }
 

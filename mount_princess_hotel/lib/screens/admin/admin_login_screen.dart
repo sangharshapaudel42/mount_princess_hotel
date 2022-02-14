@@ -82,6 +82,8 @@ class _LoginState extends State<Login> {
                 hintText: "Enter your email",
                 textInputType: TextInputType.emailAddress,
                 textEditingController: _emailController,
+                icon: Icons.person,
+                color: Colors.white,
               ),
 
               const SizedBox(
@@ -94,6 +96,8 @@ class _LoginState extends State<Login> {
                 textInputType: TextInputType.text,
                 textEditingController: _passwordController,
                 isPass: true,
+                icon: Icons.lock,
+                color: Colors.white,
               ),
 
               const SizedBox(
