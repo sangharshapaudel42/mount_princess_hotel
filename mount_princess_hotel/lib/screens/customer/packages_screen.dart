@@ -15,9 +15,10 @@ class _PackagesState extends State<Packages> {
   Widget build(BuildContext context) => Scaffold(
         drawer: NavigationDrawerWidget(),
         appBar: AppBar(
-          title: Text('Packages'),
+          title: const Text('Packages'),
           centerTitle: true,
           backgroundColor: backgroundColor,
         ),
+        body: Container(),
       );
 }

@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:mount_princess_hotel/widgets/navigation_drawer_widget.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
+import 'package:mount_princess_hotel/widgets/date_picker_widget.dart';
 
 class BookingPage extends StatefulWidget {
   const BookingPage({Key? key}) : super(key: key);
@@ -12,6 +13,14 @@ class BookingPage extends StatefulWidget {
 }
 
 class _BookingPageState extends State<BookingPage> {
+  final TextEditingController _nameController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    _nameController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         // if we want the navbar to be in the right side 'endDrawer'
