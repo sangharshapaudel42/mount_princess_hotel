@@ -6,12 +6,14 @@ import 'package:mount_princess_hotel/utils/colors.dart';
 import 'package:mount_princess_hotel/screens/customer/aboutUs.dart';
 import 'package:mount_princess_hotel/screens/customer/contactUs.dart';
 import 'package:mount_princess_hotel/screens/customer/rooms_screen.dart';
-import 'package:mount_princess_hotel/screens/customer/rooms_detail.dart';
+import 'package:mount_princess_hotel/screens/customer/customer_signup_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/gallery_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/packages_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/menus_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/booking_status_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
+import 'package:mount_princess_hotel/screens/splash_screen.dart';
+import 'package:mount_princess_hotel/screens/welcome_screen.dart';
 
 class NavigationDrawerWidget extends StatelessWidget {
   final padding = EdgeInsets.symmetric(horizontal: 20);
@@ -137,7 +139,7 @@ class NavigationDrawerWidget extends StatelessWidget {
         break;
       case 6:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const Login(),
+          builder: (context) => const CustomerSignUp(),
         ));
         break;
       case 7:

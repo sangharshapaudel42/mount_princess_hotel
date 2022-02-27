@@ -35,21 +35,21 @@ class _ContactUsState extends State<ContactUs> {
                 ),
               ),
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                margin: const EdgeInsets.only(
-                    left: 20, right: 20, top: 30, bottom: 30),
-                padding: const EdgeInsets.all(20.0),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFffffff).withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: const ContactUsDetail(),
+            // child: const SingleChildScrollView(
+            //   scrollDirection: Axis.vertical,
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              margin: const EdgeInsets.only(
+                  left: 20, right: 20, top: 30, bottom: 30),
+              padding: const EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                color: const Color(0xFFffffff).withOpacity(0.8),
+                borderRadius: BorderRadius.circular(15),
               ),
+              // child: const ContactUsDetail(),
             ),
+            // ),
           ],
         ),
       ),

@@ -7,18 +7,18 @@ import 'package:mount_princess_hotel/widgets/text_field_input.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
 import 'package:mount_princess_hotel/utils/utils.dart';
 
-import 'package:mount_princess_hotel/screens/admin/admin_home_page.dart';
-
-class AdminLogin extends StatefulWidget {
-  const AdminLogin({Key? key}) : super(key: key);
+class CustomerSignUp extends StatefulWidget {
+  const CustomerSignUp({Key? key}) : super(key: key);
 
   @override
-  _AdminLoginState createState() => _AdminLoginState();
+  _CustomerSignUpState createState() => _CustomerSignUpState();
 }
 
-class _AdminLoginState extends State<AdminLogin> {
+class _CustomerSignUpState extends State<CustomerSignUp> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   bool _isLoading = false;
 
   @override
@@ -26,29 +26,8 @@ class _AdminLoginState extends State<AdminLogin> {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-  }
-
-  void loginUser() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    String res = await AuthMethods().loginUser(
-      email: _emailController.text,
-      password: _passwordController.text,
-    );
-
-    if (res == "Success") {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const AdminHome(),
-      ));
-    } else {
-      showSnackBar(context, res);
-    }
-
-    setState(() {
-      _isLoading = false;
-    });
+    _phoneNumberController.dispose();
+    _nameController.dispose();
   }
 
   @override
@@ -78,12 +57,24 @@ class _AdminLoginState extends State<AdminLogin> {
               ),
               const SizedBox(height: 50),
 
-              // text field input for login
+              // text field input for signup
+              TextFieldInput(
+                hintText: "Enter your Full Name",
+                textInputType: TextInputType.name,
+                textEditingController: _nameController,
+                icon: Icons.person,
+                color: Colors.white,
+              ),
+
+              const SizedBox(
+                height: 24,
+              ),
+
               TextFieldInput(
                 hintText: "Enter your email",
                 textInputType: TextInputType.emailAddress,
                 textEditingController: _emailController,
-                icon: Icons.person,
+                icon: Icons.email,
                 color: Colors.white,
               ),
 
@@ -105,9 +96,23 @@ class _AdminLoginState extends State<AdminLogin> {
                 height: 24,
               ),
 
+              // text field input for password
+              TextFieldInput(
+                hintText: "Enter your phone number",
+                textInputType: TextInputType.phone,
+                textEditingController: _phoneNumberController,
+                isPass: true,
+                icon: Icons.phone,
+                color: Colors.white,
+              ),
+
+              const SizedBox(
+                height: 24,
+              ),
+
               // login button
               InkWell(
-                onTap: loginUser,
+                onTap: () {},
                 child: Container(
                   child: _isLoading
                       ? const Center(
@@ -116,7 +121,7 @@ class _AdminLoginState extends State<AdminLogin> {
                           ),
                         )
                       : Text(
-                          'Log in',
+                          'Sign Up',
                           style: GoogleFonts.roboto(
                               fontSize: 25, color: Colors.white),
                         ),
@@ -141,12 +146,25 @@ class _AdminLoginState extends State<AdminLogin> {
                 children: [
                   Container(
                     child: Text(
-                      'Forgot Password?',
+                      "Already have an account?",
                       style:
                           GoogleFonts.roboto(fontSize: 17, color: Colors.white),
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 8),
-                  )
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      child: Text(
+                        " Login",
+                        style: GoogleFonts.roboto(
+                            fontSize: 17,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                    ),
+                  ),
                 ],
               ),
               Flexible(

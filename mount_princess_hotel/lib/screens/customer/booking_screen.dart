@@ -33,5 +33,21 @@ class _BookingPageState extends State<BookingPage> {
           ),
           // toolbarHeight: MediaQuery.of(context).size.height * 0.20,
         ),
+        body: Container(
+          width: MediaQuery.of(context).size.width,
+          margin:
+              const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 10),
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            children: const [
+              SizedBox(height: 20),
+              // DatePickerWidget(),
+            ],
+          ),
+        ),
       );
 }

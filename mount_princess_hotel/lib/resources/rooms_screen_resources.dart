@@ -28,14 +28,15 @@ class RoomsScreenResources extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: const [
-                BoxShadow(
-                    blurRadius: 15,
-                    spreadRadius: 5,
-                    color: Color.fromRGBO(0, 0, 0, .05))
-              ]),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: const [
+              BoxShadow(
+                  blurRadius: 15,
+                  spreadRadius: 5,
+                  color: Color.fromRGBO(0, 0, 0, .05))
+            ],
+          ),
           child: Stack(
             children: <Widget>[
               Positioned.fill(

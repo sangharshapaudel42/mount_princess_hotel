@@ -9,14 +9,14 @@ import 'package:mount_princess_hotel/utils/utils.dart';
 
 import 'package:mount_princess_hotel/screens/admin/admin_home_page.dart';
 
-class AdminLogin extends StatefulWidget {
-  const AdminLogin({Key? key}) : super(key: key);
+class CustomerLogin extends StatefulWidget {
+  const CustomerLogin({Key? key}) : super(key: key);
 
   @override
-  _AdminLoginState createState() => _AdminLoginState();
+  _CustomerLoginState createState() => _CustomerLoginState();
 }
 
-class _AdminLoginState extends State<AdminLogin> {
+class _CustomerLoginState extends State<CustomerLogin> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
@@ -83,7 +83,7 @@ class _AdminLoginState extends State<AdminLogin> {
                 hintText: "Enter your email",
                 textInputType: TextInputType.emailAddress,
                 textEditingController: _emailController,
-                icon: Icons.person,
+                icon: Icons.email,
                 color: Colors.white,
               ),
 
@@ -107,7 +107,7 @@ class _AdminLoginState extends State<AdminLogin> {
 
               // login button
               InkWell(
-                onTap: loginUser,
+                onTap: () {},
                 child: Container(
                   child: _isLoading
                       ? const Center(
@@ -141,12 +141,25 @@ class _AdminLoginState extends State<AdminLogin> {
                 children: [
                   Container(
                     child: Text(
-                      'Forgot Password?',
+                      "Don't have an account?",
                       style:
                           GoogleFonts.roboto(fontSize: 17, color: Colors.white),
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 8),
-                  )
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      child: Text(
+                        " Sign Up",
+                        style: GoogleFonts.roboto(
+                            fontSize: 17,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                    ),
+                  ),
                 ],
               ),
               Flexible(
