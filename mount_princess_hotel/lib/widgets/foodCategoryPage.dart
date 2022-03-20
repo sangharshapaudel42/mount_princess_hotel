@@ -1,18 +1,25 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
 
-class FoodCategory extends StatelessWidget {
+class FoodCategory extends StatefulWidget {
   Function? onCardClick;
-  FoodCategory({Key? key, this.onCardClick}) : super(key: key);
+  final String? name;
+  final String? image;
+  FoodCategory({@required this.image, this.onCardClick, @required this.name});
 
+  @override
+  State<FoodCategory> createState() => _FoodCategoryState();
+}
+
+class _FoodCategoryState extends State<FoodCategory> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        this.onCardClick!();
+        this.widget.onCardClick!();
       },
       child: Container(
-        margin: const EdgeInsets.all(20),
         height: MediaQuery.of(context).size.height / 4.55,
         // height: 150,
         child: Stack(
@@ -20,8 +27,10 @@ class FoodCategory extends StatelessWidget {
             Positioned.fill(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: Image.asset("assets/images/breakfast.jpg",
-                    fit: BoxFit.cover),
+                child: CachedNetworkImage(
+                  imageUrl: widget.image.toString(),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             Positioned(
@@ -64,9 +73,9 @@ class FoodCategory extends StatelessWidget {
                     // Text(this.category!.name!,
                     //     style: TextStyle(
                     //         color: Colors.white, fontSize: 25))
-                    const Text(
-                      'hello world',
-                      style: TextStyle(color: Colors.white, fontSize: 25),
+                    Text(
+                      widget.name.toString(),
+                      style: const TextStyle(color: Colors.white, fontSize: 25),
                     )
                   ],
                 ),

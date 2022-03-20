@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
 import 'package:mount_princess_hotel/screens/customer/rooms_detail.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class RoomsScreenResources extends StatelessWidget {
   final String name;
   final String imgName;
+  final String roomReferenceId;
   const RoomsScreenResources({
     Key? key,
     required this.name,
     required this.imgName,
+    required this.roomReferenceId,
   }) : super(key: key);
 
   @override
@@ -19,14 +22,17 @@ class RoomsScreenResources extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => RoomDetailPage(),
+              builder: (context) => RoomDetailPage(
+                name: name,
+                roomReferenceId: roomReferenceId,
+              ),
             ),
           );
         },
         child: Container(
           margin: const EdgeInsets.all(10),
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
+          // height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
@@ -44,10 +50,14 @@ class RoomsScreenResources extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20.0),
                   child: Opacity(
                     opacity: 0.8,
-                    child: Image.asset(
-                      imgName,
+                    child: CachedNetworkImage(
+                      imageUrl: imgName.toString(),
                       fit: BoxFit.cover,
                     ),
+                    // child: Image(
+                    //   image: NetworkImage(imgName.toString()),
+                    //   fit: BoxFit.cover,
+                    // ),
                   ),
                 ),
               ),

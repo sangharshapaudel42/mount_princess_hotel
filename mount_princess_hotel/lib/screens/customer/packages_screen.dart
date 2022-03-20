@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:mount_princess_hotel/widgets/navigation_drawer_widget.dart';
@@ -12,6 +13,45 @@ class Packages extends StatefulWidget {
 }
 
 class _PackagesState extends State<Packages> {
+  FutureBuilder createCard() {
+    return FutureBuilder(
+      future: FirebaseFirestore.instance.collection("Packages").get(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        List<QueryDocumentSnapshot> docs =
+            (snapshot.data! as QuerySnapshot).docs;
+
+        List names = [];
+        List descriptions = [];
+        List prices = [];
+
+        docs.forEach((item) {
+          names.add(item['name']);
+          descriptions.add(item['description']);
+          prices.add(item['price']);
+        });
+
+        return Container(
+          height: MediaQuery.of(context).size.height - 80,
+          child: ListView.builder(
+            itemCount: names.length,
+            itemBuilder: (context, index) {
+              return PackagesResource(
+                packageName: names[index],
+                packageDescription: descriptions[index],
+                price: prices[index],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         drawer: NavigationDrawerWidget(),
@@ -20,27 +60,15 @@ class _PackagesState extends State<Packages> {
           centerTitle: true,
           backgroundColor: backgroundColor,
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: const <Widget>[
-              SizedBox(height: 40),
-              PackagesResource(
-                packageName: 'Bed and Breakfast double - BB',
-                price: '25',
-              ),
-              PackagesResource(
-                packageName: 'Diner, breakfast and bed double - MAP',
-                price: '35',
-              ),
-              PackagesResource(
-                packageName: 'Dinner, lunch, breakfast and bed double - AP',
-                price: '45',
-              ),
-              PackagesResource(
-                packageName: 'Seminar package purposnal',
-                price: '25',
-              ),
-            ],
+        body: Container(
+          color: Colors.white,
+          height: MediaQuery.of(context).size.height,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                createCard(),
+              ],
+            ),
           ),
         ),
       );

@@ -25,18 +25,18 @@ class AboutUs extends StatelessWidget {
                       fit: BoxFit.cover),
                 ),
               ),
-              Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  margin: const EdgeInsets.only(
-                      left: 20, right: 20, top: 40, bottom: 40),
-                  padding: const EdgeInsets.all(20.0),
-                  // color: Colors.black,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFffffff).withOpacity(0.8),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                margin: const EdgeInsets.only(
+                    left: 20, right: 20, top: 40, bottom: 40),
+                padding: const EdgeInsets.all(20.0),
+                // color: Colors.black,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFffffff).withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: SingleChildScrollView(
                   child: RichText(
                     text: const TextSpan(
                         // text: 'About Us',

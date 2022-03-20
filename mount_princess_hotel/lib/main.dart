@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mount_princess_hotel/LandingPage.dart';
 
-import 'package:mount_princess_hotel/screens/admin/admin_home_page.dart';
 import 'package:mount_princess_hotel/screens/splash_screen.dart';
 import 'package:mount_princess_hotel/screens/welcome_screen.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
@@ -46,11 +46,9 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.active) {
-            // Checking if the snapshot has any data or not
-            // if(snapshot.hasData & role == 'Admin')
             if (snapshot.hasData) {
-              // if snapshot has data which means user is logged in then we go to 'adminHomePage'
-              return const AdminHome();
+              // if snapshot has data which means user is logged in then we go to landing page where we will decide weather it is customer or admin
+              return LandingPage();
             } else if (snapshot.hasError) {
               return Center(
                 child: Text('${snapshot.error}'),

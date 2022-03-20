@@ -34,9 +34,9 @@ class _CustomerLoginState extends State<CustomerLogin> {
     });
 
     String res = await AuthMethods().loginUser(
-      email: _emailController.text,
-      password: _passwordController.text,
-    );
+        email: _emailController.text,
+        password: _passwordController.text,
+        context: context);
 
     if (res == "Success") {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -107,7 +107,7 @@ class _CustomerLoginState extends State<CustomerLogin> {
 
               // login button
               InkWell(
-                onTap: () {},
+                onTap: loginUser,
                 child: Container(
                   child: _isLoading
                       ? const Center(

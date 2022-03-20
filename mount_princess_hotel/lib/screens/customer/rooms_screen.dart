@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:mount_princess_hotel/widgets/navigation_drawer_widget.dart';
@@ -13,6 +14,50 @@ class Rooms extends StatefulWidget {
 }
 
 class _RoomsState extends State<Rooms> {
+  FutureBuilder createCard() {
+    return FutureBuilder(
+      future: FirebaseFirestore.instance.collection('Rooms').get(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        List<QueryDocumentSnapshot> docs =
+            (snapshot.data! as QuerySnapshot).docs;
+
+        List names = [];
+        List images = [];
+        List roomReference = [];
+
+        docs.forEach((item) {
+          names.add(item['Name']);
+          images.add(item['imgName']);
+          roomReference.add(item.id);
+        });
+
+        return Container(
+          height: MediaQuery.of(context).size.height,
+          child: GridView.builder(
+            itemCount: names.length,
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 300,
+                childAspectRatio: 0.8,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10),
+            itemBuilder: (context, index) {
+              return RoomsScreenResources(
+                name: names[index],
+                imgName: images[index],
+                roomReferenceId: roomReference[index],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         drawer: NavigationDrawerWidget(),
@@ -24,28 +69,7 @@ class _RoomsState extends State<Rooms> {
         body: Container(
           margin: const EdgeInsets.only(top: 50),
           height: MediaQuery.of(context).size.height,
-          child: GridView.count(
-            shrinkWrap: false,
-            primary: false,
-            crossAxisCount: 2,
-            crossAxisSpacing: 20,
-            mainAxisSpacing: 20,
-            childAspectRatio: 0.8,
-            children: const [
-              RoomsScreenResources(
-                name: "Single Room",
-                imgName: 'assets/images/single_room.jfif',
-              ),
-              RoomsScreenResources(
-                name: "Standard Room",
-                imgName: 'assets/images/single_room.jfif',
-              ),
-              RoomsScreenResources(
-                name: "Delux Room",
-                imgName: 'assets/images/single_room.jfif',
-              ),
-            ],
-          ),
+          child: createCard(),
         ),
       );
 }

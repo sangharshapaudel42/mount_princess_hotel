@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mount_princess_hotel/screens/admin/admin_login_screen.dart';
-import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
+import 'package:mount_princess_hotel/screens/login_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/customer_login_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/customer_signup_screen.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
@@ -66,14 +65,14 @@ class WelcomePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const BookingPage(),
+                          builder: (context) => const CustomerSignUp(),
                         ),
                       );
                     },
                   ),
                   const SizedBox(height: 10),
                   ThemeButton(
-                    label: "Admin Login",
+                    label: "Login",
                     labelColor: backgroundColor,
                     color: Colors.transparent,
                     highlight: backgroundColor,
@@ -83,7 +82,7 @@ class WelcomePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const AdminLogin(),
+                          builder: (context) => const Login(),
                         ),
                       );
                     },

@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:mount_princess_hotel/models/category.dart';
 
 import 'package:mount_princess_hotel/widgets/navigation_drawer_widget.dart';
 import 'package:mount_princess_hotel/widgets/foodCategoryPage.dart';
@@ -14,6 +14,64 @@ class Menus extends StatefulWidget {
 }
 
 class _MenusState extends State<Menus> {
+  FutureBuilder createCard() {
+    return FutureBuilder(
+      future: FirebaseFirestore.instance.collection('Menus').get(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        List<QueryDocumentSnapshot> docs =
+            (snapshot.data! as QuerySnapshot).docs;
+
+        List names = [];
+        List images = [];
+        List itemReference = [];
+
+        docs.forEach((item) {
+          names.add(item['name']);
+          images.add(item['image']);
+          itemReference.add(item.id);
+        });
+        print("hello motherfucker");
+        print(itemReference);
+
+        return Container(
+          height: MediaQuery.of(context).size.height - 135,
+          child: ListView.builder(
+            itemCount: names.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(8),
+                child: FoodCategory(
+                  name: names[index],
+                  image: images[index],
+                  onCardClick: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SelectedFoodCategory(
+                          referenceId: itemReference[index],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         // if we want the navbar to be in the right side 'endDrawer'
@@ -42,24 +100,15 @@ class _MenusState extends State<Menus> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        FoodCategory(onCardClick: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SelectedFoodCategory(),
-                            ),
-                          );
-                        }),
-                        FoodCategory(onCardClick: () {}),
-                        FoodCategory(onCardClick: () {}),
-                        FoodCategory(onCardClick: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SelectedFoodCategory(),
-                            ),
-                          );
-                        }),
+                        // FoodCategory(onCardClick: () {
+                        //   Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => SelectedFoodCategory(),
+                        //     ),
+                        //   );
+                        // }),
+                        createCard()
                       ],
                     ),
                   ),

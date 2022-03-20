@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mount_princess_hotel/resources/auth_method.dart';
+import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
 
 import 'package:mount_princess_hotel/widgets/text_field_input.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
@@ -20,6 +21,8 @@ class _CustomerSignUpState extends State<CustomerSignUp> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   bool _isLoading = false;
+  // Initially password is obscure
+  bool _isObscure = true;
 
   @override
   void dispose() {
@@ -30,8 +33,43 @@ class _CustomerSignUpState extends State<CustomerSignUp> {
     _nameController.dispose();
   }
 
+  void signUpUser() async {
+    // set loading to true
+    setState(() {
+      _isLoading = true;
+    });
+
+    // signup user using our authmethodds
+    String res = await AuthMethods().signUpUser(
+      email: _emailController.text,
+      password: _passwordController.text,
+      name: _nameController.text,
+      phoneNumber: _phoneNumberController.text,
+    );
+    // if string returned is sucess, user has been created
+    if (res == "success") {
+      setState(() {
+        _isLoading = false;
+      });
+      // navigate to the home screen
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const BookingPage()),
+      );
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+      // show the error
+      showSnackBar(context, res);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final inputBorder = OutlineInputBorder(
+      borderSide: Divider.createBorderSide(context),
+    );
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -83,13 +121,32 @@ class _CustomerSignUpState extends State<CustomerSignUp> {
               ),
 
               // text field input for password
-              TextFieldInput(
-                hintText: "Enter your password",
-                textInputType: TextInputType.text,
-                textEditingController: _passwordController,
-                isPass: true,
-                icon: Icons.lock,
-                color: Colors.white,
+              TextField(
+                controller: _passwordController,
+                style: const TextStyle(fontSize: 20),
+                obscureText: _isObscure,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  prefixIcon:
+                      Icon(Icons.lock, color: Colors.grey.shade700, size: 25),
+                  hintText: "Enter your password",
+                  hintStyle: const TextStyle(fontSize: 20),
+                  fillColor: Colors.white,
+                  border: inputBorder,
+                  focusedBorder: inputBorder,
+                  enabledBorder: inputBorder,
+                  filled: true,
+                  contentPadding: const EdgeInsets.all(8),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                        _isObscure ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        _isObscure = !_isObscure;
+                      });
+                    },
+                  ),
+                ),
               ),
 
               const SizedBox(
@@ -101,7 +158,6 @@ class _CustomerSignUpState extends State<CustomerSignUp> {
                 hintText: "Enter your phone number",
                 textInputType: TextInputType.phone,
                 textEditingController: _phoneNumberController,
-                isPass: true,
                 icon: Icons.phone,
                 color: Colors.white,
               ),
@@ -112,7 +168,7 @@ class _CustomerSignUpState extends State<CustomerSignUp> {
 
               // login button
               InkWell(
-                onTap: () {},
+                onTap: signUpUser,
                 child: Container(
                   child: _isLoading
                       ? const Center(

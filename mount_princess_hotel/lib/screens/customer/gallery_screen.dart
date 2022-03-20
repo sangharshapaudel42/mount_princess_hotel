@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:mount_princess_hotel/widgets/navigation_drawer_widget.dart';
@@ -13,6 +14,46 @@ class Gallery extends StatefulWidget {
 }
 
 class _GalleryState extends State<Gallery> {
+  FutureBuilder createCard() {
+    return FutureBuilder(
+      future: FirebaseFirestore.instance.collection('Gallery').get(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        List<QueryDocumentSnapshot> docs =
+            (snapshot.data! as QuerySnapshot).docs;
+
+        List<String> galleryImageCategory = [];
+
+        docs.forEach((item) {
+          galleryImageCategory.add(item.id);
+        });
+
+        // print(galleryImageCategory.length);
+        // print("hello i am under the water");
+
+        // print(galleryImageCategory);
+
+        return Container(
+          height: MediaQuery.of(context).size.height,
+          child: ListView.builder(
+            itemCount: galleryImageCategory.length,
+            itemBuilder: (context, index) {
+              return GalleryResources(
+                galleryImageCategory: galleryImageCategory[index],
+                galleryImageCategoryList: galleryImageCategory,
+                galleryImageCategoryLength: galleryImageCategory.length,
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         drawer: NavigationDrawerWidget(),
@@ -27,18 +68,8 @@ class _GalleryState extends State<Gallery> {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child: Text(
-                    'Gallery',
-                    style: TextStyle(fontSize: 25),
-                  ),
-                ),
-                const Divider(color: Colors.black, thickness: 1),
-                GalleryResources(galleryImageCategory: "Dining"),
-                GalleryResources(galleryImageCategory: "Rooms"),
-                GalleryResources(galleryImageCategory: "Garden"),
-                GalleryResources(galleryImageCategory: "Paking"),
+                const SizedBox(height: 10),
+                createCard(),
               ],
             ),
           ),

@@ -115,20 +115,18 @@ class _ContactUsDetailState extends State<ContactUsDetail> {
             ),
           ),
           const SizedBox(height: 20),
-          Expanded(
-            child: Column(
-              children: const [
-                Text(
-                  'Address',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 30),
-                ),
-                Text(
-                  'Araniko Highway Dhulikhel Bus Park, 45200 Dhulikhel, Nepal\n\nPHONE:\n(+977) 011-490616\n\nEMAIL:\ninfo@mountprincess.com',
-                  style: TextStyle(fontSize: 20),
-                ),
-              ],
-            ),
+          Column(
+            children: const [
+              Text(
+                'Address',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 30),
+              ),
+              Text(
+                'Araniko Highway Dhulikhel Bus Park, 45200 Dhulikhel, Nepal\n\nPHONE:\n(+977) 011-490616\n\nEMAIL:\ninfo@mountprincess.com',
+                style: TextStyle(fontSize: 20),
+              ),
+            ],
           ),
         ],
       ),

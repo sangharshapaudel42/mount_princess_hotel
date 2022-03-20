@@ -17,30 +17,54 @@ class FoodItemContainer extends StatefulWidget {
 
 class _FoodItemContainerState extends State<FoodItemContainer> {
   @override
+  /* Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.red,
+            // color: const Color.fromRGBO(222, 225, 227, 0.5),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Image(
+                  image: NetworkImage(
+                    widget.image,
+                  ),
+                  fit: BoxFit.cover,
+                  height: MediaQuery.of(context).size.height / 15)),
+        ),
+        ListTile(
+          leading: Text(
+            widget.foodItemName,
+            style: const TextStyle(fontSize: 18, color: Colors.black),
+          ),
+          trailing: Text(
+            widget.price,
+            style: const TextStyle(fontSize: 18, color: Colors.black),
+          ),
+        ),
+      ],
+    );
+  } */
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.grey,
+        color: const Color.fromRGBO(222, 225, 227, 0.8),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Image.asset(
-          //   "assets/images/burger.jpg",
-          //   height: 80,
-          //   fit: BoxFit.cover,
-          // )
-          // CircleAvatar(
-          //   radius: 60,
-          //   backgroundImage: AssetImage(widget.image),
-          // ),
           Positioned.fill(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20.0),
-              child: Image.asset(
-                widget.image,
+              child: Image(
+                image: NetworkImage(
+                  widget.image,
+                ),
                 fit: BoxFit.cover,
               ),
             ),
@@ -48,11 +72,11 @@ class _FoodItemContainerState extends State<FoodItemContainer> {
           ListTile(
             leading: Text(
               widget.foodItemName,
-              style: const TextStyle(fontSize: 20, color: Colors.white),
+              style: const TextStyle(fontSize: 20, color: Colors.black),
             ),
             trailing: Text(
               widget.price,
-              style: const TextStyle(fontSize: 20, color: Colors.white),
+              style: const TextStyle(fontSize: 20, color: Colors.black),
             ),
           ),
         ],

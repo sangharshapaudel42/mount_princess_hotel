@@ -35,8 +35,6 @@ class _ContactUsState extends State<ContactUs> {
                 ),
               ),
             ),
-            // child: const SingleChildScrollView(
-            //   scrollDirection: Axis.vertical,
             Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
@@ -47,9 +45,8 @@ class _ContactUsState extends State<ContactUs> {
                 color: const Color(0xFFffffff).withOpacity(0.8),
                 borderRadius: BorderRadius.circular(15),
               ),
-              // child: const ContactUsDetail(),
+              child: const ContactUsDetail(),
             ),
-            // ),
           ],
         ),
       ),
