@@ -6,7 +6,10 @@ import 'package:mount_princess_hotel/widgets/navigation_drawer_widget.dart';
 import 'package:mount_princess_hotel/widgets/booking_pop_up.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
 import 'package:mount_princess_hotel/widgets/date_picker_widget.dart';
-import 'package:mount_princess_hotel/widgets/room_type_dropdown.dart';
+import 'package:mount_princess_hotel/widgets/dropdown.dart';
+
+import 'package:mount_princess_hotel/models/booking_data_from_widget.dart'
+    as model;
 
 class BookingPage extends StatefulWidget {
   const BookingPage({Key? key}) : super(key: key);
@@ -67,7 +70,8 @@ class _BookingPageState extends State<BookingPage> {
                 const SizedBox(height: 10),
                 // widget for "Check In"
 
-                const DatePickerWidget(status: "Select Date"),
+                const DatePickerWidget(
+                    status: "Select Date", dateType: "check-in"),
                 //////////////// Check In ////////////////
 
                 //////////////// Check Out ////////////////
@@ -85,7 +89,8 @@ class _BookingPageState extends State<BookingPage> {
                 const SizedBox(height: 10),
 
                 // widget for "Check Out"
-                const DatePickerWidget(status: "Select Date"),
+                const DatePickerWidget(
+                    status: "Select Date", dateType: "check-out"),
                 //////////////// Check Out ////////////////
 
                 //////////////// Room Type ////////////////
@@ -104,8 +109,9 @@ class _BookingPageState extends State<BookingPage> {
 
                 // widget for "RoomType"
                 DropDown(
-                    roomTypes: const ['Single Room', 'Standard Room'],
-                    selectedRoomType: 'Single Room'),
+                    valueTypes: const ['Single Room', 'Standard Room'],
+                    selectedValueType: 'Single Room',
+                    dropDownType: "room-type"),
                 //////////////// Room Type ////////////////
 
                 //////////////// Adults ////////////////
@@ -124,8 +130,9 @@ class _BookingPageState extends State<BookingPage> {
 
                 // widget for "Adults"
                 DropDown(
-                    roomTypes: const ['1', '2', '3', '4+'],
-                    selectedRoomType: '1'),
+                    valueTypes: const ['1', '2', '3', '4+'],
+                    selectedValueType: '1',
+                    dropDownType: "adults"),
                 //////////////// Adults ////////////////
 
                 //////////////// Childrens ////////////////
@@ -144,8 +151,9 @@ class _BookingPageState extends State<BookingPage> {
 
                 // widget for "Childrens"
                 DropDown(
-                    roomTypes: const ['0', '1', '2', '3+'],
-                    selectedRoomType: '0'),
+                    valueTypes: const ['0', '1', '2', '3+'],
+                    selectedValueType: '0',
+                    dropDownType: "childrens"),
                 //////////////// CHildrens ////////////////
 
                 //////////////// Reserve ////////////////
@@ -167,6 +175,8 @@ class _BookingPageState extends State<BookingPage> {
                     ),
                   ),
                   onPressed: () {
+                    // model.DataBookingWidget _data =
+                    //     const model.DataBookingWidget();
                     showDialog(
                         context: context,
                         builder: (BuildContext context) => BuildPopDialog());

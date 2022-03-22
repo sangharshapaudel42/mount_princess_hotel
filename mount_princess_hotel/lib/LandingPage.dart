@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mount_princess_hotel/screens/admin/admin_booking_screen.dart';
 import 'package:mount_princess_hotel/screens/admin/admin_home_page.dart';
 import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
 
@@ -59,7 +60,7 @@ class _LandingPageState extends State<LandingPage> {
     return isLoading
         ? const Center(child: CircularProgressIndicator())
         : isAdmin
-            ? const AdminHome()
+            ? const AdminBookingPage()
             : const BookingPage();
   }
 }

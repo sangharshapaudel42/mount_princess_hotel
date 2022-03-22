@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+
+import 'package:mount_princess_hotel/models/booking_data_from_widget.dart'
+    as model;
 
 class DropDown extends StatefulWidget {
-  final List<String> roomTypes;
-  String? selectedRoomType;
-  DropDown({Key? key, required this.roomTypes, required this.selectedRoomType})
+  final List<String> valueTypes;
+  String? selectedValueType;
+  String? dropDownType;
+  DropDown(
+      {Key? key,
+      required this.valueTypes,
+      required this.selectedValueType,
+      required this.dropDownType})
       : super(key: key);
 
   @override
@@ -24,16 +33,16 @@ class _DropDownState extends State<DropDown> {
         ),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
-            value: widget.selectedRoomType,
+            value: widget.selectedValueType,
             iconSize: 36,
             icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
             isExpanded: true,
-            items: widget.roomTypes
-                .map((roomType) => DropdownMenuItem<String>(
-                      value: roomType,
+            items: widget.valueTypes
+                .map((valueType) => DropdownMenuItem<String>(
+                      value: valueType,
                       child: Center(
                         child: Text(
-                          roomType,
+                          valueType,
                           style: TextStyle(
                               fontSize: 25,
                               fontWeight: FontWeight.w600,
@@ -42,8 +51,15 @@ class _DropDownState extends State<DropDown> {
                       ),
                     ))
                 .toList(),
-            onChanged: (roomType) => setState(() {
-              widget.selectedRoomType = roomType;
+            onChanged: (valueType) => setState(() {
+              widget.selectedValueType = valueType;
+              if (widget.dropDownType == "room-type") {
+                model.DataBookingWidget(roomType: valueType);
+              } else if (widget.dropDownType == "adults") {
+                model.DataBookingWidget(adults: int.parse(valueType!));
+              } else if (widget.dropDownType == "childrens") {
+                model.DataBookingWidget(childrens: int.parse(valueType!));
+              }
             }),
           ),
         ),

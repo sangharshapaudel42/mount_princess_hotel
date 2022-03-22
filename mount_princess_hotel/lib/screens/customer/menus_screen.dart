@@ -35,7 +35,6 @@ class _MenusState extends State<Menus> {
           images.add(item['image']);
           itemReference.add(item.id);
         });
-        print("hello motherfucker");
         print(itemReference);
 
         return Container(

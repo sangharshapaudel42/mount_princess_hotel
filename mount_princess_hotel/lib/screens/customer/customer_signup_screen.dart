@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mount_princess_hotel/resources/auth_method.dart';
 import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
+import 'package:mount_princess_hotel/screens/customer/phoneVerificationScreen.dart';
 
 import 'package:mount_princess_hotel/widgets/text_field_input.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
@@ -168,7 +169,15 @@ class _CustomerSignUpState extends State<CustomerSignUp> {
 
               // login button
               InkWell(
-                onTap: signUpUser,
+                onTap: () {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => OTPScreen(
+                            name: _nameController.text,
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            phone: _phoneNumberController.text,
+                          )));
+                },
                 child: Container(
                   child: _isLoading
                       ? const Center(

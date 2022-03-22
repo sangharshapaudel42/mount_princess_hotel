@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:mount_princess_hotel/models/booking_data_from_widget.dart'
+    as model;
+
 class DatePickerWidget extends StatefulWidget {
   final String status;
-  const DatePickerWidget({Key? key, required this.status}) : super(key: key);
+  final String dateType;
+  const DatePickerWidget(
+      {Key? key, required this.status, required this.dateType})
+      : super(key: key);
 
   @override
   _DatePickerWidgetState createState() => _DatePickerWidgetState();
@@ -17,6 +23,11 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
       return widget.status;
     } else {
       print(_date);
+      if (widget.dateType == "check-in") {
+        // } else if (widget.dateType == "check-out") {
+        //   model.DataBookingWidget _data =
+        //       model.DataBookingWidget(checkOut: _date.toString());
+      }
       return DateFormat('MM/dd/yyyy').format(_date!);
       // return '${_date.month}/${_date.day}/${_date.year}';
     }
@@ -44,7 +55,8 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
     final newDate = await showDatePicker(
       context: context,
       initialDate: _date ?? initialDate,
-      firstDate: DateTime(DateTime.now().year),
+      // firstDate: DateTime(DateTime.now().year),
+      firstDate: initialDate,
       lastDate: DateTime(DateTime.now().year + 1),
     );
 

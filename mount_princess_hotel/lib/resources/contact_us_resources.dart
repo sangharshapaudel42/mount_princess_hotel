@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:mount_princess_hotel/utils/utils.dart';
 
 import 'package:mount_princess_hotel/widgets/text_field_input.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
+import 'package:http/http.dart' as http;
 
 class ContactUsDetail extends StatefulWidget {
   const ContactUsDetail({Key? key}) : super(key: key);
@@ -15,6 +19,7 @@ class _ContactUsDetailState extends State<ContactUsDetail> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
+  final TextEditingController _subjectController = TextEditingController();
 
   @override
   void dispose() {
@@ -23,6 +28,48 @@ class _ContactUsDetailState extends State<ContactUsDetail> {
     _phoneController.dispose();
     _emailController.dispose();
     _messageController.dispose();
+    _subjectController.dispose();
+  }
+
+  // Email to the admin ////
+  Future sendEmail({
+    required String name,
+    required String phoneNumber,
+    required String email,
+    required String subject,
+    required String message,
+  }) async {
+    final serviceId = 'service_zckc95c';
+    final templateId = 'template_xmxpd8n';
+    final userId = 'o5HYmxK4h31SqZHS7';
+
+    final url = Uri.parse("https://api.emailjs.com/api/v1.0/email/send");
+    final response = await http.post(
+      url,
+      headers: {
+        'origin': 'http://localhost',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'service_id': serviceId,
+        'template_id': templateId,
+        'user_id': userId,
+        'template_params': {
+          'user_name': name,
+          'user_phoneNumber': phoneNumber,
+          'to_email': "ishapanta0123@gmail.com",
+          'to_name': "Mount Princess View",
+          'user_email': email,
+          'user_subject': subject,
+          'user_message': message,
+        },
+      }),
+    );
+
+    print(response.body);
+    if (response.body.toString() == "OK") {
+      showSnackBar(context, "Email sent successfully.");
+    }
   }
 
   @override
@@ -76,6 +123,14 @@ class _ContactUsDetailState extends State<ContactUsDetail> {
                   color: Colors.white,
                 ),
                 const SizedBox(height: 20),
+                TextFieldInput(
+                  hintText: "Subject",
+                  textInputType: TextInputType.phone,
+                  textEditingController: _subjectController,
+                  icon: Icons.subject,
+                  color: Colors.white,
+                ),
+                const SizedBox(height: 20),
                 TextField(
                   controller: _messageController,
                   style: const TextStyle(fontSize: 20),
@@ -92,7 +147,7 @@ class _ContactUsDetailState extends State<ContactUsDetail> {
                     contentPadding: const EdgeInsets.all(8),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 15),
                 MaterialButton(
                   height: 45,
                   minWidth: double.infinity,
@@ -100,7 +155,6 @@ class _ContactUsDetailState extends State<ContactUsDetail> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  onPressed: () {},
                   child: const Text(
                     "Submit",
                     style: TextStyle(
@@ -109,6 +163,24 @@ class _ContactUsDetailState extends State<ContactUsDetail> {
                       fontSize: 25,
                     ),
                   ),
+                  onPressed: () {
+                    if (_nameController.text.isNotEmpty &&
+                        _phoneController.text.isNotEmpty &&
+                        _emailController.text.isNotEmpty &&
+                        _subjectController.text.isNotEmpty &&
+                        _messageController.text.isNotEmpty) {
+                      sendEmail(
+                        name: _nameController.text,
+                        phoneNumber: _phoneController.text,
+                        email: _emailController.text,
+                        subject: _subjectController.text,
+                        message: _messageController.text,
+                      );
+                    } else {
+                      FocusScope.of(context).unfocus();
+                      showSnackBar(context, "Enter all the fields.");
+                    }
+                  },
                 ),
                 const SizedBox(height: 10),
               ],

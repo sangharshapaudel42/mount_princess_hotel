@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mount_princess_hotel/models/user.dart' as model;
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mount_princess_hotel/screens/admin/admin_booking_screen.dart';
 import 'package:mount_princess_hotel/screens/admin/admin_home_page.dart';
 import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
 
@@ -25,7 +26,9 @@ class AuthMethods {
           password.isNotEmpty ||
           name.isNotEmpty ||
           phoneNumber.isNotEmpty ||
-          phoneNumber.length >= 10) {
+          phoneNumber.length >= 10 ||
+          phoneNumber[0] == "9" ||
+          phoneNumber[1] == "8") {
         // registering user in auth with email and password
         UserCredential cred = await _auth.createUserWithEmailAndPassword(
           email: email,
@@ -95,7 +98,7 @@ class AuthMethods {
 
           if (doc['role'] == "admin") {
             Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => const AdminHome(),
+              builder: (context) => const AdminBookingPage(),
             ));
           } else {
             Navigator.of(context).pushReplacement(MaterialPageRoute(

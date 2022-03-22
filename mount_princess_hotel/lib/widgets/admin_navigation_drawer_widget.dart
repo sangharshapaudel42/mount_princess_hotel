@@ -1,21 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mount_princess_hotel/screens/welcome_screen.dart';
 
 import 'package:mount_princess_hotel/utils/colors.dart';
 
-import 'package:mount_princess_hotel/screens/customer/aboutUs.dart';
-import 'package:mount_princess_hotel/screens/customer/contactUs.dart';
-import 'package:mount_princess_hotel/screens/customer/rooms_screen.dart';
-import 'package:mount_princess_hotel/screens/customer/gallery_screen.dart';
-import 'package:mount_princess_hotel/screens/customer/packages_screen.dart';
-import 'package:mount_princess_hotel/screens/customer/menus_screen.dart';
-import 'package:mount_princess_hotel/screens/customer/booking_status_screen.dart';
-import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
-import 'package:mount_princess_hotel/screens/welcome_screen.dart';
+import 'package:mount_princess_hotel/screens/admin/admin_aboutUs_screen.dart';
+import 'package:mount_princess_hotel/screens/admin/admin_contactUs_screen.dart';
+import 'package:mount_princess_hotel/screens/admin/admin_rooms_screen.dart';
+import 'package:mount_princess_hotel/screens/admin/admin_gallery_screen.dart';
+import 'package:mount_princess_hotel/screens/admin/admin_packages_screen.dart';
+import 'package:mount_princess_hotel/screens/admin/admin_menus_screen.dart';
+import 'package:mount_princess_hotel/screens/admin/admin_booking_screen.dart';
 
-class NavigationDrawerWidget extends StatelessWidget {
+class AdminNavigationDrawerWidget extends StatelessWidget {
   final padding = const EdgeInsets.symmetric(horizontal: 20);
-  NavigationDrawerWidget({Key? key}) : super(key: key);
+  AdminNavigationDrawerWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,57 +28,51 @@ class NavigationDrawerWidget extends StatelessWidget {
               height: 55,
             ),
             buildMenuItem(
-              text: 'Booking',
+              text: 'Manage Booking',
               icon: Icons.library_books_outlined,
               onClicked: () => selectedItem(context, 0),
             ),
             const SizedBox(height: 10),
             buildMenuItem(
-              text: 'Gallery',
+              text: 'Manage Gallery',
               icon: Icons.photo_album,
               onClicked: () => selectedItem(context, 1),
             ),
             const SizedBox(height: 10),
             buildMenuItem(
-              text: 'Rooms',
+              text: 'Manage Rooms',
               icon: Icons.room_service,
               onClicked: () => selectedItem(context, 2),
             ),
             const SizedBox(height: 10),
             buildMenuItem(
-              text: 'Menus',
+              text: 'Manage Menus',
               icon: Icons.menu,
               onClicked: () => selectedItem(context, 3),
             ),
             const SizedBox(height: 10),
             buildMenuItem(
-              text: 'Packages',
+              text: 'Manage Packages',
               icon: Icons.account_tree_outlined,
               onClicked: () => selectedItem(context, 4),
             ),
             const SizedBox(height: 10),
             buildMenuItem(
-              text: 'Booking History',
-              icon: Icons.notifications_outlined,
+              text: 'Manage About Us',
+              icon: Icons.info,
               onClicked: () => selectedItem(context, 5),
             ),
             const SizedBox(height: 10),
             buildMenuItem(
-              text: 'About Us',
-              icon: Icons.info,
-              onClicked: () => selectedItem(context, 6),
-            ),
-            const SizedBox(height: 10),
-            buildMenuItem(
-              text: 'Contact Us',
+              text: 'Manage Contact Us',
               icon: Icons.contact_phone_outlined,
-              onClicked: () => selectedItem(context, 7),
+              onClicked: () => selectedItem(context, 6),
             ),
             const SizedBox(height: 10),
             buildMenuItem(
               text: 'Sign Out',
               icon: Icons.login_outlined,
-              onClicked: () => selectedItem(context, 8),
+              onClicked: () => selectedItem(context, 7),
             ),
           ],
         ),
@@ -107,45 +100,40 @@ class NavigationDrawerWidget extends StatelessWidget {
     switch (index) {
       case 0:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const BookingPage(),
+          builder: (context) => const AdminBookingPage(),
         ));
         break;
       case 1:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const Gallery(),
+          builder: (context) => const AdminGallery(),
         ));
         break;
       case 2:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const Rooms(),
+          builder: (context) => const AdminRooms(),
         ));
         break;
       case 3:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const Menus(),
+          builder: (context) => const AdminMenus(),
         ));
         break;
       case 4:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const Packages(),
+          builder: (context) => const AdminPackages(),
         ));
         break;
       case 5:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const BookingHistory(),
+          builder: (context) => const AdminAboutUs(),
         ));
         break;
       case 6:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const AboutUs(),
+          builder: (context) => const AdminContactUs(),
         ));
         break;
       case 7:
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const ContactUs(),
-        ));
-        break;
-      case 8:
         FirebaseAuth.instance.signOut();
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const WelcomePage(),
