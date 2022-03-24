@@ -103,6 +103,9 @@ class _OTPScreenState extends State<OTPScreen> {
               pinAnimationType: PinAnimationType.fade,
               onSubmit: (pin) async {
                 try {
+                  print(pin);
+                  print(_verificationCode);
+                  if (pin == _verificationCode) {}
                   // signUpUser();
                   // if (pin == _verificationCode) {
                   //   print("done");
@@ -144,28 +147,34 @@ class _OTPScreenState extends State<OTPScreen> {
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: '+977${widget.phone}',
         verificationCompleted: (PhoneAuthCredential credential) async {
-          // await FirebaseAuth.instance
-          //     .signInWithCredential(credential)
-          //     .then((value) async {
-          //   if (value.user != null) {
-          //     Navigator.pushAndRemoveUntil(
-          //         context,
-          //         MaterialPageRoute(builder: (context) => const BookingPage()),
-          //         (route) => false);
-          //   }
-          // });
-          // await FirebaseAuth.instance
-          //     .createUserWithEmailAndPassword(
-          //   email: widget.email,
-          //   password: widget.password,
-          // )
-          //     .then((value) async {
-          //   signUpUser();
-          // });
-          // print(credential);
-          // Navigator.of(context).pushReplacement(
-          //     MaterialPageRoute(builder: (context) => const BookingPage()));
+          // Navigator.pushAndRemoveUntil(
+          //     context,
+          //     MaterialPageRoute(builder: (context) => const BookingPage()),
+          //     (route) => false);
+          await FirebaseAuth.instance
+              .signInWithCredential(credential)
+              .then((value) async {
+            if (value.user != null) {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const BookingPage()),
+                  (route) => false);
+            }
+          });
         },
+
+        // await FirebaseAuth.instance
+        //     .createUserWithEmailAndPassword(
+        //   email: widget.email,
+        //   password: widget.password,
+        // )
+        //     .then((value) async {
+        //   signUpUser();
+        // });
+        // print(credential);
+        // Navigator.of(context).pushReplacement(
+        //     MaterialPageRoute(builder: (context) => const BookingPage()));
+        // },
         verificationFailed: (FirebaseAuthException e) {
           print(e.message);
         },

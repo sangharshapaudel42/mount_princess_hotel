@@ -14,9 +14,9 @@ class Rooms extends StatefulWidget {
 }
 
 class _RoomsState extends State<Rooms> {
-  FutureBuilder createCard() {
-    return FutureBuilder(
-      future: FirebaseFirestore.instance.collection('Rooms').get(),
+  StreamBuilder createCard() {
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance.collection('Rooms').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(

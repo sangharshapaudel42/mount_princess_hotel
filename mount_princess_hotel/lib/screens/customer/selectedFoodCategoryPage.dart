@@ -20,13 +20,13 @@ class SelectedFoodCategory extends StatefulWidget {
 class _SelectedFoodCategoryState extends State<SelectedFoodCategory> {
   final TextEditingController _searchController = TextEditingController();
 
-  FutureBuilder createCard() {
-    return FutureBuilder(
-      future: FirebaseFirestore.instance
+  StreamBuilder createCard() {
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
           .collection('Menus')
           .doc(widget.referenceId)
           .collection('Food Item')
-          .get(),
+          .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(

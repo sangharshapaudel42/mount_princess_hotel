@@ -18,12 +18,12 @@ class RoomDetailPage extends StatefulWidget {
 class _RoomDetailPageState extends State<RoomDetailPage> {
   final String image = "assets/images/single_room.jfif";
 
-  FutureBuilder createCard() {
-    return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance
+  StreamBuilder createCard() {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
           .collection('Rooms')
           .doc(widget.roomReferenceId)
-          .get(),
+          .snapshots(),
       builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (!snapshot.hasData) {
           return const Center(

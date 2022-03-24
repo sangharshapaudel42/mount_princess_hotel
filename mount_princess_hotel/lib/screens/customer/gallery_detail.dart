@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:mount_princess_hotel/utils/colors.dart';
@@ -33,23 +34,26 @@ class GalleryDetail extends StatelessWidget {
                   color: Colors.transparent,
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                child: PinchZoomImage(
-                  image: ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Image.network(
-                      imageUrls[index],
-                      fit: BoxFit.fill,
+                child: Center(
+                  child: PinchZoomImage(
+                    image: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: CachedNetworkImage(
+                          imageUrl: imageUrls[index],
+                          fit: BoxFit.fill,
+                          maxHeightDiskCache:
+                              (MediaQuery.of(context).size.height / 2).round()),
                     ),
+                    hideStatusBarWhileZooming: true,
+                    zoomedBackgroundColor:
+                        const Color.fromRGBO(240, 240, 240, 1.0),
+                    onZoomStart: () {
+                      print("zoom started");
+                    },
+                    onZoomEnd: () {
+                      print("zoom ended.");
+                    },
                   ),
-                  hideStatusBarWhileZooming: true,
-                  zoomedBackgroundColor:
-                      const Color.fromRGBO(240, 240, 240, 1.0),
-                  onZoomStart: () {
-                    print("zoom started");
-                  },
-                  onZoomEnd: () {
-                    print("zoom ended.");
-                  },
                 ),
               );
             },

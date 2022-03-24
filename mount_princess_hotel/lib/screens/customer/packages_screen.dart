@@ -13,9 +13,9 @@ class Packages extends StatefulWidget {
 }
 
 class _PackagesState extends State<Packages> {
-  FutureBuilder createCard() {
-    return FutureBuilder(
-      future: FirebaseFirestore.instance.collection("Packages").get(),
+  StreamBuilder createCard() {
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance.collection("Packages").snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(

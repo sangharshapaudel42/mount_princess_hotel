@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:mount_princess_hotel/models/booking_data_from_widget.dart'
     as model;
 
+import '../models/booking_data_from_widget.dart';
+
 class DatePickerWidget extends StatefulWidget {
   final String status;
   final String dateType;

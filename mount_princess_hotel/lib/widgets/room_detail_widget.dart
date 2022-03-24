@@ -111,7 +111,7 @@ class _RoomDetailWidgetState extends State<RoomDetailWidget> {
                       ),
                       const Spacer(),
                       Text(
-                        widget.price,
+                        'Price: ' + widget.price,
                         style: const TextStyle(
                           color: backgroundColor,
                           fontWeight: FontWeight.bold,
@@ -132,15 +132,9 @@ class _RoomDetailWidgetState extends State<RoomDetailWidget> {
                     widget.description,
                     textAlign: TextAlign.justify,
                     style: const TextStyle(
-                        fontWeight: FontWeight.w300, fontSize: 14.0),
+                        fontWeight: FontWeight.w300, fontSize: 20.0),
                   ),
                   const SizedBox(height: 10.0),
-                  const Text(
-                    "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ratione architecto autem quasi nisi iusto eius ex dolorum velit! Atque, veniam! Atque incidunt laudantium eveniet sint quod harum facere numquam molestias?fhjkdsfbsdkjfbsdjkfbsdkjbfsjkdbfjksdbfkjsdbfkjsdbfkjsdbfjksdbfkjsdbfkjsdbfjksdbfkjsdbfkjsdbfkjsdbkfjbsdkjfbsdkjbfjkdsfhsdhkfsdhfhsdkfskfjkdskjfsdfhsdfhsdhfsdfjksdkjfjksdfbsfdsbkfjksdjkfsdhkfsdfshfkdsfhksdfjsdfhsdfskdfsdjkfsdjkfsdfhfsdkjfsdf",
-                    textAlign: TextAlign.justify,
-                    style:
-                        TextStyle(fontWeight: FontWeight.w300, fontSize: 20.0),
-                  ),
                 ],
               ),
             ),

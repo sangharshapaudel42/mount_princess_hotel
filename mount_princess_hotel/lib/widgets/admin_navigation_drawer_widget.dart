@@ -4,8 +4,6 @@ import 'package:mount_princess_hotel/screens/welcome_screen.dart';
 
 import 'package:mount_princess_hotel/utils/colors.dart';
 
-import 'package:mount_princess_hotel/screens/admin/admin_aboutUs_screen.dart';
-import 'package:mount_princess_hotel/screens/admin/admin_contactUs_screen.dart';
 import 'package:mount_princess_hotel/screens/admin/admin_rooms_screen.dart';
 import 'package:mount_princess_hotel/screens/admin/admin_gallery_screen.dart';
 import 'package:mount_princess_hotel/screens/admin/admin_packages_screen.dart';
@@ -14,7 +12,7 @@ import 'package:mount_princess_hotel/screens/admin/admin_booking_screen.dart';
 
 class AdminNavigationDrawerWidget extends StatelessWidget {
   final padding = const EdgeInsets.symmetric(horizontal: 20);
-  AdminNavigationDrawerWidget({Key? key}) : super(key: key);
+  const AdminNavigationDrawerWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,21 +56,9 @@ class AdminNavigationDrawerWidget extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             buildMenuItem(
-              text: 'Manage About Us',
-              icon: Icons.info,
-              onClicked: () => selectedItem(context, 5),
-            ),
-            const SizedBox(height: 10),
-            buildMenuItem(
-              text: 'Manage Contact Us',
-              icon: Icons.contact_phone_outlined,
-              onClicked: () => selectedItem(context, 6),
-            ),
-            const SizedBox(height: 10),
-            buildMenuItem(
               text: 'Sign Out',
               icon: Icons.login_outlined,
-              onClicked: () => selectedItem(context, 7),
+              onClicked: () => selectedItem(context, 5),
             ),
           ],
         ),
@@ -124,16 +110,6 @@ class AdminNavigationDrawerWidget extends StatelessWidget {
         ));
         break;
       case 5:
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const AdminAboutUs(),
-        ));
-        break;
-      case 6:
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const AdminContactUs(),
-        ));
-        break;
-      case 7:
         FirebaseAuth.instance.signOut();
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const WelcomePage(),

@@ -14,9 +14,9 @@ class Gallery extends StatefulWidget {
 }
 
 class _GalleryState extends State<Gallery> {
-  FutureBuilder createCard() {
-    return FutureBuilder(
-      future: FirebaseFirestore.instance.collection('Gallery').get(),
+  StreamBuilder createCard() {
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance.collection('Gallery').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(

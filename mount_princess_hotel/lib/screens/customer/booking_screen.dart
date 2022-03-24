@@ -8,8 +8,7 @@ import 'package:mount_princess_hotel/utils/colors.dart';
 import 'package:mount_princess_hotel/widgets/date_picker_widget.dart';
 import 'package:mount_princess_hotel/widgets/dropdown.dart';
 
-import 'package:mount_princess_hotel/models/booking_data_from_widget.dart'
-    as model;
+import 'package:mount_princess_hotel/models/booking_data_from_widget.dart';
 
 class BookingPage extends StatefulWidget {
   const BookingPage({Key? key}) : super(key: key);

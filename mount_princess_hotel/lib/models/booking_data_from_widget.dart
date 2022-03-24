@@ -5,7 +5,7 @@ class DataBookingWidget {
   final int? adults;
   final int? childrens;
 
-  const DataBookingWidget({
+  DataBookingWidget({
     this.checkIn,
     this.checkOut,
     this.roomType,

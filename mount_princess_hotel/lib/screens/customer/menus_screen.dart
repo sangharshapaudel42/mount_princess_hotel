@@ -14,9 +14,9 @@ class Menus extends StatefulWidget {
 }
 
 class _MenusState extends State<Menus> {
-  FutureBuilder createCard() {
-    return FutureBuilder(
-      future: FirebaseFirestore.instance.collection('Menus').get(),
+  StreamBuilder createCard() {
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance.collection('Menus').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(
