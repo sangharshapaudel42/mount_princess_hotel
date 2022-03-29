@@ -131,7 +131,8 @@ class _PackagePageState extends State<PackagePage> {
                     streamSnapshot.data!.docs[index];
                 return Card(
                   color: Colors.grey[300],
-                  margin: const EdgeInsets.only(top: 20, right: 10, left: 10),
+                  margin: const EdgeInsets.only(
+                      top: 10, right: 10, left: 10, bottom: 10),
                   child: ListTile(
                     title: Text(documentSnapshot['name'],
                         style: const TextStyle(

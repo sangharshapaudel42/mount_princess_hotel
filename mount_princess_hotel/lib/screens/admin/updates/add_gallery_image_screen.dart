@@ -21,6 +21,7 @@ class AddGalleryImageScreen extends StatefulWidget {
 class _AddGalleryImageScreenState extends State<AddGalleryImageScreen> {
   File? _image;
   final _galleryCategories = FirebaseFirestore.instance.collection('Gallery');
+  bool _isLoading = false;
 
   // selecting Image from the gallery
   Future selectImageFromGallery() async {
@@ -51,11 +52,16 @@ class _AddGalleryImageScreenState extends State<AddGalleryImageScreen> {
   Future<String> uploadGalleryImageFirebaseStorageDatabase() async {
     String res = "error";
 
+    // during the process of uploading the loading is true.
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       // uploading image to the firebase storage
 
-      String photoUrl = await StorageMethods()
-          .uploadGalleryImageToStorage("Gallery", widget.categoryId, _image!);
+      String photoUrl = await StorageMethods().uploadGalleryMenusImageToStorage(
+          "Gallery", widget.categoryId, "", _image!);
 
       // uploading to the "Gallery" database
       await _galleryCategories
@@ -67,8 +73,18 @@ class _AddGalleryImageScreenState extends State<AddGalleryImageScreen> {
       );
       res = "success";
 
+      // loadin is "false" after uploading has been successfull.
+      if (res == "success") {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+
       return res;
     } catch (err) {
+      setState(() {
+        _isLoading = false;
+      });
       return err.toString();
     }
   }
@@ -81,12 +97,25 @@ class _AddGalleryImageScreenState extends State<AddGalleryImageScreen> {
           centerTitle: true,
         ),
         // body: addGalleryImage(),
-        body: _image == null ? imageNotChoose() : imageChoose(),
+        body: _image == null
+            ? imageNotChoose()
+            : _isLoading
+                ? Stack(
+                    children: [
+                      imageChoose(),
+                      const Center(
+                        child: CircularProgressIndicator(
+                            // backgroundColor: Colors.blue.opacity(0.9),
+                            ),
+                      )
+                    ],
+                  )
+                : imageChoose(),
       );
 
   // if the image hasnot been choosen yet
   Widget imageNotChoose() {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -193,13 +222,18 @@ class _AddGalleryImageScreenState extends State<AddGalleryImageScreen> {
                 ),
               ),
               onPressed: () async {
-                String res = await uploadGalleryImageFirebaseStorageDatabase();
+                if (_image != null) {
+                  String res =
+                      await uploadGalleryImageFirebaseStorageDatabase();
 
-                if (res == "success") {
-                  Navigator.pop(context);
+                  if (res == "success") {
+                    Navigator.pop(context);
 
-                  showSnackBar(context,
-                      "Image Uploaded succesfully in " + widget.categoryId);
+                    showSnackBar(context,
+                        "Image Uploaded succesfully in " + widget.categoryId);
+                  }
+                } else {
+                  showSnackBar(context, "Choose Image.");
                 }
               },
             ),

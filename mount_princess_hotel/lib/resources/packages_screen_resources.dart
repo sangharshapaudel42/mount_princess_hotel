@@ -53,7 +53,7 @@ class PackagesResource extends StatelessWidget {
             height: 20,
           ),
           Text(
-            'Price: ' + '$price',
+            'Price: \$' + '$price',
             style: const TextStyle(
               fontSize: 25,
             ),

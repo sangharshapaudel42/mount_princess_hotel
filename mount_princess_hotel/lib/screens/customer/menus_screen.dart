@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mount_princess_hotel/widgets/menus_screen_widget.dart';
 
 import 'package:mount_princess_hotel/widgets/navigation_drawer_widget.dart';
-import 'package:mount_princess_hotel/widgets/foodCategoryPage.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
-import 'package:mount_princess_hotel/screens/customer/selectedFoodCategoryPage.dart';
 
 class Menus extends StatefulWidget {
   const Menus({Key? key}) : super(key: key);
@@ -14,58 +12,6 @@ class Menus extends StatefulWidget {
 }
 
 class _MenusState extends State<Menus> {
-  StreamBuilder createCard() {
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('Menus').snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        List<QueryDocumentSnapshot> docs =
-            (snapshot.data! as QuerySnapshot).docs;
-
-        List names = [];
-        List images = [];
-        List itemReference = [];
-
-        docs.forEach((item) {
-          names.add(item['name']);
-          images.add(item['image']);
-          itemReference.add(item.id);
-        });
-        print(itemReference);
-
-        return Container(
-          height: MediaQuery.of(context).size.height - 135,
-          child: ListView.builder(
-            itemCount: names.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(8),
-                child: FoodCategory(
-                  name: names[index],
-                  image: images[index],
-                  onCardClick: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SelectedFoodCategory(
-                          referenceId: itemReference[index],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
   @override
   void initState() {
     super.initState();
@@ -80,7 +26,7 @@ class _MenusState extends State<Menus> {
           centerTitle: true,
           backgroundColor: backgroundColor,
         ),
-        body: Container(
+        body: SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: SingleChildScrollView(
@@ -95,21 +41,11 @@ class _MenusState extends State<Menus> {
                     style: TextStyle(color: Colors.black, fontSize: 30),
                   ),
                 ),
-                Container(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        // FoodCategory(onCardClick: () {
-                        //   Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) => SelectedFoodCategory(),
-                        //     ),
-                        //   );
-                        // }),
-                        createCard()
-                      ],
-                    ),
+                SingleChildScrollView(
+                  child: Column(
+                    children: const [
+                      MenusScreenWidget(),
+                    ],
                   ),
                 ),
               ],

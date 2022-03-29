@@ -23,42 +23,37 @@ class GalleryDetail extends StatelessWidget {
         centerTitle: true,
         backgroundColor: backgroundColor,
       ),
-      body: SafeArea(
-        child: Expanded(
-          child: ListView.builder(
-            itemCount: imageUrls.length,
-            itemBuilder: (context, index) {
-              return Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
+      body: ListView.builder(
+        itemCount: imageUrls.length,
+        itemBuilder: (context, index) {
+          return Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Center(
+              child: PinchZoomImage(
+                image: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
+                  child: CachedNetworkImage(
+                      imageUrl: imageUrls[index],
+                      fit: BoxFit.fill,
+                      maxHeightDiskCache:
+                          (MediaQuery.of(context).size.height / 2).round()),
                 ),
-                child: Center(
-                  child: PinchZoomImage(
-                    image: ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: CachedNetworkImage(
-                          imageUrl: imageUrls[index],
-                          fit: BoxFit.fill,
-                          maxHeightDiskCache:
-                              (MediaQuery.of(context).size.height / 2).round()),
-                    ),
-                    hideStatusBarWhileZooming: true,
-                    zoomedBackgroundColor:
-                        const Color.fromRGBO(240, 240, 240, 1.0),
-                    onZoomStart: () {
-                      print("zoom started");
-                    },
-                    onZoomEnd: () {
-                      print("zoom ended.");
-                    },
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
+                hideStatusBarWhileZooming: true,
+                zoomedBackgroundColor: const Color.fromRGBO(240, 240, 240, 1.0),
+                onZoomStart: () {
+                  print("zoom started");
+                },
+                onZoomEnd: () {
+                  print("zoom ended.");
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }

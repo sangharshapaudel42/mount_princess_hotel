@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mount_princess_hotel/widgets/individual_gallery_category.dart';
 
 import 'package:mount_princess_hotel/widgets/navigation_drawer_widget.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
@@ -32,20 +33,21 @@ class _GalleryState extends State<Gallery> {
           galleryImageCategory.add(item.id);
         });
 
-        // print(galleryImageCategory.length);
-        // print("hello i am under the water");
-
-        // print(galleryImageCategory);
-
-        return Container(
-          height: MediaQuery.of(context).size.height,
+        return SizedBox(
+          height: MediaQuery.of(context).size.height -
+              MediaQuery.of(context).size.height / 9,
           child: ListView.builder(
             itemCount: galleryImageCategory.length,
             itemBuilder: (context, index) {
-              return GalleryResources(
+              // return GalleryResources(
+              //   galleryImageCategory: galleryImageCategory[index],
+              //   galleryImageCategoryList: galleryImageCategory,
+              //   galleryImageCategoryLength: galleryImageCategory.length,
+              // );
+
+              // sending the id of gallery category
+              return IndividualGalleryCategory(
                 galleryImageCategory: galleryImageCategory[index],
-                galleryImageCategoryList: galleryImageCategory,
-                galleryImageCategoryLength: galleryImageCategory.length,
               );
             },
           ),
@@ -63,7 +65,7 @@ class _GalleryState extends State<Gallery> {
           backgroundColor: backgroundColor,
         ),
         // whole page
-        body: Container(
+        body: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: SingleChildScrollView(
             child: Column(

@@ -6,7 +6,9 @@ class FoodCategory extends StatefulWidget {
   Function? onCardClick;
   final String? name;
   final String? image;
-  FoodCategory({@required this.image, this.onCardClick, @required this.name});
+  FoodCategory(
+      {Key? key, required this.image, this.onCardClick, required this.name})
+      : super(key: key);
 
   @override
   State<FoodCategory> createState() => _FoodCategoryState();
@@ -17,9 +19,9 @@ class _FoodCategoryState extends State<FoodCategory> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        this.widget.onCardClick!();
+        widget.onCardClick!();
       },
-      child: Container(
+      child: SizedBox(
         height: MediaQuery.of(context).size.height / 4.55,
         // height: 150,
         child: Stack(
@@ -28,7 +30,7 @@ class _FoodCategoryState extends State<FoodCategory> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: CachedNetworkImage(
-                  imageUrl: widget.image.toString(),
+                  imageUrl: widget.image!,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -74,7 +76,7 @@ class _FoodCategoryState extends State<FoodCategory> {
                     //     style: TextStyle(
                     //         color: Colors.white, fontSize: 25))
                     Text(
-                      widget.name.toString(),
+                      widget.name!,
                       style: const TextStyle(color: Colors.white, fontSize: 25),
                     )
                   ],

@@ -25,14 +25,17 @@ class StorageMethods {
   }
 
   // adding gallery image to firebase storage
-  Future<String> uploadGalleryImageToStorage(
-      String childName, String categoryId, File file) async {
+  Future<String> uploadGalleryMenusImageToStorage(
+      String childName, String categoryId, String imageName, File file) async {
+    if (imageName == "") {
+      imageName = galleryImageId;
+    }
     // creating location to our firebase storage
     Reference ref = _storage
         .ref("Images")
         .child(childName)
         .child(categoryId)
-        .child(galleryImageId);
+        .child(imageName);
 
     // uploading file in the storage
     UploadTask uploadTask = ref.putFile(file);

@@ -9,7 +9,7 @@ class GalleryResources extends StatefulWidget {
   final String galleryImageCategory;
   final List<String> galleryImageCategoryList;
   final int galleryImageCategoryLength;
-  GalleryResources({
+  const GalleryResources({
     Key? key,
     required this.galleryImageCategory,
     required this.galleryImageCategoryList,
@@ -22,6 +22,7 @@ class GalleryResources extends StatefulWidget {
 
 class _GalleryResourcesState extends State<GalleryResources> {
   StreamBuilder createCard() {
+    print(widget.galleryImageCategory);
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('Gallery')
@@ -34,34 +35,27 @@ class _GalleryResourcesState extends State<GalleryResources> {
             child: CircularProgressIndicator(),
           );
         }
-        print(widget.galleryImageCategory);
-        // print(widget.galleryImageCategory.length);
 
         List<DocumentSnapshot> docs = (snapshot.data! as QuerySnapshot).docs;
 
         List<String> images = [];
 
-        // print(widget.galleryImageCategoryList);
-
         docs.forEach((item) {
+          print(item.data());
           images.add(item['image']);
         });
-        // print(widget.galleryImageCategory.length);
-        // print(widget.galleryImageCategoryList);
-        print(images);
-        print(images.length);
-        // print(widget.galleryImageCategoryLength);
 
-        return Container(
+        return SizedBox(
           height: MediaQuery.of(context).size.height,
           child: ListView.builder(
-            itemCount: images.length,
+            itemCount: widget.galleryImageCategoryList.length,
             itemBuilder: (context, index) {
-              return IndividualGalleryCategory(
-                images: images,
-                // galleryImageCategory: widget.galleryImageCategory,
-                galleryImageCategory: widget.galleryImageCategoryList[index],
-              );
+              return Container();
+              // return IndividualGalleryCategory(
+              //   images: images,
+              //   // galleryImageCategory: widget.galleryImageCategory,
+              //   galleryImageCategory: widget.galleryImageCategoryList[index],
+              // );
             },
           ),
         );

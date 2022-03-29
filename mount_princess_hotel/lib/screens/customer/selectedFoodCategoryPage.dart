@@ -1,16 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mount_princess_hotel/screens/admin/updates/add_food_item_screen.dart';
 
 import 'package:mount_princess_hotel/utils/colors.dart';
 
 import 'package:mount_princess_hotel/widgets/food_item_widget.dart';
-import 'package:mount_princess_hotel/widgets/text_field_input.dart';
-import 'package:flutter/services.dart';
 
 class SelectedFoodCategory extends StatefulWidget {
   final String? referenceId;
-  const SelectedFoodCategory({Key? key, @required this.referenceId})
+  final String userRole;
+  final String categoryName;
+  const SelectedFoodCategory(
+      {Key? key,
+      required this.referenceId,
+      required this.userRole,
+      required this.categoryName})
       : super(key: key);
 
   @override
@@ -34,39 +39,40 @@ class _SelectedFoodCategoryState extends State<SelectedFoodCategory> {
           );
         }
 
-        print(FirebaseFirestore.instance
-            .collection('Menus')
-            .doc(widget.referenceId)
-            .collection('Food Item')
-            .get());
-
         List<DocumentSnapshot> docs = (snapshot.data! as QuerySnapshot).docs;
 
         List foodItemName = [];
         List image = [];
         List price = [];
+        List foodIds = [];
 
         docs.forEach((item) {
-          print(item.data());
           foodItemName.add(item['name']);
           image.add(item['image']);
           price.add(item['price']);
+          foodIds.add(item.id);
         });
 
-        return Container(
+        return SizedBox(
           height: MediaQuery.of(context).size.height,
           child: GridView.builder(
             itemCount: docs.length,
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 300,
-                childAspectRatio: 0.9,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10),
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: MediaQuery.of(context).size.width / 2,
+              childAspectRatio: 0.9,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
             itemBuilder: (context, index) {
               return FoodItemContainer(
-                  image: image[index],
-                  foodItemName: foodItemName[index],
-                  price: price[index]);
+                image: image[index],
+                foodItemName: foodItemName[index],
+                price: price[index],
+                userRole: widget.userRole,
+                foodId: foodIds[index],
+                categoryId: widget.referenceId!,
+                categoryName: widget.categoryName,
+              );
             },
           ),
         );
@@ -89,27 +95,33 @@ class _SelectedFoodCategoryState extends State<SelectedFoodCategory> {
         backgroundColor: backgroundColor,
       ),
       body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
+        // height: MediaQuery.of(context).size.height,
+        // width: MediaQuery.of(context).size.width,
         margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
         color: Colors.white,
         child: createCard(),
-        // child: GridView.count(
-        //   shrinkWrap: false,
-        //   primary: false,
-        //   crossAxisCount: 2,
-        //   crossAxisSpacing: 10,
-        //   mainAxisSpacing: 5,
-        //   childAspectRatio: 0.9,
-        //   children: const [
-        //     // FoodItemContainer(
-        //     //   image: "assets/images/burger.jpg",
-        //     //   foodItemName: "Burger",
-        //     //   price: "\$25",
-        //     // ),
-        //   ],
-        // ),
       ),
+      // show floatingAction Button to admin only
+      floatingActionButton: widget.userRole == "admin"
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AddFoodItem(
+                      categoryId: widget.referenceId!,
+                      categoryName: widget.categoryName,
+                    ),
+                  ),
+                );
+              },
+              backgroundColor: backgroundColor,
+              child: const Icon(
+                Icons.add,
+                color: Colors.white,
+                size: 32,
+              ),
+            )
+          : null,
     );
   }
 }

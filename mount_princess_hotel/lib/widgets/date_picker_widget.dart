@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:mount_princess_hotel/models/booking_data_from_widget.dart'
-    as model;
-
-import '../models/booking_data_from_widget.dart';
-
 class DatePickerWidget extends StatefulWidget {
   final String status;
   final String dateType;
@@ -25,11 +20,25 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
       return widget.status;
     } else {
       print(_date);
+      // formating the date. And converting into string.
+      // String date = DateFormat('MM/dd/yyyy').format(_date!).toString();
+      // var datetime = DateTime.parse(_date.toString());
+      // String date = '${datetime.month}/${datetime.day}/${datetime.year}';
+      var dateOnly = DateUtils.dateOnly(_date!);
+      String date = dateOnly.toString();
+
+      // sending date to "SendDatePickerDataProvider"
       if (widget.dateType == "check-in") {
-        // } else if (widget.dateType == "check-out") {
-        //   model.DataBookingWidget _data =
-        //       model.DataBookingWidget(checkOut: _date.toString());
+        // in this case send date to checkInDate only.
+        // SendDatePickerDataProvider(date, "");
+        SendDatePickerDataProvider object =
+            SendDatePickerDataProvider(checkInDate: date);
+      } else if (widget.dateType == "check-out") {
+        // in this case send date to checkOutDate only.
+        SendDatePickerDataProvider object =
+            SendDatePickerDataProvider(checkOutDate: date);
       }
+
       return DateFormat('MM/dd/yyyy').format(_date!);
       // return '${_date.month}/${_date.day}/${_date.year}';
     }
@@ -66,4 +75,45 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
 
     setState(() => _date = newDate);
   }
+}
+
+class SendDatePickerDataProvider extends ChangeNotifier {
+  final String? checkInDate;
+  final String? checkOutDate;
+  late bool _checkInHasData = false;
+  late bool _checkOutHasData = false;
+
+  SendDatePickerDataProvider({this.checkInDate, this.checkOutDate});
+
+  void checkDateAndSend() {
+    // if (_date != null && _date != "") {
+    //   _hasData = true;
+    // }
+    if (checkInDate != null &&
+        checkInDate != "" &&
+        checkOutDate == null &&
+        checkOutDate == "") {
+      _checkInHasData = true;
+    } else if (checkOutDate != null &&
+        checkOutDate != "" &&
+        checkInDate == null &&
+        checkInDate == "") {
+      _checkOutHasData = true;
+    }
+
+    //Call this whenever there is some change in any field of change notifier.
+    notifyListeners();
+  }
+
+  // Getter for check-in date
+  String? get providerCheckInDate => checkInDate;
+
+  // Getter for check-out date
+  String? get providerCheckOutDate => checkOutDate;
+
+  // Getter for check-in flag
+  bool get checkInHasData => _checkInHasData;
+
+  // Getter for check-in flag
+  bool get checkOutHasData => _checkOutHasData;
 }

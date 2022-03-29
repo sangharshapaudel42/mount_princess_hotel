@@ -75,9 +75,10 @@ class _AdminGalleryUpdateDeleteState extends State<AdminGalleryUpdateDelete> {
                               context: context,
                               builder: (BuildContext context) =>
                                   DeletePopUpDialog(
-                                      categoryId: widget.categoryId,
-                                      imageId: imageIds[index],
-                                      imageUrl: imageUrls[index]),
+                                categoryId: widget.categoryId,
+                                imageId: imageIds[index],
+                                deleteType: "gallery",
+                              ),
                             );
                             print(imageUrls[index]);
                           },

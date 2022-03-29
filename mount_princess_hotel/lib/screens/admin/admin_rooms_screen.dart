@@ -109,7 +109,7 @@ class _AdminRoomPageState extends State<AdminRoomPage> {
                             padding: const EdgeInsets.all(10),
                             child: const Icon(
                               Icons.edit,
-                              size: 30,
+                              size: 25,
                               color: Colors.white,
                             ),
                           ),

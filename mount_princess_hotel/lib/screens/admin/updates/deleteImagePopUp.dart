@@ -1,33 +1,43 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mount_princess_hotel/utils/utils.dart';
 
 class DeletePopUpDialog extends StatefulWidget {
   final String categoryId;
   final String imageId;
-  final String imageUrl;
-  const DeletePopUpDialog(
-      {Key? key,
-      required this.categoryId,
-      required this.imageId,
-      required this.imageUrl})
-      : super(key: key);
+  final String deleteType;
+  const DeletePopUpDialog({
+    Key? key,
+    required this.categoryId,
+    required this.imageId,
+    required this.deleteType,
+  }) : super(key: key);
 
   @override
   State<DeletePopUpDialog> createState() => _DeletePopUpDialogState();
 }
 
 class _DeletePopUpDialogState extends State<DeletePopUpDialog> {
+  final _menusCategory = FirebaseFirestore.instance.collection("Menus");
   final _galleryCategory = FirebaseFirestore.instance.collection('Gallery');
 
   // Delete image from database
-  Future<String> deleteImage(String imageId, String imageName) async {
+  Future<String> deleteImage(String imageId) async {
     String res = "error";
     try {
-      final _image =
-          _galleryCategory.doc(widget.categoryId).collection("Images");
-      await _image.doc(imageId).delete();
+      if (widget.deleteType == "food") {
+        // this is food items
+        final _foodItems =
+            _menusCategory.doc(widget.categoryId).collection("Food Item");
+        await _foodItems.doc(imageId).delete();
+      } else if (widget.deleteType == "gallery") {
+        // this is gallery image
+        final _image =
+            _galleryCategory.doc(widget.categoryId).collection("Images");
+        await _image.doc(imageId).delete();
+      }
       // FirebaseStorage.instance.refFromURL("Images/Gallery/$imageName").delete();
       res = "success";
       return res;
@@ -102,14 +112,18 @@ class _DeletePopUpDialogState extends State<DeletePopUpDialog> {
                         ),
                       ),
                       onPressed: () async {
-                        String res =
-                            await deleteImage(widget.imageId, widget.imageUrl);
+                        String res = await deleteImage(widget.imageId);
 
                         if (res == "success") {
                           Navigator.pop(context);
 
-                          showSnackBar(
-                              context, "You have succesfully deleted a Image.");
+                          if (widget.deleteType == "food") {
+                            showSnackBar(context,
+                                "You have succesfully deleted Food Item.");
+                          } else if (widget.deleteType == "gallery") {
+                            showSnackBar(context,
+                                "You have succesfully deleted an Image.");
+                          }
                         }
                       },
                     ),

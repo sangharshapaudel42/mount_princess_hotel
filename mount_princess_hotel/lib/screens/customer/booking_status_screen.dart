@@ -22,7 +22,7 @@ class _BookingHistoryState extends State<BookingHistory> {
         centerTitle: true,
         backgroundColor: backgroundColor,
       ),
-      body: bookingHistory ? Text("False xa") : Text("true xa"));
+      body: bookingHistory ? Text("true xa") : Text("false xa"));
 }
 // import 'package:flutter/material.dart';
 // import 'package:mount_princess_hotel/screens/customer/phoneVerificationScreen.dart';
