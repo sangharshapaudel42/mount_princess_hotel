@@ -10,21 +10,20 @@ class BookingMethods {
   // final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<String> addBookingInfo({
-    required String checkIn,
-    required String checkOut,
+    required DateTime checkIn,
+    required DateTime checkOut,
     required String roomType,
-    required int adults,
-    required int childrens,
+    required int person,
     required String name,
     required String email,
     required String phoneNumber,
     required int numberOfRooms,
-    required int totalPrice,
+    required double totalPrice,
   }) async {
     String res = "Some error Occurred";
     try {
-      if (checkIn.isNotEmpty ||
-          checkOut.isNotEmpty ||
+      if (checkIn != null ||
+          checkOut != null ||
           roomType.isNotEmpty ||
           name.isNotEmpty ||
           email.isNotEmpty ||
@@ -36,8 +35,7 @@ class BookingMethods {
           checkIn: checkIn,
           checkOut: checkOut,
           roomType: roomType,
-          adults: adults,
-          childrens: childrens,
+          person: person,
           name: name,
           email: email,
           phoneNumber: phoneNumber,

@@ -4,8 +4,7 @@ import 'package:intl/intl.dart';
 class DatePickerWidget extends StatefulWidget {
   final String status;
   final String dateType;
-  const DatePickerWidget(
-      {Key? key, required this.status, required this.dateType})
+  DatePickerWidget({Key? key, required this.status, required this.dateType})
       : super(key: key);
 
   @override
@@ -20,24 +19,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
       return widget.status;
     } else {
       print(_date);
-      // formating the date. And converting into string.
-      // String date = DateFormat('MM/dd/yyyy').format(_date!).toString();
-      // var datetime = DateTime.parse(_date.toString());
-      // String date = '${datetime.month}/${datetime.day}/${datetime.year}';
-      var dateOnly = DateUtils.dateOnly(_date!);
-      String date = dateOnly.toString();
-
-      // sending date to "SendDatePickerDataProvider"
-      if (widget.dateType == "check-in") {
-        // in this case send date to checkInDate only.
-        // SendDatePickerDataProvider(date, "");
-        SendDatePickerDataProvider object =
-            SendDatePickerDataProvider(checkInDate: date);
-      } else if (widget.dateType == "check-out") {
-        // in this case send date to checkOutDate only.
-        SendDatePickerDataProvider object =
-            SendDatePickerDataProvider(checkOutDate: date);
-      }
 
       return DateFormat('MM/dd/yyyy').format(_date!);
       // return '${_date.month}/${_date.day}/${_date.year}';

@@ -1,23 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Booking {
-  final String checkIn;
-  final String checkOut;
+  final DateTime checkIn;
+  final DateTime checkOut;
   final String roomType;
-  final int adults;
-  final int childrens;
+  final int person;
   final String name;
   final String email;
   final String phoneNumber;
   final int numberOfRooms;
-  final int totalPrice;
+  final double totalPrice;
 
   const Booking({
     required this.checkIn,
     required this.checkOut,
     required this.roomType,
-    required this.adults,
-    required this.childrens,
+    required this.person,
     required this.name,
     required this.email,
     required this.phoneNumber,
@@ -32,8 +30,7 @@ class Booking {
       checkIn: snapshot["checkIn"],
       checkOut: snapshot["checkOut"],
       roomType: snapshot["roomType"],
-      adults: snapshot["adults"],
-      childrens: snapshot["childrens"],
+      person: snapshot["person"],
       name: snapshot["name"],
       email: snapshot["email"],
       phoneNumber: snapshot["phoneNumber"],
@@ -46,8 +43,7 @@ class Booking {
         "checkIn": checkIn,
         "checkOut": checkOut,
         "roomType": roomType,
-        "adults": adults,
-        "childrens": childrens,
+        "person": person,
         "name": name,
         "email": email,
         "phoneNumber": phoneNumber,

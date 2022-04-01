@@ -20,8 +20,6 @@ class DropDown extends StatefulWidget {
 }
 
 class _DropDownState extends State<DropDown> {
-  // List<String> roomTypes = ['Single Room', 'Standard Room'];
-  // String? selectedRoomType = 'Single Room';
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -53,13 +51,6 @@ class _DropDownState extends State<DropDown> {
                 .toList(),
             onChanged: (valueType) => setState(() {
               widget.selectedValueType = valueType;
-              if (widget.dropDownType == "room-type") {
-                model.DataBookingWidget(roomType: valueType);
-              } else if (widget.dropDownType == "adults") {
-                model.DataBookingWidget(adults: int.parse(valueType!));
-              } else if (widget.dropDownType == "childrens") {
-                model.DataBookingWidget(childrens: int.parse(valueType!));
-              }
             }),
           ),
         ),

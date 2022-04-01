@@ -56,101 +56,225 @@ class _AdminRoomPageState extends State<AdminRoomPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: StreamBuilder(
-          stream: _roomsCollection.snapshots(),
-          builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-            if (!streamSnapshot.hasData) {
+          stream:
+              _roomsCollection.orderBy("Price", descending: false).snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-            return GridView.builder(
-              itemCount: streamSnapshot.data!.docs.length,
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 300,
-                  childAspectRatio: 0.8,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20),
-              itemBuilder: (context, index) {
-                final DocumentSnapshot documentSnapshot =
-                    streamSnapshot.data!.docs[index];
-                return Stack(
-                  children: <Widget>[
-                    Positioned.fill(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: Opacity(
-                          opacity: 0.8,
-                          child: CachedNetworkImage(
-                            imageUrl: documentSnapshot["imgName"],
-                            fit: BoxFit.cover,
+
+            List<QueryDocumentSnapshot> docs =
+                (snapshot.data! as QuerySnapshot).docs;
+
+            List<String> names = [];
+            List<String> images = [];
+            List prices = [];
+            List<String> roomReference = [];
+
+            docs.forEach((item) {
+              names.add(item['Name']);
+              images.add(item['imgName']);
+              prices.add(item['Price']);
+              roomReference.add(item.id);
+            });
+
+            return ListView.builder(
+                itemCount: names.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin:
+                        const EdgeInsets.only(right: 15, left: 15, bottom: 20),
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 3,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: const [
+                        BoxShadow(
+                            blurRadius: 15,
+                            spreadRadius: 5,
+                            color: Color.fromRGBO(0, 0, 0, .05))
+                      ],
+                    ),
+                    child: Stack(
+                      children: <Widget>[
+                        Positioned.fill(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: Opacity(
+                              opacity: 0.85,
+                              child: CachedNetworkImage(
+                                imageUrl: images[index],
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.topRight,
-                      // child: IconButton(
-                      //   icon: const Icon(Icons.edit),
-                      //   color: Colors.white,
-                      //   iconSize: 30,
-                      //   onPressed: () {},
-                      // ),
-                      child: ClipOval(
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  UpdateRooms(roomId: documentSnapshot.id),
-                            ));
-                            // _updateRoomInfo(documentSnapshot);
-                          },
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8, right: 8),
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: ClipOval(
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => UpdateRooms(
+                                        roomId: roomReference[index]),
+                                  ));
+                                  // _updateRoomInfo(documentSnapshot);
+                                },
+                                child: Container(
+                                  color: backgroundColor,
+                                  padding: const EdgeInsets.all(10),
+                                  child: const Icon(
+                                    Icons.edit,
+                                    size: 25,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
                           child: Container(
-                            color: backgroundColor,
-                            padding: const EdgeInsets.all(10),
-                            child: const Icon(
-                              Icons.edit,
-                              size: 25,
-                              color: Colors.white,
+                            height: MediaQuery.of(context).size.height / 13,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(20.0),
+                                bottomRight: Radius.circular(20.0),
+                              ),
+                              gradient: LinearGradient(
+                                end: const Alignment(0.0, 0.5),
+                                begin: const Alignment(0.0, 0.10),
+                                colors: <Color>[
+                                  const Color(0x8A000000),
+                                  Colors.black12.withOpacity(0.3),
+                                ],
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      names[index],
+                                      style: const TextStyle(
+                                        fontSize: 25,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Text(
+                                      'Price: \$' + prices[index].toString(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 25.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        height: 60,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(20.0),
-                            bottomRight: Radius.circular(20.0),
-                          ),
-                          gradient: LinearGradient(
-                            end: const Alignment(0.0, 0.1),
-                            begin: const Alignment(0.0, 0.15),
-                            colors: <Color>[
-                              const Color(0x8A000000),
-                              Colors.black12.withOpacity(0.15),
-                            ],
-                          ),
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            documentSnapshot["Name"],
-                            style: const TextStyle(
-                              fontSize: 25,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            );
+                  );
+                });
+            // return GridView.builder(
+            //   itemCount: streamSnapshot.data!.docs.length,
+            //   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            //       maxCrossAxisExtent: 300,
+            //       childAspectRatio: 0.8,
+            //       crossAxisSpacing: 20,
+            //       mainAxisSpacing: 20),
+            //   itemBuilder: (context, index) {
+            //     final DocumentSnapshot documentSnapshot =
+            //         streamSnapshot.data!.docs[index];
+            //     return Stack(
+            //       children: <Widget>[
+            //         Positioned.fill(
+            //           child: ClipRRect(
+            //             borderRadius: BorderRadius.circular(20.0),
+            //             child: Opacity(
+            //               opacity: 0.8,
+            //               child: CachedNetworkImage(
+            //                 imageUrl: documentSnapshot["imgName"],
+            //                 fit: BoxFit.cover,
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //         Align(
+            //           alignment: Alignment.topRight,
+            //           // child: IconButton(
+            //           //   icon: const Icon(Icons.edit),
+            //           //   color: Colors.white,
+            //           //   iconSize: 30,
+            //           //   onPressed: () {},
+            //           // ),
+            //           child: ClipOval(
+            //             child: InkWell(
+            //               onTap: () {
+            //                 Navigator.of(context).push(MaterialPageRoute(
+            //                   builder: (context) =>
+            //                       UpdateRooms(roomId: documentSnapshot.id),
+            //                 ));
+            //                 // _updateRoomInfo(documentSnapshot);
+            //               },
+            //               child: Container(
+            //                 color: backgroundColor,
+            //                 padding: const EdgeInsets.all(10),
+            //                 child: const Icon(
+            //                   Icons.edit,
+            //                   size: 25,
+            //                   color: Colors.white,
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //         Align(
+            //           alignment: Alignment.bottomCenter,
+            //           child: Container(
+            //             height: 60,
+            //             width: double.infinity,
+            //             decoration: BoxDecoration(
+            //               borderRadius: const BorderRadius.only(
+            //                 bottomLeft: Radius.circular(20.0),
+            //                 bottomRight: Radius.circular(20.0),
+            //               ),
+            //               gradient: LinearGradient(
+            //                 end: const Alignment(0.0, 0.1),
+            //                 begin: const Alignment(0.0, 0.15),
+            //                 colors: <Color>[
+            //                   const Color(0x8A000000),
+            //                   Colors.black12.withOpacity(0.15),
+            //                 ],
+            //               ),
+            //             ),
+            //             child: Align(
+            //               alignment: Alignment.centerLeft,
+            //               child: Text(
+            //                 documentSnapshot["Name"],
+            //                 style: const TextStyle(
+            //                   fontSize: 25,
+            //                   color: Colors.white,
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       ],
+            //     );
+            //   },
+            // );
           },
         ),
       );

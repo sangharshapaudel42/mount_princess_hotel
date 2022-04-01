@@ -16,7 +16,10 @@ class Rooms extends StatefulWidget {
 class _RoomsState extends State<Rooms> {
   StreamBuilder createCard() {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('Rooms').snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('Rooms')
+          .orderBy("Price", descending: false)
+          .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(
@@ -26,29 +29,29 @@ class _RoomsState extends State<Rooms> {
         List<QueryDocumentSnapshot> docs =
             (snapshot.data! as QuerySnapshot).docs;
 
-        List names = [];
-        List images = [];
-        List roomReference = [];
+        List<String> names = [];
+        List<String> images = [];
+        List prices = [];
+        List<String> roomReference = [];
 
         docs.forEach((item) {
           names.add(item['Name']);
           images.add(item['imgName']);
+          prices.add(item['Price']);
           roomReference.add(item.id);
         });
 
-        return Container(
+        return SizedBox(
           height: MediaQuery.of(context).size.height,
-          child: GridView.builder(
+
+          // new design
+          child: ListView.builder(
             itemCount: names.length,
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 300,
-                childAspectRatio: 0.8,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10),
             itemBuilder: (context, index) {
               return RoomsScreenResources(
                 name: names[index],
                 imgName: images[index],
+                price: prices[index].toString(),
                 roomReferenceId: roomReference[index],
               );
             },
@@ -67,7 +70,7 @@ class _RoomsState extends State<Rooms> {
           backgroundColor: backgroundColor,
         ),
         body: Container(
-          margin: const EdgeInsets.only(top: 50),
+          margin: const EdgeInsets.only(top: 30),
           height: MediaQuery.of(context).size.height,
           child: createCard(),
         ),

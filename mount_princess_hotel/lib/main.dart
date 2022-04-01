@@ -7,6 +7,8 @@ import 'package:mount_princess_hotel/LandingPage.dart';
 import 'package:mount_princess_hotel/screens/splash_screen.dart';
 import 'package:mount_princess_hotel/screens/welcome_screen.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
+import 'package:mount_princess_hotel/widgets/date_picker_widget.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   // initilize firebase in our app
@@ -26,7 +28,12 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
-  runApp(const MyApp());
+  runApp(
+    const MyApp(),
+    // MultiProvider(providers: [
+    // ChangeNotifierProvider(create: (_) => DatePickerWidget()),
+    // ]),
+  );
 }
 
 class MyApp extends StatelessWidget {

@@ -39,13 +39,15 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
         var price = data['Price'];
         var description = data['Description'];
 
-        return Container(
+        return SizedBox(
           height: MediaQuery.of(context).size.height,
           child: RoomDetailWidget(
-              name: roomName,
-              price: price.toString(),
-              image: image,
-              description: description),
+            name: roomName,
+            price: price.toString(),
+            image: image,
+            description: description,
+            roomReferenceId: widget.roomReferenceId,
+          ),
         );
       },
     );

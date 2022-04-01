@@ -179,22 +179,50 @@ class _UpdateRoomsState extends State<UpdateRooms> {
                           ),
                     // same as update_food_item.dart
                     Positioned(
-                      bottom: -10,
-                      left: 80,
-                      child: IconButton(
-                        onPressed: selectImageTakePhoto,
-                        icon: const Icon(
-                          Icons.add_a_photo,
+                      bottom: -3,
+                      left: 87,
+                      child: ClipOval(
+                        child: InkWell(
+                          onTap: selectImageTakePhoto,
+                          child: Container(
+                            color: Colors.white,
+                            padding: const EdgeInsets.all(3),
+                            child: ClipOval(
+                              child: Container(
+                                color: backgroundColor,
+                                padding: const EdgeInsets.all(5),
+                                child: const Icon(
+                                  Icons.add_a_photo,
+                                  // size: 25,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                     Positioned(
-                      bottom: -10,
-                      right: 80,
-                      child: IconButton(
-                        onPressed: selectImageFromGallery,
-                        icon: const Icon(
-                          Icons.add_photo_alternate,
+                      bottom: -3,
+                      right: 87,
+                      child: ClipOval(
+                        child: InkWell(
+                          onTap: selectImageFromGallery,
+                          child: Container(
+                            color: Colors.white,
+                            padding: const EdgeInsets.all(3),
+                            child: ClipOval(
+                              child: Container(
+                                color: backgroundColor,
+                                padding: const EdgeInsets.all(5),
+                                child: const Icon(
+                                  Icons.add_photo_alternate,
+                                  // size: 25,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -231,7 +259,7 @@ class _UpdateRoomsState extends State<UpdateRooms> {
                           ),
                   ],
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 40),
                 AdminTextFieldInput(
                   textEditingController: _nameController,
                   textInputType: TextInputType.text,
