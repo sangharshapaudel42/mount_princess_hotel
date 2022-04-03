@@ -10,8 +10,8 @@ class BookingMethods {
   // final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<String> addBookingInfo({
-    required DateTime checkIn,
-    required DateTime checkOut,
+    required String checkIn,
+    required String checkOut,
     required String roomType,
     required int person,
     required String name,

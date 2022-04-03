@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mount_princess_hotel/resources/booking_method.dart';
 import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
 import 'package:mount_princess_hotel/utils/utils.dart';
@@ -11,6 +12,7 @@ class BuildPopDialog extends StatefulWidget {
   final DateTime checOutDate;
   final String roomType;
   final int noOfPerson;
+  final double roomPrice;
   final String name;
   final String email;
   final String phoneNumber;
@@ -21,6 +23,7 @@ class BuildPopDialog extends StatefulWidget {
     required this.checOutDate,
     required this.roomType,
     required this.noOfPerson,
+    required this.roomPrice,
     required this.name,
     required this.email,
     required this.phoneNumber,
@@ -39,6 +42,14 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
   double roomTotalPrice = 0.0;
 
   @override
+  void initState() {
+    super.initState();
+    _nameController.text = widget.name;
+    _emailController.text = widget.email;
+    _phoneNumberController.text = widget.phoneNumber.toString();
+  }
+
+  @override
   void dispose() {
     super.dispose();
     _nameController.dispose();
@@ -48,7 +59,7 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
   }
 
   // calculate total price
-  double calculateTotalPrice(double roomPrice) {
+  double calculateTotalPrice() {
     double totalPrice = 0.0;
 
     // difference between checkInDate and checkOutDate
@@ -59,9 +70,11 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
     if (_noRoomsController.text.isNotEmpty) {
       if (widget.roomType == "Standard Room") {
         // totalPrice = (Standard_Room_price - 5) + ($5 * widget.noOfPerson)
-        totalPrice = (roomPrice - 5) + (5 * widget.noOfPerson.toDouble());
+        totalPrice =
+            (widget.roomPrice - 5) + (5 * widget.noOfPerson.toDouble());
       } else if (widget.roomType == "Deluxe Room") {
-        totalPrice = (roomPrice - 5) + (5 * widget.noOfPerson.toDouble());
+        totalPrice =
+            (widget.roomPrice - 5) + (5 * widget.noOfPerson.toDouble());
       }
       // totalPrice (roomType and noOfPerson) * noOfRooms
       totalPrice = totalPrice * int.parse(_noRoomsController.text);
@@ -70,12 +83,18 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
   }
 
   // Add booking Info into the firebase
-  void addBookingInfo(double roomPrice) async {
+  void addBookingInfo() async {
     String res = "fuck you";
     // set loading to true
     setState(() {
       _isLoading = true;
     });
+
+    // first convert the dateTime to string
+    String checkInDateToString =
+        DateFormat('MM-dd-yyyy').format(widget.checInDate);
+    String checkOutDateToString =
+        DateFormat('MM-dd-yyyy').format(widget.checOutDate);
 
     if (_nameController.text.isNotEmpty &&
         _emailController.text.isNotEmpty &&
@@ -83,15 +102,15 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
         _noRoomsController.text.isNotEmpty) {
       // passing the datas to the booking_methos
       // res = await BookingMethods().addBookingInfo(
-      //   checkIn: widget.checInDate,
-      //   checkOut: widget.checOutDate,
+      //   checkIn: checkInDateToString,
+      //   checkOut: checkOutDateToString,
       //   roomType: widget.roomType,
       //   person: widget.noOfPerson,
       //   name: _nameController.text,
       //   email: _emailController.text,
       //   phoneNumber: _phoneNumberController.text,
       //   numberOfRooms: int.parse(_noRoomsController.text),
-      //   totalPrice: calculateTotalPrice(roomPrice),
+      //   totalPrice: calculateTotalPrice(),
       // );
     } else {
       res = "unsuccess";
@@ -121,157 +140,118 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
       contentPadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
 
       // to get choose room price for calculating totalPrice
-      content: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('Rooms').snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            List<QueryDocumentSnapshot> docs =
-                (snapshot.data! as QuerySnapshot).docs;
+      content: Container(
+        height: MediaQuery.of(context).size.height / 1.5,
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.only(top: 25),
+        decoration: BoxDecoration(
+          color: const Color(0xFF000000).withOpacity(0.5),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                // const Align(
+                //   alignment: Alignment.topRight,
+                //   child: Icon(
+                //     Icons.close,
+                //     color: Colors.red,
+                //   ),
+                // ),
 
-            List<String> names = [];
-            List prices = [];
-
-            docs.forEach((item) {
-              names.add(item['Name']);
-              prices.add(item['Price']);
-            });
-
-            // initilizing the value of current room price to 0.0
-            double roomPrice = 0.0;
-
-            // for loop (0-1)
-            for (var i = 0; i < names.length; i++) {
-              // compare roomType with ith names
-              if (widget.roomType == names[i]) {
-                roomPrice = prices[i].toDouble();
-              }
-            }
-
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasData) {
-              _nameController.text = widget.name;
-              _emailController.text = widget.email;
-              _phoneNumberController.text = widget.phoneNumber.toString();
-            }
-
-            return Container(
-              height: MediaQuery.of(context).size.height / 1.5,
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.only(top: 25),
-              decoration: BoxDecoration(
-                color: const Color(0xFF000000).withOpacity(0.5),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      // const Align(
-                      //   alignment: Alignment.topRight,
-                      //   child: Icon(
-                      //     Icons.close,
-                      //     color: Colors.red,
-                      //   ),
-                      // ),
-
-                      // Name
-                      TextFieldInput(
-                        textEditingController: _nameController,
-                        hintText: "Enter your name",
-                        textInputType: TextInputType.name,
-                        icon: Icons.person,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Email
-                      TextFieldInput(
-                        hintText: "Email",
-                        textInputType: TextInputType.emailAddress,
-                        textEditingController: _emailController,
-                        icon: Icons.email,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Phone Number
-                      TextFieldInput(
-                        hintText: "Phone number",
-                        textInputType: TextInputType.phone,
-                        textEditingController: _phoneNumberController,
-                        icon: Icons.phone,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Number of Rooms
-                      TextFieldInput(
-                        hintText: "Number of Rooms",
-                        textInputType: TextInputType.number,
-                        textEditingController: _noRoomsController,
-                        icon: Icons.format_list_numbered,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Total Price
-                      MaterialButton(
-                        height: 50,
-                        minWidth: MediaQuery.of(context).size.width,
-                        color: Colors.white,
-                        disabledColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                        child: Text(
-                          "Total Price: \$ ${roomTotalPrice.toString()}",
-                          style: TextStyle(
-                            // fontWeight: FontWeight.bold,
-                            color: Colors.grey[800],
-                            fontSize: 25,
-                          ),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            roomTotalPrice = calculateTotalPrice(roomPrice);
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Submit
-                      MaterialButton(
-                        height: 50,
-                        minWidth: MediaQuery.of(context).size.width / 2,
-                        color: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                        child: const Text(
-                          "Submit",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 25,
-                          ),
-                        ),
-                        onPressed: () => addBookingInfo(roomPrice),
-                        // onPressed: () {},
-                      ),
-                    ],
-                  ),
+                // Name
+                TextFieldInput(
+                  textEditingController: _nameController,
+                  hintText: "Enter your name",
+                  textInputType: TextInputType.name,
+                  icon: Icons.person,
+                  color: Colors.white,
                 ),
-              ),
-            );
-          }),
+                const SizedBox(height: 20),
+
+                // Email
+                TextFieldInput(
+                  hintText: "Email",
+                  textInputType: TextInputType.emailAddress,
+                  textEditingController: _emailController,
+                  icon: Icons.email,
+                  color: Colors.white,
+                ),
+                const SizedBox(height: 20),
+
+                // Phone Number
+                TextFieldInput(
+                  hintText: "Phone number",
+                  textInputType: TextInputType.phone,
+                  textEditingController: _phoneNumberController,
+                  icon: Icons.phone,
+                  color: Colors.white,
+                ),
+                const SizedBox(height: 20),
+
+                // Number of Rooms
+                TextFieldInput(
+                  hintText: "Number of Rooms",
+                  textInputType: TextInputType.number,
+                  textEditingController: _noRoomsController,
+                  icon: Icons.format_list_numbered,
+                  color: Colors.white,
+                ),
+                const SizedBox(height: 20),
+
+                // Total Price
+                MaterialButton(
+                  height: 50,
+                  minWidth: MediaQuery.of(context).size.width,
+                  color: Colors.white,
+                  disabledColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  child: Text(
+                    "Total Price: \$ ${calculateTotalPrice().toString()}",
+                    // "Total Price: \$ ${roomTotalPrice.toString()}",
+                    style: TextStyle(
+                      // fontWeight: FontWeight.bold,
+                      color: Colors.grey[800],
+                      fontSize: 25,
+                    ),
+                  ),
+                  onPressed: null,
+                  // onPressed: () {
+                  //   setState(() {
+                  //     roomTotalPrice = calculateTotalPrice(widget.roomPrice);
+                  //   });
+                  // },
+                ),
+                const SizedBox(height: 20),
+
+                // Submit
+                MaterialButton(
+                  height: 50,
+                  minWidth: MediaQuery.of(context).size.width / 2,
+                  color: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: const Text(
+                    "Submit",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 25,
+                    ),
+                  ),
+                  onPressed: () => addBookingInfo(),
+                  // onPressed: () {},
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

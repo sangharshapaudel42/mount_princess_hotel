@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-
-import 'package:mount_princess_hotel/models/booking_data_from_widget.dart'
-    as model;
 
 class DropDown extends StatefulWidget {
   final List<String> valueTypes;

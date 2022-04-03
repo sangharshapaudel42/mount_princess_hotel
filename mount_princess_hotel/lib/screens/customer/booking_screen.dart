@@ -27,6 +27,15 @@ class _BookingPageState extends State<BookingPage> {
   String _roomTypeDropDown = "Standard Room";
   String _personsDropDown = "1";
 
+  List _allRooms = [];
+  double roomPrice = 0.0;
+
+  final List<String> roomsValueTypes = ['Standard Room', 'Deluxe Room'];
+  String? roomsSelectedValueType = 'Standard Room';
+
+  final List<String> personsValueTypes = ['1', '2', '3', '4+'];
+  String? personsSelectedValueType = '1';
+
   @override
   void dispose() {
     super.dispose();
@@ -71,53 +80,53 @@ class _BookingPageState extends State<BookingPage> {
   }
 
   // widget for drop down menu
-  Widget dropDown(
-    BuildContext context,
-    final List<String> valueTypes,
-    String? selectedValueType,
-    String? dropDownType,
-  ) {
-    return Center(
-      child: Container(
-        height: MediaQuery.of(context).size.height / 14,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: Colors.white,
-        ),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-            value: selectedValueType,
-            iconSize: 36,
-            icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
-            isExpanded: true,
-            items: valueTypes
-                .map((valueType) => DropdownMenuItem<String>(
-                      value: valueType,
-                      child: Center(
-                        child: Text(
-                          valueType,
-                          style: TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[600]),
-                        ),
-                      ),
-                    ))
-                .toList(),
-            onChanged: (valueType) => setState(() {
-              selectedValueType = valueType;
-              if (dropDownType == "room-type") {
-                _roomTypeDropDown = valueType!;
-              } else if (dropDownType == "persons") {
-                _personsDropDown = valueType!;
-              }
-            }),
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget dropDown(
+  //   BuildContext context,
+  //   final List<String> valueTypes,
+  //   String? selectedValueType,
+  //   String? dropDownType,
+  // ) {
+  //   return Center(
+  //     child: Container(
+  //       height: MediaQuery.of(context).size.height / 14,
+  //       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+  //       decoration: BoxDecoration(
+  //         borderRadius: BorderRadius.circular(5),
+  //         color: Colors.white,
+  //       ),
+  //       child: DropdownButtonHideUnderline(
+  //         child: DropdownButton<String>(
+  //           value: selectedValueType,
+  //           iconSize: 36,
+  //           icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+  //           isExpanded: true,
+  //           items: valueTypes
+  //               .map((valueType) => DropdownMenuItem<String>(
+  //                     value: valueType,
+  //                     child: Center(
+  //                       child: Text(
+  //                         valueType,
+  //                         style: TextStyle(
+  //                             fontSize: 25,
+  //                             fontWeight: FontWeight.w600,
+  //                             color: Colors.grey[600]),
+  //                       ),
+  //                     ),
+  //                   ))
+  //               .toList(),
+  //           onChanged: (valueType) => setState(() {
+  //             selectedValueType = valueType;
+  //             if (dropDownType == "room-type") {
+  //               _roomTypeDropDown = valueType!;
+  //             } else if (dropDownType == "persons") {
+  //               _personsDropDown = valueType!;
+  //             }
+  //           }),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -227,8 +236,48 @@ class _BookingPageState extends State<BookingPage> {
               ),
               const SizedBox(height: 10),
 
-              dropDown(context, const ['Standard Room', 'Deluxe Room'],
-                  'Standard Room', "room-type"),
+              // dropDown(context, const ['Standard Room', 'Deluxe Room'],
+              //     'Standard Room', "room-type"),
+
+              // rooms dropdown button
+              Center(
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 14,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.white,
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: roomsSelectedValueType,
+                      iconSize: 36,
+                      icon: const Icon(Icons.arrow_drop_down,
+                          color: Colors.black),
+                      isExpanded: true,
+                      items: roomsValueTypes
+                          .map((valueType) => DropdownMenuItem<String>(
+                                value: valueType,
+                                child: Center(
+                                  child: Text(
+                                    valueType,
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey[600]),
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                      onChanged: (valueType) => setState(() {
+                        roomsSelectedValueType = valueType;
+                        _roomTypeDropDown = valueType!;
+                      }),
+                    ),
+                  ),
+                ),
+              ),
 
               // widget for "RoomType"
               // DropDown(
@@ -251,7 +300,51 @@ class _BookingPageState extends State<BookingPage> {
               ),
               const SizedBox(height: 10),
 
-              dropDown(context, const ['1', '2', '3', '4+'], '1', "persons"),
+              // drop down menu for persons
+              Center(
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 14,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.white,
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: personsSelectedValueType,
+                      iconSize: 36,
+                      icon: const Icon(Icons.arrow_drop_down,
+                          color: Colors.black),
+                      isExpanded: true,
+                      items: personsValueTypes
+                          .map((valueType) => DropdownMenuItem<String>(
+                                value: valueType,
+                                child: Center(
+                                  child: Text(
+                                    valueType,
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey[600]),
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                      onChanged: (valueType) => setState(() {
+                        personsSelectedValueType = valueType;
+                        if (valueType == "4+") {
+                          _personsDropDown = "4";
+                        } else {
+                          _personsDropDown = valueType!;
+                        }
+                      }),
+                    ),
+                  ),
+                ),
+              ),
+
+              // dropDown(context, const ['1', '2', '3', '4+'], '1', "persons"),
               //////////////// Persons ////////////////
 
               //////////////// Reserve ////////////////
@@ -283,6 +376,27 @@ class _BookingPageState extends State<BookingPage> {
                           .doc(userId)
                           .get();
 
+                      // get all rooms
+                      var data = await FirebaseFirestore.instance
+                          .collection("Rooms")
+                          .get();
+
+                      // access it's documents
+                      _allRooms = data.docs;
+
+                      // compare the user defined room with all rooms and get
+                      // it's price
+                      if (_allRooms.isNotEmpty) {
+                        for (var roomsSnapshot in _allRooms) {
+                          if (_roomTypeDropDown == roomsSnapshot["Name"]) {
+                            roomPrice =
+                                double.parse(roomsSnapshot["Price"].toString());
+                          } else {
+                            roomPrice = 25.0;
+                          }
+                        }
+                      }
+
                       showDialog(
                         context: context,
                         builder: (BuildContext context) => BuildPopDialog(
@@ -290,6 +404,7 @@ class _BookingPageState extends State<BookingPage> {
                           checOutDate: _checkOutDate!,
                           roomType: _roomTypeDropDown,
                           noOfPerson: int.parse(_personsDropDown),
+                          roomPrice: roomPrice,
                           name: doc["name"],
                           email: doc["email"],
                           phoneNumber: doc["phoneNumber"],
