@@ -8,8 +8,8 @@ import 'package:mount_princess_hotel/utils/utils.dart';
 import 'package:mount_princess_hotel/widgets/text_field_input.dart';
 
 class BuildPopDialog extends StatefulWidget {
-  final DateTime checInDate;
-  final DateTime checOutDate;
+  final DateTime checkInDate;
+  final DateTime checkOutDate;
   final String roomType;
   final int noOfPerson;
   final double roomPrice;
@@ -19,8 +19,8 @@ class BuildPopDialog extends StatefulWidget {
 
   const BuildPopDialog({
     Key? key,
-    required this.checInDate,
-    required this.checOutDate,
+    required this.checkInDate,
+    required this.checkOutDate,
     required this.roomType,
     required this.noOfPerson,
     required this.roomPrice,
@@ -84,34 +84,35 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
 
   // Add booking Info into the firebase
   void addBookingInfo() async {
-    String res = "fuck you";
+    String res;
     // set loading to true
     setState(() {
       _isLoading = true;
     });
 
     // first convert the dateTime to string
-    String checkInDateToString =
-        DateFormat('MM-dd-yyyy').format(widget.checInDate);
-    String checkOutDateToString =
-        DateFormat('MM-dd-yyyy').format(widget.checOutDate);
+    // String checkInDateToString =
+    //     DateFormat('MM-dd-yyyy').format(widget.checkInDate);
+    // String checkOutDateToString =
+    //     DateFormat('MM-dd-yyyy').format(widget.checkOutDate);
 
     if (_nameController.text.isNotEmpty &&
         _emailController.text.isNotEmpty &&
         _phoneNumberController.text.isNotEmpty &&
         _noRoomsController.text.isNotEmpty) {
       // passing the datas to the booking_methos
-      // res = await BookingMethods().addBookingInfo(
-      //   checkIn: checkInDateToString,
-      //   checkOut: checkOutDateToString,
-      //   roomType: widget.roomType,
-      //   person: widget.noOfPerson,
-      //   name: _nameController.text,
-      //   email: _emailController.text,
-      //   phoneNumber: _phoneNumberController.text,
-      //   numberOfRooms: int.parse(_noRoomsController.text),
-      //   totalPrice: calculateTotalPrice(),
-      // );
+      res = await BookingMethods().addBookingInfo(
+        checkIn: widget.checkInDate,
+        checkOut: widget.checkOutDate,
+        bookingDate: DateTime.now(),
+        roomType: widget.roomType,
+        person: widget.noOfPerson,
+        name: _nameController.text,
+        email: _emailController.text,
+        phoneNumber: _phoneNumberController.text,
+        numberOfRooms: int.parse(_noRoomsController.text),
+        totalPrice: calculateTotalPrice(),
+      );
     } else {
       res = "unsuccess";
       showSnackBar(context, "Fill all the fields.");
@@ -122,7 +123,10 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
         _isLoading = false;
       });
       // navigate to the home screen
-      Navigator.of(context).pop();
+      // Navigator.of(context).pop();
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const BookingPage(),
+      ));
       showSnackBar(context, "Booking has been sucessfull.");
     } else {
       setState(() {

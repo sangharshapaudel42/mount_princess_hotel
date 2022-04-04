@@ -50,7 +50,9 @@ class _BookingPageState extends State<BookingPage> {
     } else {
       print(date);
 
-      return DateFormat('MM/dd/yyyy').format(date);
+      // return DateFormat('MM/dd/yyyy').format(date);
+      // return DateFormat.yMMMd().format(date);
+      return DateFormat.yMMMMEEEEd().format(date);
     }
   }
 
@@ -388,9 +390,15 @@ class _BookingPageState extends State<BookingPage> {
                       // it's price
                       if (_allRooms.isNotEmpty) {
                         for (var roomsSnapshot in _allRooms) {
-                          if (_roomTypeDropDown == roomsSnapshot["Name"]) {
+                          // converting the room name to lowercase
+                          String snapshotRoomName = roomsSnapshot["Name"];
+                          snapshotRoomName = snapshotRoomName.toLowerCase();
+
+                          if (_roomTypeDropDown.toLowerCase() ==
+                              snapshotRoomName) {
                             roomPrice =
                                 double.parse(roomsSnapshot["Price"].toString());
+                            break;
                           } else {
                             roomPrice = 25.0;
                           }
@@ -400,8 +408,8 @@ class _BookingPageState extends State<BookingPage> {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) => BuildPopDialog(
-                          checInDate: _checkInDate!,
-                          checOutDate: _checkOutDate!,
+                          checkInDate: _checkInDate!,
+                          checkOutDate: _checkOutDate!,
                           roomType: _roomTypeDropDown,
                           noOfPerson: int.parse(_personsDropDown),
                           roomPrice: roomPrice,

@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Booking {
-  final String checkIn;
-  final String checkOut;
+  final DateTime checkIn;
+  final DateTime checkOut;
+  final DateTime bookingDate;
   final String roomType;
   final int person;
   final String name;
@@ -14,6 +15,7 @@ class Booking {
   const Booking({
     required this.checkIn,
     required this.checkOut,
+    required this.bookingDate,
     required this.roomType,
     required this.person,
     required this.name,
@@ -29,6 +31,7 @@ class Booking {
     return Booking(
       checkIn: snapshot["checkIn"],
       checkOut: snapshot["checkOut"],
+      bookingDate: snapshot["bookingDate"],
       roomType: snapshot["roomType"],
       person: snapshot["person"],
       name: snapshot["name"],
@@ -42,6 +45,7 @@ class Booking {
   Booking.fromSnapshot(DocumentSnapshot snapshot)
       : checkIn = snapshot["checkIn"],
         checkOut = snapshot["checkOut"],
+        bookingDate = snapshot["bookingDate"],
         roomType = snapshot["roomType"],
         person = snapshot["person"],
         name = snapshot["name"],
@@ -53,6 +57,7 @@ class Booking {
   Map<String, dynamic> toJson() => {
         "checkIn": checkIn,
         "checkOut": checkOut,
+        "bookingDate": bookingDate,
         "roomType": roomType,
         "person": person,
         "name": name,
