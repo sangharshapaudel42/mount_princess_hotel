@@ -116,68 +116,47 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
     // date-picker results will be stored here
     var showResults = [];
 
-    // if date is choose
-    // display the today's arrival info
-    if (_chooseDate == "" && _departureInfo == false) {
-      for (var bookingInfoSnapshot in _allResults) {
-        // var title = Booking.fromSnapshot(bookingInfoSnapshot).checkIn;
-        // print(title);
-        Timestamp timestampCheckIn = bookingInfoSnapshot['checkIn'];
-        DateTime dateTimeCheckIn = timestampCheckIn.toDate();
-        String checkInDate =
-            DateFormat('MM-dd-yyyy').format(dateTimeCheckIn).toString();
+    for (var bookingInfoSnapshot in _allResults) {
+      // check in date
+      Timestamp timestampCheckIn = bookingInfoSnapshot['checkIn'];
+      DateTime dateTimeCheckIn = timestampCheckIn.toDate();
+      String checkInDate =
+          DateFormat('MM-dd-yyyy').format(dateTimeCheckIn).toString();
 
-        // String title = bookingInfoSnapshot["checkIn"];
+      // check-out date
+      Timestamp timestampCheckOut = bookingInfoSnapshot['checkOut'];
+      DateTime dateTimeCheckOut = timestampCheckOut.toDate();
+      String checkOutDate =
+          DateFormat('MM-dd-yyyy').format(dateTimeCheckOut).toString();
 
-        String _todayDate = DateFormat('MM-dd-yyyy').format(DateTime.now());
+      // today's date
+      String _todayDate = DateFormat('MM-dd-yyyy').format(DateTime.now());
 
+      // if date is choose
+      // display the today's arrival info
+      if (_chooseDate == "" && _departureInfo == false) {
         if (checkInDate.contains(_todayDate)) {
           showResults.add(bookingInfoSnapshot);
         }
-      }
-      // arrival's info according to user's choice date.
-    } else if (_chooseDate != "" && _departureInfo == false) {
-      for (var bookingInfoSnapshot in _allResults) {
-        // var title = Booking.fromSnapshot(bookingInfoSnapshot).checkIn;
-        Timestamp timestampCheckIn = bookingInfoSnapshot['checkIn'];
-        DateTime dateTimeCheckIn = timestampCheckIn.toDate();
-        String checkInDate =
-            DateFormat('MM-dd-yyyy').format(dateTimeCheckIn).toString();
-
+        // arrival's info according to user's choice date.
+      } else if (_chooseDate != "" && _departureInfo == false) {
         if (checkInDate.contains(_chooseDate)) {
           showResults.add(bookingInfoSnapshot);
         }
-      }
-      // display the today's departure's info
-    } else if (_departureInfo == true && _chooseDate == "") {
-      for (var bookingInfoSnapshot in _allResults) {
-        Timestamp timestampCheckOut = bookingInfoSnapshot['checkOut'];
-        DateTime dateTimeCheckOut = timestampCheckOut.toDate();
-        String checkOutDate =
-            DateFormat('MM-dd-yyyy').format(dateTimeCheckOut).toString();
-
-        String _todayDate = DateFormat('MM-dd-yyyy').format(DateTime.now());
-
+        // display the today's departure's info
+      } else if (_departureInfo == true && _chooseDate == "") {
         if (checkOutDate.contains(_todayDate)) {
           showResults.add(bookingInfoSnapshot);
         }
-      }
-      // departure's info according to user's choice date.
-    } else if (_departureInfo == true && _chooseDate != "") {
-      for (var bookingInfoSnapshot in _allResults) {
-        Timestamp timestampCheckOut = bookingInfoSnapshot['checkOut'];
-        DateTime dateTimeCheckOut = timestampCheckOut.toDate();
-        String checkOutDate =
-            DateFormat('MM-dd-yyyy').format(dateTimeCheckOut).toString();
-
+        // departure's info according to user's choice date.
+      } else if (_departureInfo == true && _chooseDate != "") {
         if (checkOutDate.contains(_chooseDate)) {
           showResults.add(bookingInfoSnapshot);
         }
+        // if nothing is choose then all the results will be displayed.
+      } else {
+        showResults = List.from(_allResults);
       }
-    }
-    // if nothing is choose then all the results will be displayed.
-    else {
-      showResults = List.from(_allResults);
     }
     setState(() {
       // arrivals info
@@ -206,8 +185,9 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
         drawer: const AdminNavigationDrawerWidget(),
         appBar: AppBar(
           backgroundColor: backgroundColor,
-          title: const Text('Manage Booking'),
+          title: const Text('Bookings'),
           centerTitle: true,
+          // search all the guests
           actions: [
             IconButton(
               icon: const Icon(Icons.search),
@@ -231,6 +211,7 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height / 3,
                   child: CupertinoDatePicker(
+                    dateOrder: DatePickerDateOrder.ymd,
                     initialDateTime: DateTime.now(),
                     mode: CupertinoDatePickerMode.date,
                     onDateTimeChanged: (DateTime value) {
@@ -383,7 +364,6 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
 
 class MySearchDelegate extends SearchDelegate {
   List allresults;
-  List<String> searchResults = [];
 
   MySearchDelegate({required this.allresults});
 
@@ -436,45 +416,7 @@ class MySearchDelegate extends SearchDelegate {
         : Container();
   }
 
+  // no suggestions
   @override
   Widget buildSuggestions(BuildContext context) => Container();
-  // @override
-  // Widget buildSuggestions(BuildContext context) {
-  //   // List<String> suggestions = searchResults.where((searchResult) {
-  //   //   final result = searchResult.toLowerCase();
-  //   //   final input = query.toLowerCase();
-
-  //   //   print("hello");
-  //   //   print(input);
-
-  //   //   searchResults.add(input);
-  //   //   print(searchResult);
-
-  //   //   return true;
-
-  //   //   // return result.contains(input);
-  //   // }).toList();
-
-  //   // final input = query.toLowerCase();
-
-  //   // searchResults.add(input);
-
-  //   print(searchResults);
-
-  //   return ListView.builder(
-  //     itemCount: searchResults.length,
-  //     itemBuilder: (context, index) {
-  //       final suggestion = searchResults[index];
-
-  //       return ListTile(
-  //         title: Text(suggestion),
-  //         onTap: () {
-  //           query = suggestion;
-
-  //           showResults(context);
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
 }
