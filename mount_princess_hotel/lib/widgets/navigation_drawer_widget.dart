@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'package:mount_princess_hotel/screens/admin/admin_login_screen.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
 
 import 'package:mount_princess_hotel/screens/customer/aboutUs.dart';
@@ -11,9 +11,10 @@ import 'package:mount_princess_hotel/screens/customer/packages_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/menus_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/booking_status_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
+import 'package:mount_princess_hotel/screens/welcome_screen.dart';
 
 class NavigationDrawerWidget extends StatelessWidget {
-  final padding = EdgeInsets.symmetric(horizontal: 20);
+  final padding = const EdgeInsets.symmetric(horizontal: 20);
   NavigationDrawerWidget({Key? key}) : super(key: key);
 
   @override
@@ -58,26 +59,26 @@ class NavigationDrawerWidget extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             buildMenuItem(
-              text: 'Booking Status',
+              text: 'Booking History',
               icon: Icons.notifications_outlined,
               onClicked: () => selectedItem(context, 5),
             ),
             const SizedBox(height: 10),
             buildMenuItem(
-              text: 'Admin Login',
-              icon: Icons.login_outlined,
-              onClicked: () => selectedItem(context, 6),
-            ),
-            const SizedBox(height: 10),
-            buildMenuItem(
               text: 'About Us',
               icon: Icons.info,
-              onClicked: () => selectedItem(context, 7),
+              onClicked: () => selectedItem(context, 6),
             ),
             const SizedBox(height: 10),
             buildMenuItem(
               text: 'Contact Us',
               icon: Icons.contact_phone_outlined,
+              onClicked: () => selectedItem(context, 7),
+            ),
+            const SizedBox(height: 10),
+            buildMenuItem(
+              text: 'Sign Out',
+              icon: Icons.login_outlined,
               onClicked: () => selectedItem(context, 8),
             ),
           ],
@@ -131,22 +132,23 @@ class NavigationDrawerWidget extends StatelessWidget {
         break;
       case 5:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const BookingStatus(),
+          builder: (context) => const BookingHistory(),
         ));
         break;
       case 6:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const Login(),
+          builder: (context) => const AboutUs(),
         ));
         break;
       case 7:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const AboutUs(),
+          builder: (context) => const ContactUs(),
         ));
         break;
       case 8:
+        FirebaseAuth.instance.signOut();
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const ContactUs(),
+          builder: (context) => const WelcomePage(),
         ));
         break;
     }

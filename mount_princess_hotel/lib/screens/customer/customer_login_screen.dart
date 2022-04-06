@@ -9,14 +9,14 @@ import 'package:mount_princess_hotel/utils/utils.dart';
 
 import 'package:mount_princess_hotel/screens/admin/admin_home_page.dart';
 
-class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+class CustomerLogin extends StatefulWidget {
+  const CustomerLogin({Key? key}) : super(key: key);
 
   @override
-  _LoginState createState() => _LoginState();
+  _CustomerLoginState createState() => _CustomerLoginState();
 }
 
-class _LoginState extends State<Login> {
+class _CustomerLoginState extends State<CustomerLogin> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
@@ -34,9 +34,9 @@ class _LoginState extends State<Login> {
     });
 
     String res = await AuthMethods().loginUser(
-      email: _emailController.text,
-      password: _passwordController.text,
-    );
+        email: _emailController.text,
+        password: _passwordController.text,
+        context: context);
 
     if (res == "Success") {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -54,6 +54,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           color: backgroundColor,
@@ -82,6 +83,8 @@ class _LoginState extends State<Login> {
                 hintText: "Enter your email",
                 textInputType: TextInputType.emailAddress,
                 textEditingController: _emailController,
+                icon: Icons.email,
+                color: Colors.white,
               ),
 
               const SizedBox(
@@ -94,6 +97,8 @@ class _LoginState extends State<Login> {
                 textInputType: TextInputType.text,
                 textEditingController: _passwordController,
                 isPass: true,
+                icon: Icons.lock,
+                color: Colors.white,
               ),
 
               const SizedBox(
@@ -131,16 +136,32 @@ class _LoginState extends State<Login> {
               ),
 
               // Forgot password
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Container(
-                  child: Text(
-                    'Forgot Password?',
-                    style:
-                        GoogleFonts.roboto(fontSize: 17, color: Colors.white),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    child: Text(
+                      "Don't have an account?",
+                      style:
+                          GoogleFonts.roboto(fontSize: 17, color: Colors.white),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                )
-              ]),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      child: Text(
+                        " Sign Up",
+                        style: GoogleFonts.roboto(
+                            fontSize: 17,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                    ),
+                  ),
+                ],
+              ),
               Flexible(
                 child: Container(),
                 flex: 2,

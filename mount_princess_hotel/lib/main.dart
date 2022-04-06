@@ -2,9 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mount_princess_hotel/LandingPage.dart';
 
-import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
-import 'package:mount_princess_hotel/screens/admin/admin_home_page.dart';
+import 'package:mount_princess_hotel/screens/splash_screen.dart';
+import 'package:mount_princess_hotel/screens/welcome_screen.dart';
+import 'package:mount_princess_hotel/utils/colors.dart';
+import 'package:mount_princess_hotel/widgets/date_picker_widget.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   // initilize firebase in our app
@@ -24,7 +28,12 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
-  runApp(const MyApp());
+  runApp(
+    const MyApp(),
+    // MultiProvider(providers: [
+    // ChangeNotifierProvider(create: (_) => DatePickerWidget()),
+    // ]),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -44,10 +53,9 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.active) {
-            // Checking if the snapshot has any data or not
             if (snapshot.hasData) {
-              // if snapshot has data which means user is logged in then we go to 'adminHomePage'
-              return const AdminHome();
+              // if snapshot has data which means user is logged in then we go to landing page where we will decide weather it is customer or admin
+              return LandingPage();
             } else if (snapshot.hasError) {
               return Center(
                 child: Text('${snapshot.error}'),
@@ -57,12 +65,14 @@ class MyApp extends StatelessWidget {
           // means connection to future hasnt been made yet
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                backgroundColor: backgroundColor,
+              ),
             );
           }
 
           // if the connection hasnot been made (i.e. non-login)
-          return const BookingPage();
+          return SplashPage(duration: 1, goToPage: const WelcomePage());
         },
       ),
     );
