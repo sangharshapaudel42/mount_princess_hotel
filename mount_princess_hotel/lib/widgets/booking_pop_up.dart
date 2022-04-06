@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -40,6 +41,11 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
   final TextEditingController _noRoomsController = TextEditingController();
   bool _isLoading = false;
   double roomTotalPrice = 0.0;
+  bool showSnackBarPopUp = false;
+  bool standardRoomShowSnackBar = false;
+  bool deluxeRoomShowSnackBar = false;
+  int standardRooms = 1;
+  int deluxeRooms = 1;
 
   // query of booking status
   final _bookingStatusQuery = FirebaseFirestore.instance
@@ -89,7 +95,8 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
 
   // Add booking Info into the firebase
   void addBookingInfo() async {
-    String res = "fuck";
+    String res = "";
+    String updateStatus = "";
     // set loading to true
     setState(() {
       _isLoading = true;
@@ -105,82 +112,132 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
         _emailController.text.isNotEmpty &&
         _phoneNumberController.text.isNotEmpty &&
         _noRoomsController.text.isNotEmpty) {
-      // if number of people is 4 and number of rooms is 1 then dont book.
-      if (widget.noOfPerson == 4 && _noRoomsController.text == "1") {
-        showSnackBar(
-            context, "Only 3 people allowed in 1 room. Choose 2 rooms.");
-      } else {
-        // passing the datas to the booking_methos
-        // res = await BookingMethods().addBookingInfo(
-        //   checkIn: widget.checkInDate,
-        //   checkOut: widget.checkOutDate,
-        //   bookingDate: DateTime.now(),
-        //   roomType: widget.roomType,
-        //   person: widget.noOfPerson,
-        //   name: _nameController.text,
-        //   email: _emailController.text,
-        //   phoneNumber: _phoneNumberController.text,
-        //   numberOfRooms: int.parse(_noRoomsController.text),
-        //   totalPrice: calculateTotalPrice(),
-        // );
+      // change the totalRoom and booked in 'BookingStatus'
+      // get snapshots
+      var data = await _bookingStatusQuery.get();
 
-        // // change the totalRoom and booked in 'BookingStatus'
+      // get room's total and booked rooms
+      int standardRoomTotalRooms = data["standardRoomTotalRooms"];
+      int deluxeRoomTotalRooms = data["deluxeRoomTotalRooms"];
+      int standardRoomBookedRooms = data["standardRoomBookedRooms"];
+      int deluxeRoomBookedRooms = data["deluxeRoomBookedRooms"];
 
-        // // get snapshots
-        // var data = await _bookingStatusQuery.get();
+      // change the number of total rooms of stadard and deluxe rooms according
+      // to database.
+      setState(() {
+        standardRooms = standardRoomTotalRooms;
+        deluxeRooms = deluxeRoomTotalRooms;
+      });
 
-        // // get room's total and booked rooms
-        // int standardRoomTotalRooms = data["standardRoomTotalRooms"];
-        // int deluxeRoomTotalRooms = data["deluxeRoomTotalRooms"];
-        // int standardRoomBookedRooms = data["standardRoomBookedRooms"];
-        // int deluxeRoomBookedRooms = data["deluxeRoomBookedRooms"];
+      /* booking paxi: 
+        - number_of_total_rooms chai gatxa. (total_rooms - now_booked_room) 
+        - booked_room chai badxa. (previous_booked_room + now_booked_room) */
 
-        // // for standard room
-        // // "standardRoomBookedRooms" will be the previous booked room + this booked room
-        // // "standardRoomTotalRooms" will be the previous defined total room - this booked room
-        // if (widget.roomType.toLowerCase() == "standard room") {
-        //   await _bookingStatusQuery.update({
-        //     "standardRoomTotalRooms":
-        //         standardRoomTotalRooms - int.parse(_noRoomsController.text),
-        //     "standardRoomBookedRooms":
-        //         standardRoomBookedRooms + int.parse(_noRoomsController.text),
-        //   });
+      // for standard room
+      // "standardRoomBookedRooms" will be the previous booked room + this booked room
+      // "standardRoomTotalRooms" will be the previous defined total room - this booked room
+      if (widget.roomType.toLowerCase() == "standard room") {
+        // if avaiable rooms are same or greater in number then required_rooms(now_booked_room)
+        if (standardRoomTotalRooms >= int.parse(_noRoomsController.text)) {
+          try {
+            await _bookingStatusQuery.update({
+              "standardRoomTotalRooms":
+                  standardRoomTotalRooms - int.parse(_noRoomsController.text),
+              "standardRoomBookedRooms":
+                  standardRoomBookedRooms + int.parse(_noRoomsController.text),
+            });
+            updateStatus = "done";
+          } catch (e) {
+            print(e.toString());
+          }
 
-        //   // for deluxe room
-        // } else if (widget.roomType.toLowerCase() == "deluxe room") {
-        //   await _bookingStatusQuery.update({
-        //     "deluxeRoomTotalRooms":
-        //         deluxeRoomTotalRooms - int.parse(_noRoomsController.text),
-        //     "deluxeRoomBookedRooms":
-        //         deluxeRoomBookedRooms + int.parse(_noRoomsController.text),
-        //   });
-        // }
-        // res = "success";
+          // if less then show the snackBar saying there is only few rooms left.
+        } else {
+          // initilly it will be true
+          setState(() {
+            standardRoomShowSnackBar = true;
+          });
+          // after 3 seconds it will be false
+          Timer(const Duration(seconds: 3), () {
+            setState(() {
+              standardRoomShowSnackBar = false;
+            });
+          });
+        }
 
-        print("fuck");
+        // for deluxe room
+      } else if (widget.roomType.toLowerCase() == "deluxe room") {
+        if (deluxeRoomTotalRooms >= int.parse(_noRoomsController.text)) {
+          try {
+            await _bookingStatusQuery.update({
+              "deluxeRoomTotalRooms":
+                  deluxeRoomTotalRooms - int.parse(_noRoomsController.text),
+              "deluxeRoomBookedRooms":
+                  deluxeRoomBookedRooms + int.parse(_noRoomsController.text),
+            });
+            updateStatus = "done";
+          } catch (err) {
+            print(err.toString());
+          }
+        } else {
+          // initilly it will be true
+          setState(() {
+            deluxeRoomShowSnackBar = true;
+          });
+          // after 3 seconds it will be false
+          Timer(const Duration(seconds: 3), () {
+            setState(() {
+              deluxeRoomShowSnackBar = false;
+            });
+          });
+        }
       }
+
+      // upload the booking info only after checking above conditions
+      if (updateStatus == "done") {
+        // passing the datas to the booking_methods
+        res = await BookingMethods().addBookingInfo(
+          checkIn: widget.checkInDate,
+          checkOut: widget.checkOutDate,
+          bookingDate: DateTime.now(),
+          roomType: widget.roomType,
+          person: widget.noOfPerson,
+          name: _nameController.text,
+          email: _emailController.text,
+          phoneNumber: _phoneNumberController.text,
+          numberOfRooms: int.parse(_noRoomsController.text),
+          totalPrice: calculateTotalPrice(),
+        );
+        res = "success";
+      }
+      // else {
+      //   res = "unsuccessful";
+      // }
     } else {
       res = "unsuccess";
       showSnackBar(context, "Fill all the fields.");
     }
-    // if string returned is sucess, data has been sucessfully added to the firebase
+
+    // if string returned is success, data has been sucessfully added to the firebase
     if (res == "success") {
       setState(() {
         _isLoading = false;
       });
+
       // navigate to the home screen
-      // Navigator.of(context).pop();
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => const BookingPage(),
       ));
-      showSnackBar(context, "Booking has been sucessfull.");
+
+      // successfull message.
+      showSnackBar(context, "Booking has been successfull.");
     }
-    //  else {
+    // else if (res == "unsuccessful") {
     //   setState(() {
     //     _isLoading = false;
     //   });
     //   // show the error
-    //   showSnackBar(context, res);
+    //   showSnackBar(context, "Something went wrong.");
     // }
   }
 
@@ -297,24 +354,70 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
 
                 // Submit
                 MaterialButton(
-                  height: MediaQuery.of(context).size.width / 7.5,
-                  minWidth: MediaQuery.of(context).size.width / 2,
-                  color: Colors.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: const Text(
-                    "Submit",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 25,
+                    height: MediaQuery.of(context).size.width / 7.5,
+                    minWidth: MediaQuery.of(context).size.width / 2,
+                    color: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: const Text(
+                      "Submit",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 25,
+                      ),
+                    ),
+                    onPressed: () {
+                      // if number of people is 4 and number of rooms is 1 then dont book.
+                      if (widget.noOfPerson == 4 &&
+                          _noRoomsController.text == "1") {
+                        // initilly it will be true
+                        setState(() {
+                          showSnackBarPopUp = true;
+                        });
+                        // after 3 seconds it will be false
+                        Timer(const Duration(seconds: 3), () {
+                          setState(() {
+                            showSnackBarPopUp = false;
+                          });
+                        });
+                      } else {
+                        addBookingInfo();
+                      }
+                    }
+                    // onPressed: () {},
+                    ),
+                const SizedBox(height: 20),
+                // show this container only if "showSnackBarPopUp" or
+                //"deluxeRoomShowSnackBar" or "standardRoomShowSnackBar" is true.
+                // hides if false
+                if (showSnackBarPopUp ||
+                    standardRoomShowSnackBar ||
+                    deluxeRoomShowSnackBar)
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 57, 55, 55),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      // if 4+ and number of rooms is 1.
+                      showSnackBarPopUp == true
+                          ? "Only 3 people allowed in 1 room.\nChoose 2 rooms."
+                          // if standard rooms not enough.
+                          : standardRoomShowSnackBar == true
+                              ? "Only $standardRooms Standard rooms left."
+                              // if deluxe rooms not enough.
+                              : "Only $deluxeRooms Deluxe rooms left.",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
-                  onPressed: () => addBookingInfo(),
-                  // onPressed: () {},
-                ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 5),
               ],
             ),
           ),

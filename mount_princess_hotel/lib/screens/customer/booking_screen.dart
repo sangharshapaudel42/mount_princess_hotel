@@ -39,7 +39,12 @@ class _BookingPageState extends State<BookingPage> {
   List<String> personsValueTypes = ['1', '2', '3', '4+'];
   String personsSelectedValueType = '1';
 
-  int? numberOfPerson;
+  int numberOfPerson = 1;
+
+  String? standardRoomBookingStatus;
+  String? deluxRoomBookingStatus;
+  int? standardTotalRooms;
+  int? deluxeTotalRooms;
 
   @override
   void initState() {
@@ -61,8 +66,12 @@ class _BookingPageState extends State<BookingPage> {
       setState(() {
         // data["standardRoomBookedRooms"]
         // data["deluxeRoomBookedRooms"]
-        // data["standardRoomTotalRooms"]
-        // data["deluxeRoomTotalRooms"]
+
+        // setting the values of following.
+        standardRoomBookingStatus = data["standardRoomStatus"];
+        deluxRoomBookingStatus = data["deluxeRoomStatus"];
+        standardTotalRooms = data["standardRoomTotalRooms"];
+        deluxeTotalRooms = data["deluxeRoomTotalRooms"];
 
         // if standard room is unbookable then remove standard room from the
         // drop-down list and change "roomsSelectedValueType" to Deluxe Room
@@ -188,297 +197,314 @@ class _BookingPageState extends State<BookingPage> {
         title: const Text('Booking'),
         centerTitle: true,
       ),
-      body: Container(
-        height: size.height,
-        width: size.width,
-        margin: const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 10),
-        padding: const EdgeInsets.only(left: 10, right: 10),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              //////////////// Check In ////////////////
-              const SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.only(right: size.width / 1.55),
-                child: const Text(
-                  "Check In",
-                  style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
-                ),
+      body: standardRoomBookingStatus != "Bookable" &&
+              deluxRoomBookingStatus != "Bookable" &&
+              standardTotalRooms == 0 &&
+              deluxeTotalRooms == 0
+          // if all the rooms are packed or disabled.
+          ? Center(
+              child: Text(
+                "No Rooms available.\n\nPlease Contact us for any queries.\n\n011-490616 / 011-490627 / 980-8258214 \n\nmntprincess@gmail.com",
+                style: TextStyle(color: Colors.grey[600], fontSize: 20),
               ),
-              const SizedBox(height: 10),
-              // widget for "Check In"
-
-              // check-in button
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size.fromHeight(size.height / 14),
-                  primary: Colors.white,
-                ),
-                child: FittedBox(
-                  child: Text(
-                    getText("Select Date", "check-in", _checkInDate),
-                    style: TextStyle(fontSize: 25, color: Colors.grey[600]),
-                  ),
-                ),
-                onPressed: () => pickDate(context, "check-in"),
+            )
+          : Container(
+              height: size.height,
+              width: size.width,
+              margin: const EdgeInsets.only(
+                  left: 10, right: 10, top: 20, bottom: 10),
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                borderRadius: BorderRadius.circular(20),
               ),
-
-              // DatePickerWidget(status: "Select Date", dateType: "check-in"),
-              //////////////// Check In ////////////////
-
-              //////////////// Check Out ////////////////
-              const SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.only(right: size.width / 1.7),
-                child: const Text(
-                  "Check Out",
-                  style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              // check-out button
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size.fromHeight(size.height / 14),
-                  primary: Colors.white,
-                ),
-                child: FittedBox(
-                  child: Text(
-                    getText("Select Date", "check-out", _checkOutDate),
-                    style: TextStyle(fontSize: 25, color: Colors.grey[600]),
-                  ),
-                ),
-                onPressed: () => pickDate(context, "check-out"),
-              ),
-
-              // widget for "Check Out"
-              // DatePickerWidget(status: "Select Date", dateType: "check-out"),
-              //////////////// Check Out ////////////////
-
-              //////////////// Room Type ////////////////
-              const SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.only(right: size.width / 1.8),
-                child: const Text(
-                  "Room Type",
-                  style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              // dropDown(context, const ['Standard Room', 'Deluxe Room'],
-              //     'Standard Room', "room-type"),
-
-              // rooms dropdown button
-              Center(
-                child: Container(
-                  height: MediaQuery.of(context).size.height / 14,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.white,
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: roomsSelectedValueType,
-                      iconSize: 36,
-                      icon: const Icon(Icons.arrow_drop_down,
-                          color: Colors.black),
-                      isExpanded: true,
-                      items: roomsValueTypes
-                          .map((valueType) => DropdownMenuItem<String>(
-                                value: valueType,
-                                child: Center(
-                                  child: Text(
-                                    valueType,
-                                    style: TextStyle(
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.grey[600]),
-                                  ),
-                                ),
-                              ))
-                          .toList(),
-                      onChanged: (valueType) => setState(() {
-                        roomsSelectedValueType = valueType!;
-                      }),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    //////////////// Check In ////////////////
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: EdgeInsets.only(right: size.width / 1.55),
+                      child: const Text(
+                        "Check In",
+                        style: TextStyle(
+                            fontSize: 25,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                ),
-              ),
+                    const SizedBox(height: 10),
+                    // widget for "Check In"
 
-              // widget for "RoomType"
-              // DropDown(
-              //     valueTypes: const ['Single Room', 'Standard Room'],
-              //     selectedValueType: 'Single Room',
-              //     dropDownType: "room-type"),
-              //////////////// Room Type ////////////////
-
-              //////////////// Persons ////////////////
-              const SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.only(right: size.width / 1.5),
-                child: const Text(
-                  "Person",
-                  style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              // drop down menu for persons
-              Center(
-                child: Container(
-                  height: MediaQuery.of(context).size.height / 14,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.white,
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: personsSelectedValueType,
-                      iconSize: 36,
-                      icon: const Icon(Icons.arrow_drop_down,
-                          color: Colors.black),
-                      isExpanded: true,
-                      items: personsValueTypes
-                          .map((valueType) => DropdownMenuItem<String>(
-                                value: valueType,
-                                child: Center(
-                                  child: Text(
-                                    valueType,
-                                    style: TextStyle(
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.grey[600]),
-                                  ),
-                                ),
-                              ))
-                          .toList(),
-                      onChanged: (valueType) => setState(() {
-                        personsSelectedValueType = valueType!;
-                      }),
-                    ),
-                  ),
-                ),
-              ),
-
-              // dropDown(context, const ['1', '2', '3', '4+'], '1', "persons"),
-              //////////////// Persons ////////////////
-
-              //////////////// Reserve ////////////////
-              const SizedBox(height: 30),
-
-              MaterialButton(
-                // height: 50,
-                height: size.height / 13,
-                minWidth: MediaQuery.of(context).size.width / 2,
-                color: const Color(0xff024DB8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: const Text(
-                  "Reserve",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 25,
-                  ),
-                ),
-                onPressed: () async {
-                  try {
-                    if (_checkInDate != null && _checkOutDate != null) {
-                      // access current user documents
-                      // passing user's name, email and phone number.
-                      DocumentSnapshot doc = await FirebaseFirestore.instance
-                          .collection('Users')
-                          .doc(userId)
-                          .get();
-
-                      // get all rooms
-                      var data = await FirebaseFirestore.instance
-                          .collection("Rooms")
-                          .get();
-
-                      // access it's documents
-                      _allRooms = data.docs;
-
-                      // compare the user defined room with all rooms and get
-                      // it's price
-                      if (_allRooms.isNotEmpty) {
-                        for (var roomsSnapshot in _allRooms) {
-                          // converting the room name to lowercase
-                          String snapshotRoomName = roomsSnapshot["Name"];
-                          snapshotRoomName = snapshotRoomName.toLowerCase();
-
-                          if (roomsSelectedValueType.toLowerCase() ==
-                              snapshotRoomName) {
-                            roomPrice =
-                                double.parse(roomsSnapshot["Price"].toString());
-                            break;
-                          } else {
-                            roomPrice = 25.0;
-                          }
-                        }
-                      }
-
-                      // if "personsSelectedValueType" is not empty
-                      if (personsSelectedValueType.isNotEmpty) {
-                        if (personsSelectedValueType == "4+") {
-                          numberOfPerson = 4;
-                        } else {
-                          numberOfPerson = int.parse(personsSelectedValueType);
-                        }
-                        // if empty then numberOfPerson = 1
-                      } else {
-                        numberOfPerson = 1;
-                      }
-
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => BuildPopDialog(
-                          checkInDate: _checkInDate!,
-                          checkOutDate: _checkOutDate!,
-                          roomType: roomsSelectedValueType,
-                          noOfPerson: numberOfPerson!,
-                          roomPrice: roomPrice,
-                          name: doc["name"],
-                          email: doc["email"],
-                          phoneNumber: doc["phoneNumber"],
+                    // check-in button
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size.fromHeight(size.height / 14),
+                        primary: Colors.white,
+                      ),
+                      child: FittedBox(
+                        child: Text(
+                          getText("Select Date", "check-in", _checkInDate),
+                          style:
+                              TextStyle(fontSize: 25, color: Colors.grey[600]),
                         ),
-                      );
-                    } else {
-                      showSnackBar(context, "Fill all the fields.");
-                    }
-                  } catch (err) {
-                    print(err.toString());
-                  }
-                },
+                      ),
+                      onPressed: () => pickDate(context, "check-in"),
+                    ),
+
+                    // DatePickerWidget(status: "Select Date", dateType: "check-in"),
+                    //////////////// Check In ////////////////
+
+                    //////////////// Check Out ////////////////
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: EdgeInsets.only(right: size.width / 1.7),
+                      child: const Text(
+                        "Check Out",
+                        style: TextStyle(
+                            fontSize: 25,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // check-out button
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size.fromHeight(size.height / 14),
+                        primary: Colors.white,
+                      ),
+                      child: FittedBox(
+                        child: Text(
+                          getText("Select Date", "check-out", _checkOutDate),
+                          style:
+                              TextStyle(fontSize: 25, color: Colors.grey[600]),
+                        ),
+                      ),
+                      onPressed: () => pickDate(context, "check-out"),
+                    ),
+
+                    // widget for "Check Out"
+                    // DatePickerWidget(status: "Select Date", dateType: "check-out"),
+                    //////////////// Check Out ////////////////
+
+                    //////////////// Room Type ////////////////
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: EdgeInsets.only(right: size.width / 1.8),
+                      child: const Text(
+                        "Room Type",
+                        style: TextStyle(
+                            fontSize: 25,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // dropDown(context, const ['Standard Room', 'Deluxe Room'],
+                    //     'Standard Room', "room-type"),
+
+                    // rooms dropdown button
+                    Center(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height / 14,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.white,
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: roomsSelectedValueType,
+                            iconSize: 36,
+                            icon: const Icon(Icons.arrow_drop_down,
+                                color: Colors.black),
+                            isExpanded: true,
+                            items: roomsValueTypes
+                                .map((valueType) => DropdownMenuItem<String>(
+                                      value: valueType,
+                                      child: Center(
+                                        child: Text(
+                                          valueType,
+                                          style: TextStyle(
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.grey[600]),
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                            onChanged: (valueType) => setState(() {
+                              roomsSelectedValueType = valueType!;
+                            }),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // widget for "RoomType"
+                    // DropDown(
+                    //     valueTypes: const ['Single Room', 'Standard Room'],
+                    //     selectedValueType: 'Single Room',
+                    //     dropDownType: "room-type"),
+                    //////////////// Room Type ////////////////
+
+                    //////////////// Persons ////////////////
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: EdgeInsets.only(right: size.width / 1.5),
+                      child: const Text(
+                        "Person",
+                        style: TextStyle(
+                            fontSize: 25,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // drop down menu for persons
+                    Center(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height / 14,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.white,
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: personsSelectedValueType,
+                            iconSize: 36,
+                            icon: const Icon(Icons.arrow_drop_down,
+                                color: Colors.black),
+                            isExpanded: true,
+                            items: personsValueTypes
+                                .map((valueType) => DropdownMenuItem<String>(
+                                      value: valueType,
+                                      child: Center(
+                                        child: Text(
+                                          valueType,
+                                          style: TextStyle(
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.grey[600]),
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                            onChanged: (valueType) => setState(() {
+                              personsSelectedValueType = valueType!;
+                            }),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // dropDown(context, const ['1', '2', '3', '4+'], '1', "persons"),
+                    //////////////// Persons ////////////////
+
+                    //////////////// Reserve ////////////////
+                    const SizedBox(height: 30),
+
+                    MaterialButton(
+                      // height: 50,
+                      height: size.height / 13,
+                      minWidth: MediaQuery.of(context).size.width / 2,
+                      color: const Color(0xff024DB8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: const Text(
+                        "Reserve",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 25,
+                        ),
+                      ),
+                      onPressed: () async {
+                        try {
+                          if (_checkInDate != null && _checkOutDate != null) {
+                            // access current user documents
+                            // passing user's name, email and phone number.
+                            DocumentSnapshot doc = await FirebaseFirestore
+                                .instance
+                                .collection('Users')
+                                .doc(userId)
+                                .get();
+
+                            // get all rooms
+                            var data = await FirebaseFirestore.instance
+                                .collection("Rooms")
+                                .get();
+
+                            // access it's documents
+                            _allRooms = data.docs;
+
+                            // compare the user defined room with all rooms and get
+                            // it's price
+                            if (_allRooms.isNotEmpty) {
+                              for (var roomsSnapshot in _allRooms) {
+                                // converting the room name to lowercase
+                                String snapshotRoomName = roomsSnapshot["Name"];
+                                snapshotRoomName =
+                                    snapshotRoomName.toLowerCase();
+
+                                if (roomsSelectedValueType.toLowerCase() ==
+                                    snapshotRoomName) {
+                                  roomPrice = double.parse(
+                                      roomsSnapshot["Price"].toString());
+                                  break;
+                                } else {
+                                  roomPrice = 25.0;
+                                }
+                              }
+                            }
+
+                            // if "personsSelectedValueType" is not empty
+                            if (personsSelectedValueType.isNotEmpty) {
+                              if (personsSelectedValueType == "4+") {
+                                numberOfPerson = 4;
+                              } else {
+                                numberOfPerson =
+                                    int.parse(personsSelectedValueType);
+                              }
+                              // if empty then numberOfPerson = 1
+                            } else {
+                              numberOfPerson = 1;
+                            }
+
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) => BuildPopDialog(
+                                checkInDate: _checkInDate!,
+                                checkOutDate: _checkOutDate!,
+                                roomType: roomsSelectedValueType,
+                                noOfPerson: numberOfPerson,
+                                roomPrice: roomPrice,
+                                name: doc["name"],
+                                email: doc["email"],
+                                phoneNumber: doc["phoneNumber"],
+                              ),
+                            );
+                          } else {
+                            showSnackBar(context, "Fill all the fields.");
+                          }
+                        } catch (err) {
+                          print(err.toString());
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
               ),
-              const SizedBox(height: 10),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }
