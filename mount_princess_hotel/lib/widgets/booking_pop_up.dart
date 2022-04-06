@@ -193,6 +193,10 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
         }
       }
 
+      // current user uid
+      final user = FirebaseAuth.instance.currentUser!;
+      final userID = user.uid;
+
       // upload the booking info only after checking above conditions
       if (updateStatus == "done") {
         // passing the datas to the booking_methods
@@ -207,6 +211,8 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
           phoneNumber: _phoneNumberController.text,
           numberOfRooms: int.parse(_noRoomsController.text),
           totalPrice: calculateTotalPrice(),
+          bookingCancel: false,
+          uid: userID,
         );
         res = "success";
       }

@@ -1,44 +1,60 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mount_princess_hotel/utils/utils.dart';
 
-class DeletePopUpDialog extends StatefulWidget {
-  final String categoryId;
-  final String imageId;
-  final String deleteType;
-  const DeletePopUpDialog({
+class CancelBookingPopUpDialog extends StatefulWidget {
+  final String bookingId;
+  final String roomType;
+  final int noOfRooms;
+  const CancelBookingPopUpDialog({
     Key? key,
-    required this.categoryId,
-    required this.imageId,
-    required this.deleteType,
+    required this.bookingId,
+    required this.roomType,
+    required this.noOfRooms,
   }) : super(key: key);
 
   @override
-  State<DeletePopUpDialog> createState() => _DeletePopUpDialogState();
+  State<CancelBookingPopUpDialog> createState() =>
+      _CancelBookingPopUpDialogState();
 }
 
-class _DeletePopUpDialogState extends State<DeletePopUpDialog> {
-  final _menusCategory = FirebaseFirestore.instance.collection("Menus");
-  final _galleryCategory = FirebaseFirestore.instance.collection('Gallery');
+class _CancelBookingPopUpDialogState extends State<CancelBookingPopUpDialog> {
+  final _bookingQuery = FirebaseFirestore.instance.collection("Booking");
+  final _bookingStatusQuery = FirebaseFirestore.instance
+      .collection('BookingStatus')
+      .doc("booking_status");
 
-  // Delete image from database
-  Future<String> deleteImage(String imageId) async {
+  // changing "bookingCancel" to true in 'Booking'
+  // changing "..BookedRooms" and "..TotalRooms" in 'BookingStatus'
+  Future<String> cancelBooking() async {
     String res = "error";
     try {
-      if (widget.deleteType == "food") {
-        // this is food items
-        final _foodItems =
-            _menusCategory.doc(widget.categoryId).collection("Food Item");
-        await _foodItems.doc(imageId).delete();
-      } else if (widget.deleteType == "gallery") {
-        // this is gallery image
-        final _image =
-            _galleryCategory.doc(widget.categoryId).collection("Images");
-        await _image.doc(imageId).delete();
+      // change "bookingCancel" to true
+      _bookingQuery.doc(widget.bookingId).update({"bookingCancel": true});
+
+      // get values of "BookingStatus"
+      var data = await _bookingStatusQuery.get();
+
+      int standardRoomBookedRooms = data["standardRoomBookedRooms"];
+      int deluxeRoomBookedRooms = data["deluxeRoomBookedRooms"];
+      int standardRoomTotalRooms = data["standardRoomTotalRooms"];
+      int deluxeRoomTotalRooms = data["deluxeRoomTotalRooms"];
+
+      // now update/change the "totalRooms" and "bookedRooms"
+      // "..RoomBookedRooms" will be previous_booked_rooms - noOfRooms
+      // "..RoomTotalRooms" will be previous_total_rooms + noOfRooms
+      if (widget.roomType.toLowerCase() == "standard room") {
+        await _bookingStatusQuery.update({
+          "standardRoomBookedRooms": standardRoomBookedRooms - widget.noOfRooms,
+          "standardRoomTotalRooms": standardRoomTotalRooms + widget.noOfRooms,
+        });
+      } else if (widget.roomType.toLowerCase() == "deluxe room") {
+        await _bookingStatusQuery.update({
+          "deluxeRoomBookedRooms": deluxeRoomBookedRooms - widget.noOfRooms,
+          "deluxeRoomTotalRooms": deluxeRoomTotalRooms + widget.noOfRooms,
+        });
       }
-      // FirebaseStorage.instance.refFromURL("Images/Gallery/$imageName").delete();
+
       res = "success";
       return res;
     } catch (err) {
@@ -59,9 +75,9 @@ class _DeletePopUpDialogState extends State<DeletePopUpDialog> {
           child: Center(
             child: Column(
               children: [
-                const Icon(
+                Icon(
                   Icons.cancel_outlined,
-                  size: 120,
+                  size: MediaQuery.of(context).size.height / 5.8,
                   color: Colors.red,
                 ),
                 const SizedBox(height: 20),
@@ -71,7 +87,7 @@ class _DeletePopUpDialogState extends State<DeletePopUpDialog> {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  "Do you really want to delete this image? This process cannot be undone.",
+                  "Do you really want to cancel this booking? This process cannot be undone.",
                   style: TextStyle(fontSize: 21, color: Colors.grey),
                 ),
                 const SizedBox(height: 20),
@@ -79,7 +95,7 @@ class _DeletePopUpDialogState extends State<DeletePopUpDialog> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     MaterialButton(
-                      height: 50,
+                      height: MediaQuery.of(context).size.width / 8,
                       minWidth: MediaQuery.of(context).size.width / 4,
                       color: Colors.grey,
                       shape: RoundedRectangleBorder(
@@ -89,7 +105,7 @@ class _DeletePopUpDialogState extends State<DeletePopUpDialog> {
                         "Cancel",
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 25,
+                          fontSize: 20,
                         ),
                       ),
                       onPressed: () {
@@ -98,32 +114,26 @@ class _DeletePopUpDialogState extends State<DeletePopUpDialog> {
                     ),
                     const SizedBox(width: 30),
                     MaterialButton(
-                      height: 50,
-                      minWidth: MediaQuery.of(context).size.width / 4,
+                      height: MediaQuery.of(context).size.width / 8,
+                      minWidth: MediaQuery.of(context).size.width / 3,
                       color: Colors.red,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Text(
-                        "Delete",
+                        "Cancel Booking",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 25,
+                          fontSize: 20,
                         ),
                       ),
                       onPressed: () async {
-                        String res = await deleteImage(widget.imageId);
+                        String res = await cancelBooking();
 
                         if (res == "success") {
                           Navigator.pop(context);
-
-                          if (widget.deleteType == "food") {
-                            showSnackBar(context,
-                                "You have succesfully deleted Food Item.");
-                          } else if (widget.deleteType == "gallery") {
-                            showSnackBar(context,
-                                "You have succesfully deleted an Image.");
-                          }
+                          showSnackBar(context,
+                              "You have succesfully canceled booking.");
                         }
                       },
                     ),

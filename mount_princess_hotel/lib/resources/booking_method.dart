@@ -20,6 +20,8 @@ class BookingMethods {
     required String phoneNumber,
     required int numberOfRooms,
     required double totalPrice,
+    required bool bookingCancel,
+    required String uid,
   }) async {
     String res = "Some error Occurred";
     try {
@@ -43,6 +45,8 @@ class BookingMethods {
           phoneNumber: phoneNumber,
           numberOfRooms: numberOfRooms,
           totalPrice: totalPrice,
+          bookingCancel: bookingCancel,
+          uid: uid,
         );
 
         // adding booking in our database

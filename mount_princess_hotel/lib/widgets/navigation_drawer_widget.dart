@@ -9,7 +9,7 @@ import 'package:mount_princess_hotel/screens/customer/rooms_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/gallery_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/packages_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/menus_screen.dart';
-import 'package:mount_princess_hotel/screens/customer/booking_status_screen.dart';
+import 'package:mount_princess_hotel/screens/customer/booking_history_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
 import 'package:mount_princess_hotel/screens/welcome_screen.dart';
 

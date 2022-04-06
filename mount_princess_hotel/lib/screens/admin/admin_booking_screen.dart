@@ -171,7 +171,10 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
 
   // get all the Booking info of all users.
   getUsersPastTripsStreamSnapshots() async {
-    var data = await FirebaseFirestore.instance.collection('Booking').get();
+    var data = await FirebaseFirestore.instance
+        .collection('Booking')
+        .where("bookingCancel", isEqualTo: false)
+        .get();
     setState(() {
       _allResults = data.docs;
     });
