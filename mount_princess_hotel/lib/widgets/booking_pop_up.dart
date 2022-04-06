@@ -41,6 +41,11 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
   bool _isLoading = false;
   double roomTotalPrice = 0.0;
 
+  // query of booking status
+  final _bookingStatusQuery = FirebaseFirestore.instance
+      .collection('BookingStatus')
+      .doc("booking_status");
+
   @override
   void initState() {
     super.initState();
@@ -84,7 +89,7 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
 
   // Add booking Info into the firebase
   void addBookingInfo() async {
-    String res;
+    String res = "fuck";
     // set loading to true
     setState(() {
       _isLoading = true;
@@ -100,19 +105,60 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
         _emailController.text.isNotEmpty &&
         _phoneNumberController.text.isNotEmpty &&
         _noRoomsController.text.isNotEmpty) {
-      // passing the datas to the booking_methos
-      res = await BookingMethods().addBookingInfo(
-        checkIn: widget.checkInDate,
-        checkOut: widget.checkOutDate,
-        bookingDate: DateTime.now(),
-        roomType: widget.roomType,
-        person: widget.noOfPerson,
-        name: _nameController.text,
-        email: _emailController.text,
-        phoneNumber: _phoneNumberController.text,
-        numberOfRooms: int.parse(_noRoomsController.text),
-        totalPrice: calculateTotalPrice(),
-      );
+      // if number of people is 4 and number of rooms is 1 then dont book.
+      if (widget.noOfPerson == 4 && _noRoomsController.text == "1") {
+        showSnackBar(
+            context, "Only 3 people allowed in 1 room. Choose 2 rooms.");
+      } else {
+        // passing the datas to the booking_methos
+        // res = await BookingMethods().addBookingInfo(
+        //   checkIn: widget.checkInDate,
+        //   checkOut: widget.checkOutDate,
+        //   bookingDate: DateTime.now(),
+        //   roomType: widget.roomType,
+        //   person: widget.noOfPerson,
+        //   name: _nameController.text,
+        //   email: _emailController.text,
+        //   phoneNumber: _phoneNumberController.text,
+        //   numberOfRooms: int.parse(_noRoomsController.text),
+        //   totalPrice: calculateTotalPrice(),
+        // );
+
+        // // change the totalRoom and booked in 'BookingStatus'
+
+        // // get snapshots
+        // var data = await _bookingStatusQuery.get();
+
+        // // get room's total and booked rooms
+        // int standardRoomTotalRooms = data["standardRoomTotalRooms"];
+        // int deluxeRoomTotalRooms = data["deluxeRoomTotalRooms"];
+        // int standardRoomBookedRooms = data["standardRoomBookedRooms"];
+        // int deluxeRoomBookedRooms = data["deluxeRoomBookedRooms"];
+
+        // // for standard room
+        // // "standardRoomBookedRooms" will be the previous booked room + this booked room
+        // // "standardRoomTotalRooms" will be the previous defined total room - this booked room
+        // if (widget.roomType.toLowerCase() == "standard room") {
+        //   await _bookingStatusQuery.update({
+        //     "standardRoomTotalRooms":
+        //         standardRoomTotalRooms - int.parse(_noRoomsController.text),
+        //     "standardRoomBookedRooms":
+        //         standardRoomBookedRooms + int.parse(_noRoomsController.text),
+        //   });
+
+        //   // for deluxe room
+        // } else if (widget.roomType.toLowerCase() == "deluxe room") {
+        //   await _bookingStatusQuery.update({
+        //     "deluxeRoomTotalRooms":
+        //         deluxeRoomTotalRooms - int.parse(_noRoomsController.text),
+        //     "deluxeRoomBookedRooms":
+        //         deluxeRoomBookedRooms + int.parse(_noRoomsController.text),
+        //   });
+        // }
+        // res = "success";
+
+        print("fuck");
+      }
     } else {
       res = "unsuccess";
       showSnackBar(context, "Fill all the fields.");
@@ -128,13 +174,14 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
         builder: (context) => const BookingPage(),
       ));
       showSnackBar(context, "Booking has been sucessfull.");
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-      // show the error
-      showSnackBar(context, res);
     }
+    //  else {
+    //   setState(() {
+    //     _isLoading = false;
+    //   });
+    //   // show the error
+    //   showSnackBar(context, res);
+    // }
   }
 
   @override
@@ -145,7 +192,7 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
 
       // to get choose room price for calculating totalPrice
       content: Container(
-        height: MediaQuery.of(context).size.height / 1.5,
+        // height: MediaQuery.of(context).size.height / 1.5,
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.only(top: 25),
         decoration: BoxDecoration(
@@ -203,7 +250,23 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
                   icon: Icons.format_list_numbered,
                   color: Colors.white,
                 ),
-                const SizedBox(height: 20),
+                widget.noOfPerson == 4
+                    // if number of person is 4.
+                    ? _noRoomsController.text == "1"
+                        // if number of rooms is 1.
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 5, bottom: 5),
+                            child: Text(
+                              "**Only 3 people allowed in 1 Room.**",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 234, 29, 15),
+                              ),
+                            ),
+                          )
+                        : const Text("")
+                    // if number of persons is not 4.
+                    : const Text(""),
+                // const SizedBox(height: 20),
 
                 // Total Price
                 MaterialButton(
@@ -234,7 +297,7 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
 
                 // Submit
                 MaterialButton(
-                  height: 50,
+                  height: MediaQuery.of(context).size.width / 7.5,
                   minWidth: MediaQuery.of(context).size.width / 2,
                   color: Colors.blue,
                   shape: RoundedRectangleBorder(
@@ -251,6 +314,7 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
                   onPressed: () => addBookingInfo(),
                   // onPressed: () {},
                 ),
+                const SizedBox(height: 20),
               ],
             ),
           ),

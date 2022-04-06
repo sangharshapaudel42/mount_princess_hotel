@@ -269,7 +269,7 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
                       )
                     // if there is arrival and departure on that day
                     : Container(
-                        height: MediaQuery.of(context).size.height / 2.2229,
+                        height: MediaQuery.of(context).size.height / 1.821,
                         margin: const EdgeInsets.only(right: 10, left: 10),
                         color: Colors.white,
                         child: Column(

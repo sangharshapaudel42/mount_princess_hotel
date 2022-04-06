@@ -24,22 +24,62 @@ class _BookingPageState extends State<BookingPage> {
   final _formKey = GlobalKey<FormState>();
   DateTime? _checkInDate;
   DateTime? _checkOutDate;
-  String _roomTypeDropDown = "Standard Room";
-  String _personsDropDown = "1";
+  late Future bookingStatusInfos;
+
+  final _bookingStatusQuery = FirebaseFirestore.instance
+      .collection('BookingStatus')
+      .doc("booking_status");
 
   List _allRooms = [];
   double roomPrice = 0.0;
 
-  final List<String> roomsValueTypes = ['Standard Room', 'Deluxe Room'];
-  String? roomsSelectedValueType = 'Standard Room';
+  List<String> roomsValueTypes = ['Standard Room', 'Deluxe Room'];
+  String roomsSelectedValueType = 'Standard Room';
 
-  final List<String> personsValueTypes = ['1', '2', '3', '4+'];
-  String? personsSelectedValueType = '1';
+  List<String> personsValueTypes = ['1', '2', '3', '4+'];
+  String personsSelectedValueType = '1';
+
+  int? numberOfPerson;
+
+  @override
+  void initState() {
+    super.initState();
+    bookingStatusInfos = getBookingStatus();
+  }
 
   @override
   void dispose() {
     super.dispose();
     _nameController.dispose();
+  }
+
+  // get all the info of 'BookingStatus'
+  getBookingStatus() async {
+    try {
+      var data = await _bookingStatusQuery.get();
+
+      setState(() {
+        // data["standardRoomBookedRooms"]
+        // data["deluxeRoomBookedRooms"]
+        // data["standardRoomTotalRooms"]
+        // data["deluxeRoomTotalRooms"]
+
+        // if standard room is unbookable then remove standard room from the
+        // drop-down list and change "roomsSelectedValueType" to Deluxe Room
+        if (data["standardRoomStatus"] == "Un-Bookable") {
+          roomsValueTypes = ['Deluxe Room'];
+          roomsSelectedValueType = 'Deluxe Room';
+        }
+
+        // if deluxe room is unbookable then remove deluxe room from the
+        // drop-down list
+        if (data["deluxeRoomStatus"] == "Un-Bookable") {
+          roomsValueTypes = ['Standard Room'];
+        }
+      });
+    } catch (err) {
+      print(err.toString());
+    }
   }
 
   // get text from the date picker
@@ -63,9 +103,11 @@ class _BookingPageState extends State<BookingPage> {
       context: context,
       initialDate: dateType == "check-in"
           ? _checkInDate ?? initialDate
-          : _checkOutDate ?? initialDate,
-      // firstDate: DateTime(DateTime.now().year),
-      firstDate: initialDate,
+          : _checkOutDate ?? _checkInDate!,
+
+      // first date check-in is the today's date.
+      // first date of check-out is the date of check-in or after that.
+      firstDate: dateType == "check-in" ? initialDate : _checkInDate!,
       lastDate: DateTime(DateTime.now().year + 1),
     );
 
@@ -273,8 +315,7 @@ class _BookingPageState extends State<BookingPage> {
                               ))
                           .toList(),
                       onChanged: (valueType) => setState(() {
-                        roomsSelectedValueType = valueType;
-                        _roomTypeDropDown = valueType!;
+                        roomsSelectedValueType = valueType!;
                       }),
                     ),
                   ),
@@ -334,12 +375,7 @@ class _BookingPageState extends State<BookingPage> {
                               ))
                           .toList(),
                       onChanged: (valueType) => setState(() {
-                        personsSelectedValueType = valueType;
-                        if (valueType == "4+") {
-                          _personsDropDown = "4";
-                        } else {
-                          _personsDropDown = valueType!;
-                        }
+                        personsSelectedValueType = valueType!;
                       }),
                     ),
                   ),
@@ -394,7 +430,7 @@ class _BookingPageState extends State<BookingPage> {
                           String snapshotRoomName = roomsSnapshot["Name"];
                           snapshotRoomName = snapshotRoomName.toLowerCase();
 
-                          if (_roomTypeDropDown.toLowerCase() ==
+                          if (roomsSelectedValueType.toLowerCase() ==
                               snapshotRoomName) {
                             roomPrice =
                                 double.parse(roomsSnapshot["Price"].toString());
@@ -405,13 +441,25 @@ class _BookingPageState extends State<BookingPage> {
                         }
                       }
 
+                      // if "personsSelectedValueType" is not empty
+                      if (personsSelectedValueType.isNotEmpty) {
+                        if (personsSelectedValueType == "4+") {
+                          numberOfPerson = 4;
+                        } else {
+                          numberOfPerson = int.parse(personsSelectedValueType);
+                        }
+                        // if empty then numberOfPerson = 1
+                      } else {
+                        numberOfPerson = 1;
+                      }
+
                       showDialog(
                         context: context,
                         builder: (BuildContext context) => BuildPopDialog(
                           checkInDate: _checkInDate!,
                           checkOutDate: _checkOutDate!,
-                          roomType: _roomTypeDropDown,
-                          noOfPerson: int.parse(_personsDropDown),
+                          roomType: roomsSelectedValueType,
+                          noOfPerson: numberOfPerson!,
                           roomPrice: roomPrice,
                           name: doc["name"],
                           email: doc["email"],

@@ -1,5 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:mount_princess_hotel/screens/admin/widgets/availability_widget.dart';
+import 'package:mount_princess_hotel/utils/utils.dart';
 import 'package:mount_princess_hotel/widgets/admin_navigation_drawer_widget.dart';
 
 import '../../utils/colors.dart';
@@ -12,12 +13,75 @@ class AvailabilityPage extends StatefulWidget {
 }
 
 class _AvailabilityPageState extends State<AvailabilityPage> {
+  late Future bookingStatusLoaded;
   bool isSwitchedStandard = true;
   bool isSwitchedDeluxe = true;
-  int standardRoomAvailable = 0;
-  int deluxeRoomAvailable = 1;
-  String standardRoomStatus = "Bookable";
-  String deluxeRoomStatus = "Bookable";
+  int? _standardRoomBookedRooms;
+  int? _deluxeRoomBookedRooms;
+  int? _standardRoomTotalRooms;
+  int? _deluxeRoomTotalRooms;
+  String? _standardRoomStatus;
+  String? _deluxeRoomStatus;
+
+  // NOTE: if user changes anything then '_isChanged' will be true and check button
+  // will appear then update can be done.
+  bool _isChanged = false;
+
+  final _bookingStatusQuery = FirebaseFirestore.instance
+      .collection('BookingStatus')
+      .doc("booking_status");
+
+  @override
+  void initState() {
+    super.initState();
+    bookingStatusLoaded = getBookingStatusStreamSnapshots();
+  }
+
+  // get booking status
+  getBookingStatusStreamSnapshots() async {
+    try {
+      var data = await _bookingStatusQuery.get();
+
+      setState(() {
+        _standardRoomBookedRooms = data["standardRoomBookedRooms"];
+        _deluxeRoomBookedRooms = data["deluxeRoomBookedRooms"];
+        _standardRoomTotalRooms = data["standardRoomTotalRooms"];
+        _deluxeRoomTotalRooms = data["deluxeRoomTotalRooms"];
+        _standardRoomStatus = data["standardRoomStatus"];
+        _deluxeRoomStatus = data["deluxeRoomStatus"];
+
+        if (_standardRoomStatus == "Un-Bookable") {
+          isSwitchedStandard = false;
+        }
+        if (_deluxeRoomStatus == "Un-Bookable") {
+          isSwitchedDeluxe = false;
+        }
+      });
+      return "complete";
+    } catch (err) {
+      print(err.toString());
+    }
+  }
+
+  // update the booking status
+  updateBookingStatus() async {
+    try {
+      await _bookingStatusQuery.update({
+        "standardRoomBookedRooms": _standardRoomBookedRooms,
+        "deluxeRoomBookedRooms": _deluxeRoomBookedRooms,
+        "standardRoomTotalRooms": _standardRoomTotalRooms,
+        "deluxeRoomTotalRooms": _deluxeRoomTotalRooms,
+        "standardRoomStatus": _standardRoomStatus,
+        "deluxeRoomStatus": _deluxeRoomStatus,
+      });
+      setState(() {
+        _isChanged = false;
+      });
+      showSnackBar(context, "Successfully Changed.");
+    } catch (err) {
+      print(err.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -26,26 +90,50 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
           backgroundColor: backgroundColor,
           title: const Text('Availability'),
           centerTitle: true,
+          // show the check button only when something has been changed
+          actions: _isChanged
+              ? [
+                  IconButton(
+                    padding:
+                        const EdgeInsets.only(top: 8.0, right: 10, bottom: 8.0),
+                    icon:
+                        const Icon(Icons.check, color: Colors.white, size: 35),
+                    onPressed: () => updateBookingStatus(),
+                  )
+                ]
+              : null,
         ),
-        body: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            color: Colors.grey[100],
-            // all fields
-            child: SingleChildScrollView(
-              child: Container(
-                  margin: const EdgeInsets.only(right: 10, left: 10, top: 30),
-                  padding: const EdgeInsets.only(right: 15, left: 15),
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      // AvailabilityWidget(roomName: "Standard Room"),
-                      // AvailabilityWidget(roomName: "Deluxe Room"),
-                      availabilityWidget("Standard Room"),
-                      availabilityWidget("Deluxe Room"),
-                    ],
-                  )),
-            )),
+        body: _standardRoomBookedRooms != null &&
+                _deluxeRoomBookedRooms != null &&
+                _standardRoomTotalRooms != null &&
+                _deluxeRoomTotalRooms != null &&
+                _standardRoomStatus!.isNotEmpty &&
+                _deluxeRoomStatus!.isNotEmpty
+            ? Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                color: Colors.grey[100],
+                // all fields
+                child: SingleChildScrollView(
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 10, left: 10, top: 30),
+                    padding: const EdgeInsets.only(right: 15, left: 15),
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        availabilityWidget("Standard Room"),
+                        availabilityWidget("Deluxe Room"),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            : Center(
+                child: Text(
+                  "Sorry, something went wrong!!",
+                  style: TextStyle(color: Colors.grey[600], fontSize: 25),
+                ),
+              ),
       );
 
   // widget for each room
@@ -79,10 +167,10 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
                   roomName == "Standard Room"
                       // for standard room
                       ? Text(
-                          standardRoomStatus,
+                          _standardRoomStatus!,
                           style: TextStyle(
                             fontSize: 19,
-                            color: standardRoomStatus == "Bookable"
+                            color: _standardRoomStatus == "Bookable"
                                 // if bookable
                                 ? Colors.green[700]
                                 // if unbookable
@@ -91,10 +179,10 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
                         )
                       // for deluxe room
                       : Text(
-                          deluxeRoomStatus,
+                          _deluxeRoomStatus!,
                           style: TextStyle(
                             fontSize: 19,
-                            color: deluxeRoomStatus == "Bookable"
+                            color: _deluxeRoomStatus == "Bookable"
                                 // if bookable
                                 ? Colors.green[700]
                                 // if unbookable
@@ -115,18 +203,22 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
                       isSwitchedStandard = value;
                       // if on then bookable
                       if (value == true) {
-                        standardRoomStatus = "Bookable";
+                        _standardRoomStatus = "Bookable";
+                        _isChanged = true;
                         // else then un-bookable
                       } else {
-                        standardRoomStatus = "Un-Bookable";
+                        _standardRoomStatus = "Un-Bookable";
+                        _isChanged = true;
                       }
                       // for deluxe room
                     } else {
                       isSwitchedDeluxe = value;
                       if (value == true) {
-                        deluxeRoomStatus = "Bookable";
+                        _deluxeRoomStatus = "Bookable";
+                        _isChanged = true;
                       } else {
-                        deluxeRoomStatus = "Un-Bookable";
+                        _deluxeRoomStatus = "Un-Bookable";
+                        _isChanged = true;
                       }
                     }
                   });
@@ -153,7 +245,9 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    "Booked: 2",
+                    roomName == "Standard Room"
+                        ? "Booked: $_standardRoomBookedRooms"
+                        : "Booked: $_deluxeRoomBookedRooms",
                     style: TextStyle(
                       fontSize: 19,
                       color: Colors.grey[700],
@@ -171,13 +265,17 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
                       setState(() {
                         // for standard room
                         if (roomName == "Standard Room") {
-                          if (standardRoomAvailable != 0) {
-                            standardRoomAvailable--;
+                          if (_standardRoomTotalRooms != 0) {
+                            _standardRoomTotalRooms =
+                                _standardRoomTotalRooms! - 1;
+                            _isChanged = true;
                           }
                           // for deluxe room
                         } else {
-                          if (deluxeRoomAvailable != 0) {
-                            deluxeRoomAvailable--;
+                          if (_deluxeRoomTotalRooms != 0) {
+                            _deluxeRoomTotalRooms = _deluxeRoomTotalRooms! - 1;
+
+                            _isChanged = true;
                           }
                         }
                       });
@@ -192,8 +290,8 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
                   // digit
                   Text(
                     roomName == "Standard Room"
-                        ? "$standardRoomAvailable"
-                        : "$deluxeRoomAvailable",
+                        ? "$_standardRoomTotalRooms"
+                        : "$_deluxeRoomTotalRooms",
                     style: const TextStyle(fontSize: 25),
                   ),
                   const SizedBox(width: 10),
@@ -203,10 +301,15 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
                       setState(() {
                         // for standard room
                         if (roomName == "Standard Room") {
-                          standardRoomAvailable++;
+                          _standardRoomTotalRooms =
+                              _standardRoomTotalRooms! + 1;
+
+                          _isChanged = true;
                           // for deluxe room
                         } else {
-                          deluxeRoomAvailable++;
+                          _deluxeRoomTotalRooms = _deluxeRoomTotalRooms! + 1;
+
+                          _isChanged = true;
                         }
                       });
                     },
