@@ -13,6 +13,8 @@ class Booking {
   final double totalPrice;
   final bool bookingCancel;
   final String uid;
+  final String checkInString;
+  final String checkOutString;
 
   const Booking({
     required this.checkIn,
@@ -27,6 +29,8 @@ class Booking {
     required this.totalPrice,
     required this.bookingCancel,
     required this.uid,
+    required this.checkInString,
+    required this.checkOutString,
   });
 
   static Booking fromSnap(DocumentSnapshot snap) {
@@ -45,6 +49,8 @@ class Booking {
       totalPrice: snapshot["totalPrice"],
       bookingCancel: snapshot["bookingCancel"],
       uid: snapshot["uid"],
+      checkInString: snapshot["checkInString"],
+      checkOutString: snapshot["checkOutString"],
     );
   }
 
@@ -60,7 +66,9 @@ class Booking {
         numberOfRooms = snapshot["numberOfRooms"],
         totalPrice = snapshot["totalPrice"],
         bookingCancel = snapshot["bookingCancel"],
-        uid = snapshot["uid"];
+        uid = snapshot["uid"],
+        checkInString = snapshot["checkInString"],
+        checkOutString = snapshot["checkOutString"];
 
   Map<String, dynamic> toJson() => {
         "checkIn": checkIn,
@@ -75,5 +83,7 @@ class Booking {
         "totalPrice": totalPrice,
         "bookingCancel": bookingCancel,
         "uid": uid,
+        "checkInString": checkInString,
+        "checkOutString": checkOutString,
       };
 }

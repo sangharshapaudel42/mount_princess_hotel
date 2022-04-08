@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 // Activity Daily Report widget
-Widget buildDailyReportWidget(BuildContext context) {
+Widget buildDailyReportWidget(
+    BuildContext context, int checkIns, int checkOuts) {
   return Container(
+    margin: const EdgeInsets.only(top: 5),
     padding: const EdgeInsets.only(right: 15, left: 15, top: 20, bottom: 20),
     decoration: const BoxDecoration(
       color: Colors.white,
@@ -37,9 +39,9 @@ Widget buildDailyReportWidget(BuildContext context) {
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  "2",
-                  style: TextStyle(
+                Text(
+                  "$checkIns",
+                  style: const TextStyle(
                     fontSize: 20,
                     // color: Colors.grey[700],
                   ),
@@ -49,7 +51,7 @@ Widget buildDailyReportWidget(BuildContext context) {
             const Spacer(),
             // Nights - no_of_nights
             Padding(
-              padding: const EdgeInsets.only(right: 80),
+              padding: const EdgeInsets.only(right: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -61,9 +63,9 @@ Widget buildDailyReportWidget(BuildContext context) {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    "0",
-                    style: TextStyle(
+                  Text(
+                    "$checkOuts",
+                    style: const TextStyle(
                       fontSize: 20,
                       // color: Colors.grey[700],
                     ),

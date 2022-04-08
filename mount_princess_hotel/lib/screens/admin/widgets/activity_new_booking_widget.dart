@@ -1,8 +1,34 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 // Activity New Booking widget
-Widget buildNewBookingWidget(BuildContext context) {
+Widget buildNewBookingWidget(BuildContext context, QueryDocumentSnapshot data) {
+  // get the checkIn date
+  Timestamp timestampCheckIn = data['checkIn'];
+  DateTime dateTimeCheckIn = timestampCheckIn.toDate();
+  String checkInDate = DateFormat.yMMMEd().format(dateTimeCheckIn);
+
+  // get the checkOut date
+  Timestamp timestampCheckOut = data['checkOut'];
+  DateTime dateTimeCheckOut = timestampCheckOut.toDate();
+
+  // get the bookingDate date
+  Timestamp timestampBookingDate = data['bookingDate'];
+  DateTime dateTimeBookingDate = timestampBookingDate.toDate();
+
+  // number of nights
+  int nights = dateTimeCheckOut.difference(dateTimeCheckIn).inDays;
+
+  // numbers of rooms
+  int numberOfRooms = data["numberOfRooms"];
+
+  // total price
+  double price = data["totalPrice"];
+
   return Container(
+    margin: const EdgeInsets.only(top: 5, bottom: 5),
     padding: const EdgeInsets.only(right: 15, left: 15, top: 20, bottom: 20),
     decoration: const BoxDecoration(
       color: Colors.white,
@@ -24,7 +50,7 @@ Widget buildNewBookingWidget(BuildContext context) {
             ),
             const Spacer(),
             Text(
-              "an hour ago",
+              timeago.format(dateTimeBookingDate),
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.grey[700],
@@ -34,9 +60,9 @@ Widget buildNewBookingWidget(BuildContext context) {
         ),
         const SizedBox(height: 15),
         // Room type
-        const Text(
-          "Deluxe Room",
-          style: TextStyle(
+        Text(
+          data["roomType"],
+          style: const TextStyle(
             fontSize: 22,
           ),
         ),
@@ -56,9 +82,9 @@ Widget buildNewBookingWidget(BuildContext context) {
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  "Wed 3 December 2022",
-                  style: TextStyle(
+                Text(
+                  checkInDate,
+                  style: const TextStyle(
                     fontSize: 20,
                     // color: Colors.grey[700],
                   ),
@@ -68,7 +94,7 @@ Widget buildNewBookingWidget(BuildContext context) {
             const Spacer(),
             // Nights - no_of_nights
             Padding(
-              padding: const EdgeInsets.only(right: 40),
+              padding: const EdgeInsets.only(right: 25),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -80,9 +106,9 @@ Widget buildNewBookingWidget(BuildContext context) {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    "1",
-                    style: TextStyle(
+                  Text(
+                    "$nights",
+                    style: const TextStyle(
                       fontSize: 20,
                       // color: Colors.grey[700],
                     ),
@@ -108,9 +134,9 @@ Widget buildNewBookingWidget(BuildContext context) {
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  "Ishan Panta",
-                  style: TextStyle(
+                Text(
+                  data["name"],
+                  style: const TextStyle(
                     fontSize: 20,
                     // color: Colors.grey[700],
                   ),
@@ -130,9 +156,9 @@ Widget buildNewBookingWidget(BuildContext context) {
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  "US \$25.00",
-                  style: TextStyle(
+                Text(
+                  "US \$$price",
+                  style: const TextStyle(
                     fontSize: 20,
                     // color: Colors.grey[700],
                   ),
@@ -143,21 +169,50 @@ Widget buildNewBookingWidget(BuildContext context) {
         ),
         const SizedBox(height: 20),
         // phone number
-        Column(
+        Row(
           children: [
-            Text(
-              "Phone number",
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey[700],
-              ),
+            Column(
+              children: [
+                Text(
+                  "Phone number",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  data["phoneNumber"],
+                  style: const TextStyle(
+                    fontSize: 20,
+                    // color: Colors.grey[700],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 10),
-            const Text(
-              "9841326759",
-              style: TextStyle(
-                fontSize: 20,
-                // color: Colors.grey[700],
+            const Spacer(),
+            // Rooms
+            Padding(
+              padding: const EdgeInsets.only(right: 25),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Rooms",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "$numberOfRooms",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      // color: Colors.grey[700],
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

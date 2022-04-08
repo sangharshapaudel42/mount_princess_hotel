@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mount_princess_hotel/screens/admin/widgets/arrival_departure_button_widget.dart';
 import 'package:mount_princess_hotel/screens/admin/widgets/booking_indiviusal_card.dart';
+import 'package:mount_princess_hotel/widgets/refresh_widget.dart';
 import 'package:mount_princess_hotel/widgets/text_field_input.dart';
 
 import '../../utils/colors.dart';
@@ -170,7 +171,7 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
   }
 
   // get all the Booking info of all users.
-  getUsersPastTripsStreamSnapshots() async {
+  Future getUsersPastTripsStreamSnapshots() async {
     var data = await FirebaseFirestore.instance
         .collection('Booking')
         .where("bookingCancel", isEqualTo: false)
@@ -180,7 +181,6 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
     });
     numberOfArivalsDepartures();
     searchResultsList();
-    return "complete";
   }
 
   @override

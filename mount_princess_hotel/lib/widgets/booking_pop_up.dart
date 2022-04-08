@@ -103,10 +103,10 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
     });
 
     // first convert the dateTime to string
-    // String checkInDateToString =
-    //     DateFormat('MM-dd-yyyy').format(widget.checkInDate);
-    // String checkOutDateToString =
-    //     DateFormat('MM-dd-yyyy').format(widget.checkOutDate);
+    String checkInDateToString =
+        DateFormat('MM-dd-yyyy').format(widget.checkInDate);
+    String checkOutDateToString =
+        DateFormat('MM-dd-yyyy').format(widget.checkOutDate);
 
     if (_nameController.text.isNotEmpty &&
         _emailController.text.isNotEmpty &&
@@ -213,6 +213,8 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
           totalPrice: calculateTotalPrice(),
           bookingCancel: false,
           uid: userID,
+          checkInString: checkInDateToString,
+          checkOutString: checkOutDateToString,
         );
         res = "success";
       }
