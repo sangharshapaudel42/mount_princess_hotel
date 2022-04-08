@@ -190,7 +190,7 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
           backgroundColor: backgroundColor,
           title: const Text('Bookings'),
           centerTitle: true,
-          // search all the guests
+          // search the guests
           actions: [
             IconButton(
               icon: const Icon(Icons.search),
@@ -367,6 +367,9 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
 
 class MySearchDelegate extends SearchDelegate {
   List allresults;
+
+  @override
+  String get searchFieldLabel => 'Search Guest Name...';
 
   MySearchDelegate({required this.allresults});
 
