@@ -215,6 +215,8 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
           uid: userID,
           checkInString: checkInDateToString,
           checkOutString: checkOutDateToString,
+          bookingCancelDate: "",
+          note: "",
         );
         res = "success";
       }

@@ -1,11 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mount_princess_hotel/screens/admin/admin_booking_detail.dart';
 import 'package:mount_princess_hotel/screens/admin/widgets/activity_booking_cancel_widget.dart';
 import 'package:mount_princess_hotel/screens/admin/widgets/activity_daily_report_widget.dart';
 import 'package:mount_princess_hotel/screens/admin/widgets/activity_new_booking_widget.dart';
 
 Widget buildBookingActivityWidget(BuildContext context, List _weekDates,
-    List _allResults, List _weekDatesEasy) {
+    List _allResults, List _weekDatesEasy, DocumentSnapshot bookingStatusDoc) {
   String todayDate = DateFormat.yMMMMEEEEd().format(DateTime.now());
   String yesterdayDate = DateFormat.yMMMMEEEEd()
       .format(DateTime.now().subtract(const Duration(days: 1)));
@@ -59,8 +61,19 @@ Widget buildBookingActivityWidget(BuildContext context, List _weekDates,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: newBookingDatas.length,
                               itemBuilder: (context, newBookingIndex) {
-                                return buildNewBookingWidget(
-                                    context, newBookingDatas[newBookingIndex]);
+                                // after clicking on the new booking container redirect to detail page.
+                                return InkWell(
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => DetailBookingPage(
+                                              document: newBookingDatas[
+                                                  newBookingIndex],
+                                            )),
+                                  ),
+                                  child: buildNewBookingWidget(context,
+                                      newBookingDatas[newBookingIndex]),
+                                );
                               },
                             );
 
@@ -74,8 +87,18 @@ Widget buildBookingActivityWidget(BuildContext context, List _weekDates,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: bookingCancelDatas.length,
                               itemBuilder: (context, bookingCancelIndex) {
-                                return buildBookingCancelWidget(context,
-                                    bookingCancelDatas[bookingCancelIndex]);
+                                return InkWell(
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => DetailBookingPage(
+                                              document: bookingCancelDatas[
+                                                  bookingCancelIndex],
+                                            )),
+                                  ),
+                                  child: buildBookingCancelWidget(context,
+                                      bookingCancelDatas[bookingCancelIndex]),
+                                );
                               },
                             );
                             // in case on that day there was neither new booking nor booking cancel
@@ -99,16 +122,22 @@ Widget buildBookingActivityWidget(BuildContext context, List _weekDates,
                                     _weekDatesEasy[index] &&
                                 _allResults[i]["bookingCancel"] == false) {
                               checkInNumbers.add(_allResults[i]);
-                            } else if (_allResults[i]["checkOutString"] ==
+                            }
+                            if (_allResults[i]["checkOutString"] ==
                                     _weekDatesEasy[index] &&
                                 _allResults[i]["bookingCancel"] == false) {
                               checkOutNumbers.add(_allResults[i]);
                             }
                           }
-                          return buildDailyReportWidget(context,
-                              checkInNumbers.length, checkOutNumbers.length);
+                          return buildDailyReportWidget(
+                              context,
+                              checkInNumbers.length,
+                              checkOutNumbers.length,
+                              bookingStatusDoc,
+                              _weekDatesEasy[index]);
                         })
-                    : buildDailyReportWidget(context, 0, 0),
+                    : buildDailyReportWidget(
+                        context, 0, 0, bookingStatusDoc, _weekDatesEasy[index]),
               ],
             )),
       );

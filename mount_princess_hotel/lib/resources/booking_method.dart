@@ -24,6 +24,8 @@ class BookingMethods {
     required String uid,
     required String checkInString,
     required String checkOutString,
+    required String bookingCancelDate,
+    required String note,
   }) async {
     String res = "Some error Occurred";
     try {
@@ -51,6 +53,8 @@ class BookingMethods {
           uid: uid,
           checkInString: checkInString,
           checkOutString: checkOutString,
+          bookingCancelDate: bookingCancelDate,
+          note: note,
         );
 
         // adding booking in our database

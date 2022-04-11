@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mount_princess_hotel/utils/utils.dart';
 
 class CancelBookingPopUpDialog extends StatefulWidget {
@@ -29,8 +30,15 @@ class _CancelBookingPopUpDialogState extends State<CancelBookingPopUpDialog> {
   Future<String> cancelBooking() async {
     String res = "error";
     try {
-      // change "bookingCancel" to true
-      _bookingQuery.doc(widget.bookingId).update({"bookingCancel": true});
+      // add booking cancel date to the database
+      DateTime todayDate = DateTime.now();
+      String todayDateInString = DateFormat('yyyy-MM-dd').format(todayDate);
+
+      // change "bookingCancel" to true and add booking cancel date
+      _bookingQuery.doc(widget.bookingId).update({
+        "bookingCancel": true,
+        "bookingCancelDate": todayDateInString,
+      });
 
       // get values of "BookingStatus"
       var data = await _bookingStatusQuery.get();

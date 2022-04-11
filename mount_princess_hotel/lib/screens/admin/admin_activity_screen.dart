@@ -23,6 +23,9 @@ class _ActivityPageState extends State<ActivityPage> {
   // which is then compared with "bookingDateString" from database
   List _weekDatesEasy = [];
 
+  // document snapshot of booking status table.
+  DocumentSnapshot? bookingStatusDoc;
+
   @override
   void initState() {
     super.initState();
@@ -49,9 +52,20 @@ class _ActivityPageState extends State<ActivityPage> {
 
   // get all the Booking info of all users.
   Future getBookingStreamSnapshots() async {
-    var data = await FirebaseFirestore.instance.collection('Booking').get();
+    // booking docs
+    var data = await FirebaseFirestore.instance
+        .collection('Booking')
+        .orderBy("bookingDate", descending: true)
+        .get();
+
+    // booking status docs
+    var bookingStatusData = await FirebaseFirestore.instance
+        .collection("BookingStatus")
+        .doc("booking_status")
+        .get();
     setState(() {
       _allResults = data.docs;
+      bookingStatusDoc = bookingStatusData;
     });
   }
 
@@ -70,29 +84,35 @@ class _ActivityPageState extends State<ActivityPage> {
             onPressed: () {
               showSearch(
                 context: context,
-                delegate: MySearchDelegate(allresults: _allResults),
+                delegate: MySearchDelegate(
+                    allresults: _allResults,
+                    bookingStatusDoc: bookingStatusDoc!),
               );
             },
           )
         ],
       ),
       body: RefreshWidget(
-        onRefresh: getBookingStreamSnapshots,
-        child: buildBookingActivityWidget(
-            context, _weekDates, _allResults, _weekDatesEasy),
-      ),
+          onRefresh: getBookingStreamSnapshots,
+          child: bookingStatusDoc != null
+              ? buildBookingActivityWidget(context, _weekDates, _allResults,
+                  _weekDatesEasy, bookingStatusDoc!)
+              : const SizedBox()),
     );
   }
 }
 
+// search bar
 class MySearchDelegate extends SearchDelegate {
   List allresults;
+  DocumentSnapshot bookingStatusDoc;
 
   @override
   String get searchFieldLabel => 'Search Date (yyyy-MM-dd)...';
 
   MySearchDelegate({
     required this.allresults,
+    required this.bookingStatusDoc,
   });
 
   // arrow_back
@@ -128,8 +148,8 @@ class MySearchDelegate extends SearchDelegate {
 
       return Padding(
         padding: const EdgeInsets.only(top: 10.0),
-        child: buildBookingActivityWidget(
-            context, [weekStringDates], allresults, [weekDatesStringEasy]),
+        child: buildBookingActivityWidget(context, [weekStringDates],
+            allresults, [weekDatesStringEasy], bookingStatusDoc),
       );
     } catch (err) {
       return Center(

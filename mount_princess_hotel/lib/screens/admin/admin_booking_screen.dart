@@ -78,9 +78,9 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
               // change the count to the list size
               totalNumberOfArrivals = numberOfArrivals.length;
             });
-
-            // for today's departures
-          } else if (checkOutDate.contains(_todayDate)) {
+          }
+          // for today's departures
+          if (checkOutDate.contains(_todayDate)) {
             // add departures to numberOfDepartures list
             numberOfDepartures.add(bookingInfoSnapshot);
             setState(() {
@@ -101,7 +101,8 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
             setState(() {
               totalNumberOfArrivals = numberOfArrivals.toSet().length;
             });
-          } else if (checkOutDate.contains(_chooseDate)) {
+          }
+          if (checkOutDate.contains(_chooseDate)) {
             numberOfDepartures.add(bookingInfoSnapshot);
             setState(() {
               totalNumberOfDepartures = numberOfDepartures.toSet().length;
@@ -133,30 +134,37 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
       // today's date
       String _todayDate = DateFormat('MM-dd-yyyy').format(DateTime.now());
 
-      // if date is choose
-      // display the today's arrival info
-      if (_chooseDate == "" && _departureInfo == false) {
-        if (checkInDate.contains(_todayDate)) {
-          showResults.add(bookingInfoSnapshot);
+      // in initial state. i.e. no date has been choosen.
+      if (_chooseDate == "") {
+        // for check-in
+        if (_departureInfo == false) {
+          // checking if checkIn date for that booking info is eqaul to today's date
+          if (checkInDate.contains(_todayDate)) {
+            showResults.add(bookingInfoSnapshot);
+          }
+
+          // for check-out
+        } else if (_departureInfo == true) {
+          if (checkOutDate.contains(_todayDate)) {
+            showResults.add(bookingInfoSnapshot);
+          }
         }
-        // arrival's info according to user's choice date.
-      } else if (_chooseDate != "" && _departureInfo == false) {
-        if (checkInDate.contains(_chooseDate)) {
-          showResults.add(bookingInfoSnapshot);
+
+        // if date is choosen.
+      } else if (_chooseDate != "") {
+        // for check-in
+        if (_departureInfo == false) {
+          // checking if checkIn date for that booking info is eqaul to today's date
+          if (checkInDate.contains(_chooseDate)) {
+            showResults.add(bookingInfoSnapshot);
+          }
+
+          // for check-out
+        } else if (_departureInfo == true) {
+          if (checkOutDate.contains(_chooseDate)) {
+            showResults.add(bookingInfoSnapshot);
+          }
         }
-        // display the today's departure's info
-      } else if (_departureInfo == true && _chooseDate == "") {
-        if (checkOutDate.contains(_todayDate)) {
-          showResults.add(bookingInfoSnapshot);
-        }
-        // departure's info according to user's choice date.
-      } else if (_departureInfo == true && _chooseDate != "") {
-        if (checkOutDate.contains(_chooseDate)) {
-          showResults.add(bookingInfoSnapshot);
-        }
-        // if nothing is choose then all the results will be displayed.
-      } else {
-        showResults = List.from(_allResults);
       }
     }
     setState(() {
@@ -300,7 +308,7 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
                                     },
                                     // widget
                                     child: arrivalsDepartures(context,
-                                        "Arrivals", totalNumberOfArrivals),
+                                        "Arrivals", numberOfArrivals.length),
                                   ),
 
                                   const Spacer(),
@@ -312,8 +320,10 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
                                         searchResultsList();
                                       });
                                     },
-                                    child: arrivalsDepartures(context,
-                                        "Departures", totalNumberOfDepartures),
+                                    child: arrivalsDepartures(
+                                        context,
+                                        "Departures",
+                                        numberOfDepartures.length),
                                   ),
                                 ],
                               ),

@@ -17,6 +17,7 @@ Widget buildNewBookingWidget(BuildContext context, QueryDocumentSnapshot data) {
   // get the bookingDate date
   Timestamp timestampBookingDate = data['bookingDate'];
   DateTime dateTimeBookingDate = timestampBookingDate.toDate();
+  String newBookingDate = DateFormat.yMMMEd().format(dateTimeBookingDate);
 
   // number of nights
   int nights = dateTimeCheckOut.difference(dateTimeCheckIn).inDays;
@@ -58,7 +59,39 @@ Widget buildNewBookingWidget(BuildContext context, QueryDocumentSnapshot data) {
             ),
           ],
         ),
-        const SizedBox(height: 15),
+        // last-minute booking and new note from guest
+        Row(
+          children: [
+            checkInDate == newBookingDate
+                ?
+                // Last-minute booking: if check-in date and booking date is same.
+                Container(
+                    margin: EdgeInsets.only(
+                        top: 10, right: MediaQuery.of(context).size.width / 10),
+                    color: const Color.fromARGB(255, 255, 115, 0),
+                    padding: const EdgeInsets.all(8.0),
+                    child: const Text(
+                      "Last-minute booking",
+                      style: TextStyle(color: Colors.white, fontSize: 17),
+                    ),
+                  )
+                : const SizedBox(height: 0),
+            data["note"] != ""
+                ?
+                // Last-minute booking: if check-in date and booking date is same.
+                Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    color: const Color.fromARGB(255, 12, 12, 231),
+                    padding: const EdgeInsets.all(8.0),
+                    child: const Text(
+                      "Note from guest",
+                      style: TextStyle(color: Colors.white, fontSize: 17),
+                    ),
+                  )
+                : const SizedBox(height: 0),
+          ],
+        ),
+        const SizedBox(height: 10),
         // Room type
         Text(
           data["roomType"],
@@ -66,7 +99,7 @@ Widget buildNewBookingWidget(BuildContext context, QueryDocumentSnapshot data) {
             fontSize: 22,
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 15),
         // arrival, nights
         Row(
           children: [
@@ -118,7 +151,7 @@ Widget buildNewBookingWidget(BuildContext context, QueryDocumentSnapshot data) {
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 15),
         // guest name, Price
         Row(
           children: [
@@ -167,7 +200,7 @@ Widget buildNewBookingWidget(BuildContext context, QueryDocumentSnapshot data) {
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 15),
         // phone number
         Row(
           children: [
