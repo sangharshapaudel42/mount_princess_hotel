@@ -16,7 +16,7 @@ class UpcomingBooking extends StatefulWidget {
 class _UpcomingBookingState extends State<UpcomingBooking> {
   late Future resultsLoaded;
   // all booking datas after today
-  List _allResultsAfterToday = [];
+  List? _allResultsAfterToday;
   List _weekDates = [];
   // this list items are in form "mm-dd-yyyy"
   // which is then compared with "bookingDateString" from database
@@ -68,10 +68,11 @@ class _UpcomingBookingState extends State<UpcomingBooking> {
         backgroundColor: backgroundColor,
       ),
       body: RefreshWidget(
-        onRefresh: getBookingStreamSnapshots,
-        child: buildUpcomingBookingsWidget(
-            context, _weekDates, _allResultsAfterToday, _weekDatesEasy),
-      ),
+          onRefresh: getBookingStreamSnapshots,
+          child: _allResultsAfterToday != null
+              ? buildUpcomingBookingsWidget(
+                  context, _weekDates, _allResultsAfterToday!, _weekDatesEasy)
+              : const SizedBox(height: 0)),
     );
   }
 }

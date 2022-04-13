@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mount_princess_hotel/utils/utils.dart';
 import 'package:mount_princess_hotel/widgets/admin_navigation_drawer_widget.dart';
 import 'package:mount_princess_hotel/widgets/refresh_widget.dart';
+import 'package:telephony/telephony.dart';
 
 import '../../utils/colors.dart';
 
@@ -14,6 +15,7 @@ class AvailabilityPage extends StatefulWidget {
 }
 
 class _AvailabilityPageState extends State<AvailabilityPage> {
+  final Telephony telephony = Telephony.instance;
   late Future bookingStatusLoaded;
   bool isSwitchedStandard = true;
   bool isSwitchedDeluxe = true;
