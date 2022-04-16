@@ -11,6 +11,8 @@ Widget buildBookingActivityWidget(BuildContext context, List _weekDates,
   String todayDate = DateFormat.yMMMMEEEEd().format(DateTime.now());
   String yesterdayDate = DateFormat.yMMMMEEEEd()
       .format(DateTime.now().subtract(const Duration(days: 1)));
+  String tomorrowDate = DateFormat.yMMMMEEEEd()
+      .format(DateTime.now().add(const Duration(days: 1)));
 
   return ListView.builder(
     itemCount: _weekDates.length,
@@ -33,7 +35,9 @@ Widget buildBookingActivityWidget(BuildContext context, List _weekDates,
                         ? "Today"
                         : _weekDates[index] == yesterdayDate
                             ? "Yesterday"
-                            : _weekDates[index],
+                            : _weekDates[index] == tomorrowDate
+                                ? "Tomorrow"
+                                : _weekDates[index],
                     style: const TextStyle(
                       color: Color(0xff0b29d6),
                       fontSize: 20,
@@ -67,8 +71,9 @@ Widget buildBookingActivityWidget(BuildContext context, List _weekDates,
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => DetailBookingPage(
-                                              document: newBookingDatas[
-                                                  newBookingIndex],
+                                              documentId: newBookingDatas[
+                                                      newBookingIndex]
+                                                  .id,
                                             )),
                                   ),
                                   child: buildNewBookingWidget(context,
@@ -92,8 +97,9 @@ Widget buildBookingActivityWidget(BuildContext context, List _weekDates,
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => DetailBookingPage(
-                                              document: bookingCancelDatas[
-                                                  bookingCancelIndex],
+                                              documentId: bookingCancelDatas[
+                                                      bookingCancelIndex]
+                                                  .id,
                                             )),
                                   ),
                                   child: buildBookingCancelWidget(context,

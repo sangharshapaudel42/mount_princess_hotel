@@ -6,8 +6,9 @@ import 'package:mount_princess_hotel/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailBookingPage extends StatefulWidget {
-  final DocumentSnapshot document;
-  const DetailBookingPage({Key? key, required this.document}) : super(key: key);
+  final String documentId;
+  const DetailBookingPage({Key? key, required this.documentId})
+      : super(key: key);
 
   @override
   State<DetailBookingPage> createState() => _DetailBookingPageState();
@@ -17,7 +18,6 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    final phoneNumber = widget.document["phoneNumber"];
 
     return Scaffold(
       appBar: AppBar(
@@ -25,34 +25,66 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
         title: const Text('Booking Detail'),
         centerTitle: true,
       ),
-      body: Container(
-        color: Colors.grey[100],
-        height: size.height,
-        width: size.width,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // cancelled reservation
-              widget.document["bookingCancel"] == true
-                  ? cancelReservation(widget.document)
-                  : const SizedBox(height: 0),
-              // guest details and contact them
-              guestDetailContact(phoneNumber),
-              SizedBox(height: size.height / 30),
-              // booking details
-              buildBookingDetail(widget.document),
-              // note from the guest
-              widget.document["note"] != "" ? guestNote() : const SizedBox(),
-            ],
-          ),
-        ),
-      ),
+      body: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection("Booking")
+              .doc(widget.documentId)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            Map<String, dynamic> document =
+                snapshot.data!.data() as Map<String, dynamic>;
+
+            String phoneNumber = document["phoneNumber"];
+            String name = document["name"];
+            String email = document["email"];
+            int person = document["person"];
+            var bookingCancelDate = document["bookingCancelDate"];
+            String note = document["note"];
+            Timestamp checkIn = document["checkIn"];
+            Timestamp checkOut = document["checkOut"];
+            int numberOfRooms = document["numberOfRooms"];
+            int numberOfPeople = document["person"];
+            double price = document["totalPrice"];
+            bool bookingCancel = document["bookingCancel"];
+            String roomType = document["roomType"];
+
+            return Container(
+              color: Colors.grey[100],
+              height: size.height,
+              width: size.width,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // cancelled reservation
+                    bookingCancel == true
+                        ? cancelReservation(bookingCancelDate)
+                        : const SizedBox(height: 0),
+                    // guest details and contact them
+                    guestDetailContact(phoneNumber, name, email, person,
+                        numberOfRooms, bookingCancel),
+                    SizedBox(height: size.height / 30),
+                    // booking details
+                    buildBookingDetail(checkIn, checkOut, numberOfRooms,
+                        numberOfPeople, price, roomType),
+                    // note from the guest
+                    note != "" ? guestNote(name, note) : const SizedBox(),
+                  ],
+                ),
+              ),
+            );
+          }),
     );
   }
 
 // for booking cancel only
-  Widget cancelReservation(DocumentSnapshot data) {
-    DateTime bookingCancelDate = DateTime.parse(data["bookingCancelDate"]);
+  Widget cancelReservation(String bookingCancelDateString) {
+    DateTime bookingCancelDate = DateTime.parse(bookingCancelDateString);
     String bookingCancel = DateFormat.yMMMd().format(bookingCancelDate);
 
     return Container(
@@ -92,7 +124,8 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
     );
   }
 
-  Widget guestDetailContact(String phoneNumber) {
+  Widget guestDetailContact(String phoneNumber, String name, String email,
+      int person, int numberOfRooms, bool bookingCancel) {
     var size = MediaQuery.of(context).size;
     return Container(
       color: Colors.white,
@@ -102,7 +135,7 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.document["name"],
+            name,
             style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -114,15 +147,16 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
             children: [
               // guest-details
               InkWell(
-                onTap: () => guestDetailsWidget(widget.document),
-                child:
-                    buildContactAndGuestDetails("Guest details", Icons.person),
+                onTap: () => guestDetailsWidget(
+                    name, email, phoneNumber, person, numberOfRooms),
+                child: buildContactAndGuestDetails(
+                    "Guest details", Icons.person, bookingCancel),
               ),
               SizedBox(width: size.width / 10),
               // conact
               InkWell(
                 // disable if booking has been cancelled.
-                onTap: widget.document["bookingCancel"] == false
+                onTap: bookingCancel == false
                     ? () async {
                         try {
                           launch('tel://$phoneNumber');
@@ -131,7 +165,8 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
                         }
                       }
                     : null,
-                child: buildContactAndGuestDetails("Contact", Icons.phone),
+                child: buildContactAndGuestDetails(
+                    "Contact", Icons.phone, bookingCancel),
               ),
             ],
           )
@@ -141,7 +176,8 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
   }
 
   // the pop up from the bottom which contains guest info.
-  Future guestDetailsWidget(DocumentSnapshot data) async {
+  Future guestDetailsWidget(String name, String email, String phoneNumber,
+      int person, int numberOfRooms) async {
     var size = MediaQuery.of(context).size;
 
     await showModalBottomSheet(
@@ -163,7 +199,7 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
               Row(
                 children: [
                   Text(
-                    data["name"],
+                    name,
                     style: const TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
@@ -191,7 +227,7 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
                   ),
                   SizedBox(width: size.width / 40),
                   Text(
-                    data["email"],
+                    email,
                     style: const TextStyle(
                       fontSize: 22,
                       color: Colors.blue,
@@ -210,7 +246,7 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
                   ),
                   SizedBox(width: size.width / 40),
                   Text(
-                    data["phoneNumber"],
+                    phoneNumber,
                     style: const TextStyle(
                       fontSize: 22,
                       color: Colors.blue,
@@ -232,7 +268,7 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
               ),
               SizedBox(height: size.height / 60),
               Text(
-                data["person"].toString() + " person",
+                person.toString() + " person",
                 style: const TextStyle(fontSize: 21),
               ),
               // Total rooms
@@ -243,7 +279,7 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
               ),
               SizedBox(height: size.height / 60),
               Text(
-                data["numberOfRooms"].toString() + " room",
+                numberOfRooms.toString() + " room",
                 style: const TextStyle(fontSize: 21),
               ),
               // Preferred language
@@ -275,7 +311,8 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
     );
   }
 
-  Widget buildContactAndGuestDetails(String widgetName, IconData widgetIcon) {
+  Widget buildContactAndGuestDetails(
+      String widgetName, IconData widgetIcon, bool bookingCancel) {
     var size = MediaQuery.of(context).size;
     return Column(
       children: [
@@ -286,8 +323,7 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
               width: size.width / 6.5,
               height: size.height / 11,
               decoration: BoxDecoration(
-                color: widget.document["bookingCancel"] == true &&
-                        widgetName == "Contact"
+                color: bookingCancel == true && widgetName == "Contact"
                     ? Color.fromARGB(255, 212, 212, 212)
                     : Color.fromARGB(255, 207, 228, 242),
                 borderRadius: BorderRadius.circular(7),
@@ -297,8 +333,7 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
               alignment: Alignment.center,
               child: Icon(
                 widgetIcon,
-                color: widget.document["bookingCancel"] == true &&
-                        widgetName == "Contact"
+                color: bookingCancel == true && widgetName == "Contact"
                     ? Color.fromARGB(255, 119, 118, 118)
                     : const Color.fromARGB(255, 49, 89, 235),
                 size: 50,
@@ -311,8 +346,7 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
           widgetName,
           style: TextStyle(
             fontSize: 20,
-            color: widget.document["bookingCancel"] == true &&
-                    widgetName == "Contact"
+            color: bookingCancel == true && widgetName == "Contact"
                 ? const Color.fromARGB(255, 119, 118, 118)
                 : const Color.fromARGB(255, 49, 89, 235),
           ),
@@ -321,30 +355,22 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
     );
   }
 
-  Widget buildBookingDetail(DocumentSnapshot data) {
+  Widget buildBookingDetail(Timestamp checkIn, Timestamp checkOut,
+      int numberOfRooms, int numberOfPeople, double price, String roomType) {
     var size = MediaQuery.of(context).size;
 
     // get the checkIn date
-    Timestamp timestampCheckIn = data['checkIn'];
+    Timestamp timestampCheckIn = checkIn;
     DateTime dateTimeCheckIn = timestampCheckIn.toDate();
     String checkInDate = DateFormat.yMMMEd().format(dateTimeCheckIn);
 
     // get the checkOut date
-    Timestamp timestampCheckOut = data['checkOut'];
+    Timestamp timestampCheckOut = checkOut;
     DateTime dateTimeCheckOut = timestampCheckOut.toDate();
     String checkOutDate = DateFormat.yMMMEd().format(dateTimeCheckOut);
 
     // number of nights
     int nights = dateTimeCheckOut.difference(dateTimeCheckIn).inDays;
-
-    // numbers of rooms
-    int numberOfRooms = data["numberOfRooms"];
-
-    // number of people
-    int numberOfPeople = data["person"];
-
-    // total price
-    double price = data["totalPrice"];
 
     return Container(
       color: Colors.white,
@@ -426,7 +452,7 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      widget.document["roomType"],
+                      roomType,
                       style: const TextStyle(
                         fontSize: 21,
                       ),
@@ -485,7 +511,7 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
   }
 
 // show this only if the guest has some note.
-  Widget guestNote() {
+  Widget guestNote(String name, String note) {
     var size = MediaQuery.of(context).size;
     return Container(
       color: Colors.white,
@@ -496,7 +522,7 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Note from " + widget.document["name"].toString().toUpperCase(),
+            "Note from " + name.toUpperCase(),
             style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -504,7 +530,7 @@ class _DetailBookingPageState extends State<DetailBookingPage> {
           ),
           SizedBox(height: size.height / 80),
           Text(
-            widget.document["note"],
+            note,
             textScaleFactor: 1.1,
             style: const TextStyle(
               fontSize: 18,

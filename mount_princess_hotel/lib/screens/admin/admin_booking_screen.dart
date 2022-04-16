@@ -510,6 +510,14 @@ class MySearchDelegate extends SearchDelegate {
       }
     }
 
+    if (query != "") {
+      // upload the new search query to the database.
+      FirebaseFirestore.instance
+          .collection("BookingSearchHistory")
+          .doc(query)
+          .set({"search": query});
+    }
+
     return query != ""
         ? Padding(
             padding: const EdgeInsets.only(top: 10.0),
@@ -523,5 +531,78 @@ class MySearchDelegate extends SearchDelegate {
 
   // no suggestions
   @override
-  Widget buildSuggestions(BuildContext context) => Container();
+  Widget buildSuggestions(BuildContext context) {
+    var _bookingSearchHistoryDocs =
+        FirebaseFirestore.instance.collection("BookingSearchHistory");
+
+    return StreamBuilder(
+      stream: _bookingSearchHistoryDocs.snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Container();
+        }
+
+        List<QueryDocumentSnapshot> docs =
+            (snapshot.data! as QuerySnapshot).docs;
+
+        List searchList = [];
+
+        docs.forEach((item) {
+          searchList.add(item["search"]);
+        });
+
+        return ListView.builder(
+            itemCount: searchList.length,
+            itemBuilder: (context, index) {
+              return InkWell(
+                onTap: () {
+                  query = searchList[index];
+
+                  buildResults(context);
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 12,
+                  padding: const EdgeInsets.only(right: 20, left: 10),
+                  margin: const EdgeInsets.only(top: 5),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    border: Border(bottom: BorderSide(color: Colors.grey)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.history,
+                        color: Colors.grey,
+                        size: 30,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Text(
+                          searchList[index],
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                      ),
+                      const Spacer(),
+                      // delete the seach history
+                      InkWell(
+                        onTap: () async {
+                          await FirebaseFirestore.instance
+                              .collection("BookingSearchHistory")
+                              .doc(searchList[index])
+                              .delete();
+                        },
+                        child: const Icon(
+                          Icons.close,
+                          size: 30,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            });
+      },
+    );
+  }
 }

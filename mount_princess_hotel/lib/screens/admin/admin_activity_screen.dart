@@ -146,47 +146,130 @@ class MySearchDelegate extends SearchDelegate {
       String weekStringDates = DateFormat.yMMMMEEEEd().format(dateInYMD);
       String weekDatesStringEasy = DateFormat('MM-dd-yyyy').format(dateInYMD);
 
+      if (query != "") {
+        // upload the new search query to the database.
+        FirebaseFirestore.instance
+            .collection("ActivitySearchHistory")
+            .doc(query)
+            .set({"search": query});
+      }
+
       return Padding(
         padding: const EdgeInsets.only(top: 10.0),
         child: buildBookingActivityWidget(context, [weekStringDates],
             allresults, [weekDatesStringEasy], bookingStatusDoc),
       );
     } catch (err) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.cancel_outlined,
-              size: MediaQuery.of(context).size.height / 6,
-              color: Colors.grey[600],
-            ),
-            SizedBox(height: MediaQuery.of(context).size.width / 23),
-            RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                  style: TextStyle(
+      return query != ""
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.cancel_outlined,
+                    size: MediaQuery.of(context).size.height / 6,
                     color: Colors.grey[600],
-                    fontSize: 25,
                   ),
-                  children: const <TextSpan>[
-                    TextSpan(
-                      text: "Invalid Date Format!!!.\n\n",
-                      style: TextStyle(
-                        fontSize: 30,
-                      ),
-                    ),
-                    TextSpan(text: 'Date Format: year-month-day\n\n'),
-                    TextSpan(text: 'i.e. 2022-04-06\n\n')
-                  ]),
-            ),
-          ],
-        ),
-      );
+                  SizedBox(height: MediaQuery.of(context).size.width / 23),
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 25,
+                        ),
+                        children: const <TextSpan>[
+                          TextSpan(
+                            text: "Invalid Date Format!!!.\n\n",
+                            style: TextStyle(
+                              fontSize: 30,
+                            ),
+                          ),
+                          TextSpan(text: 'Date Format: year-month-day\n\n'),
+                          TextSpan(text: 'i.e. 2022-04-06\n\n')
+                        ]),
+                  ),
+                ],
+              ),
+            )
+          : const SizedBox(height: 0);
     }
   }
 
   // suggestions
+  // suggestions from the firebase
   @override
-  Widget buildSuggestions(BuildContext context) => Container();
+  Widget buildSuggestions(BuildContext context) {
+    var _activitySearchHistoryDocs =
+        FirebaseFirestore.instance.collection("ActivitySearchHistory");
+
+    return StreamBuilder(
+      stream: _activitySearchHistoryDocs.snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Container();
+        }
+
+        List<QueryDocumentSnapshot> docs =
+            (snapshot.data! as QuerySnapshot).docs;
+
+        List searchList = [];
+
+        docs.forEach((item) {
+          searchList.add(item["search"]);
+        });
+
+        return ListView.builder(
+            itemCount: searchList.length,
+            itemBuilder: (context, index) {
+              return InkWell(
+                onTap: () {
+                  query = searchList[index];
+
+                  buildResults(context);
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 12,
+                  padding: const EdgeInsets.only(right: 20, left: 10),
+                  margin: const EdgeInsets.only(top: 5),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    border: Border(bottom: BorderSide(color: Colors.grey)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.history,
+                        color: Colors.grey,
+                        size: 30,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Text(
+                          searchList[index],
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                      ),
+                      const Spacer(),
+                      InkWell(
+                        onTap: () async {
+                          await FirebaseFirestore.instance
+                              .collection("ActivitySearchHistory")
+                              .doc(searchList[index])
+                              .delete();
+                        },
+                        child: const Icon(
+                          Icons.close,
+                          size: 30,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            });
+      },
+    );
+  }
 }

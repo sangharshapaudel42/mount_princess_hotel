@@ -49,7 +49,7 @@ Widget buildBookingInfoCard(BuildContext context, DocumentSnapshot document) {
           context,
           MaterialPageRoute(
               builder: (context) => DetailBookingPage(
-                    document: document,
+                    documentId: document.id,
                   )),
         );
       },
