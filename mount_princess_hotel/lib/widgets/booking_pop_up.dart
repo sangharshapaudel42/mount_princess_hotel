@@ -4,9 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mount_princess_hotel/resources/booking_method.dart';
+import 'package:mount_princess_hotel/resources/send_email.dart';
 import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
 import 'package:mount_princess_hotel/utils/utils.dart';
 import 'package:mount_princess_hotel/widgets/text_field_input.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
 
 class BuildPopDialog extends StatefulWidget {
   final DateTime checkInDate;
@@ -47,6 +49,8 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
   int standardRooms = 1;
   int deluxeRooms = 1;
 
+  late TwilioFlutter twilioFlutter;
+
   // query of booking status
   final _bookingStatusQuery = FirebaseFirestore.instance
       .collection('BookingStatus')
@@ -54,6 +58,11 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
 
   @override
   void initState() {
+    twilioFlutter = TwilioFlutter(
+      accountSid: "ACd93747d0d38729e77ebbf0538c6c0a06",
+      authToken: "ed86ae256314451f8d9bcc9d8a5cc44f",
+      twilioNumber: "+19793169548",
+    );
     super.initState();
     _nameController.text = widget.name;
     _emailController.text = widget.email;
@@ -72,9 +81,10 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
   // calculate total price
   double calculateTotalPrice() {
     double totalPrice = 0.0;
+    int noOfDays;
 
     // difference between checkInDate and checkOutDate
-    // difference = widget.checOutDate.difference(widget.checInDate).inDays
+    noOfDays = widget.checkOutDate.difference(widget.checkInDate).inDays;
 
     // if noOfRooms text field is choose then only the actual totalPrice is shown.
     // till the text field is empty the totalPrice will be 0.0.
@@ -88,7 +98,8 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
             (widget.roomPrice - 5) + (5 * widget.noOfPerson.toDouble());
       }
       // totalPrice (roomType and noOfPerson) * noOfRooms
-      totalPrice = totalPrice * int.parse(_noRoomsController.text);
+      totalPrice =
+          (noOfDays + 1) * totalPrice * int.parse(_noRoomsController.text);
     }
     return totalPrice;
   }
@@ -103,10 +114,15 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
     });
 
     // first convert the dateTime to string
-    // String checkInDateToString =
-    //     DateFormat('MM-dd-yyyy').format(widget.checkInDate);
-    // String checkOutDateToString =
-    //     DateFormat('MM-dd-yyyy').format(widget.checkOutDate);
+    String checkInDateToString =
+        DateFormat('MM-dd-yyyy').format(widget.checkInDate);
+    String checkOutDateToString =
+        DateFormat('MM-dd-yyyy').format(widget.checkOutDate);
+
+    String bookingDateToString =
+        DateFormat('MM-dd-yyyy').format(DateTime.now());
+
+    String checkInDate = DateFormat.yMMMEd().format(widget.checkInDate);
 
     if (_nameController.text.isNotEmpty &&
         _emailController.text.isNotEmpty &&
@@ -193,6 +209,10 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
         }
       }
 
+      // current user uid
+      final user = FirebaseAuth.instance.currentUser!;
+      final userID = user.uid;
+
       // upload the booking info only after checking above conditions
       if (updateStatus == "done") {
         // passing the datas to the booking_methods
@@ -200,6 +220,7 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
           checkIn: widget.checkInDate,
           checkOut: widget.checkOutDate,
           bookingDate: DateTime.now(),
+          bookingDateString: bookingDateToString,
           roomType: widget.roomType,
           person: widget.noOfPerson,
           name: _nameController.text,
@@ -207,9 +228,40 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
           phoneNumber: _phoneNumberController.text,
           numberOfRooms: int.parse(_noRoomsController.text),
           totalPrice: calculateTotalPrice(),
+          bookingCancel: false,
+          uid: userID,
+          checkInString: checkInDateToString,
+          checkOutString: checkOutDateToString,
+          bookingCancelDate: "",
+          note: "",
         );
-        res = "success";
       }
+
+      // send sms after the booking info has been saved to the database.
+      if (res == "success") {
+        twilioFlutter.sendSMS(
+          // hotel owner phone number.
+          toNumber: "+9779861963866",
+          messageBody:
+              "NEW BOOKING \n${_noRoomsController.text}x ${widget.roomType}. Arrival on " +
+                  DateFormat.yMMMEd().format(widget.checkInDate) +
+                  " by ${_nameController.text.toUpperCase()} \n+977-${widget.phoneNumber}",
+        );
+
+        sendEmail(
+          context: context,
+          name: "",
+          phoneNumber: "",
+          email: "",
+          subject:
+              "New Booking for $checkInDate for ${_noRoomsController.text} nights",
+          message:
+              "Booked by: ${_nameController.text.toUpperCase()} \nNumber Of Rooms: ${_noRoomsController.text}x \nRoom Type: ${widget.roomType}. Arrival on " +
+                  DateFormat.yMMMEd().format(widget.checkInDate) +
+                  " Phone number: +977-${widget.phoneNumber}",
+        );
+      }
+
       // else {
       //   res = "unsuccessful";
       // }

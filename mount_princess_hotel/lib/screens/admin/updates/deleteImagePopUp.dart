@@ -51,7 +51,7 @@ class _DeletePopUpDialogState extends State<DeletePopUpDialog> {
     return AlertDialog(
       backgroundColor: Colors.white,
       contentPadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-      content: Container(
+      content: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height / 1.9,
         child: Padding(

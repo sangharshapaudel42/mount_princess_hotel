@@ -30,8 +30,8 @@ class WelcomePage extends StatelessWidget {
                 children: [
                   Center(
                     child: Align(
-                      child: SvgPicture.asset(
-                        "assets/images/logo.svg",
+                      child: Image.asset(
+                        "assets/images/logo.jpg",
                         // color: Colors.white,
                         height: 100,
                         width: double.infinity,

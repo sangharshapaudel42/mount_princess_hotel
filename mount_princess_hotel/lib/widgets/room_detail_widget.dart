@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
 import 'package:mount_princess_hotel/widgets/rooms_gallery_widget.dart';
@@ -23,6 +24,29 @@ class RoomDetailWidget extends StatefulWidget {
 }
 
 class _RoomDetailWidgetState extends State<RoomDetailWidget> {
+  late Future roomGalleryInfos;
+  List roomGalleryImages = [];
+
+  String mainImage = "";
+
+  @override
+  void initState() {
+    super.initState();
+    roomGalleryInfos = getRoomsGalleryDocs();
+  }
+
+  // getting gallery images of that room.
+  Future getRoomsGalleryDocs() async {
+    var data = await FirebaseFirestore.instance
+        .collection("Rooms")
+        .doc(widget.roomReferenceId)
+        .collection("images")
+        .get();
+    setState(() {
+      roomGalleryImages = data.docs;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +58,8 @@ class _RoomDetailWidgetState extends State<RoomDetailWidget> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 2.3,
               child: CachedNetworkImage(
-                imageUrl: widget.image.toString(),
+                // changing the mainImage to galleryImage after click.
+                imageUrl: mainImage == "" ? widget.image : mainImage,
                 fit: BoxFit.cover,
               ),
             ),
@@ -102,8 +127,40 @@ class _RoomDetailWidgetState extends State<RoomDetailWidget> {
 
                         const SizedBox(height: 20.0),
                         // Room Gallery Images
-                        RoomsGalleryImage(
-                            roomReferenceId: widget.roomReferenceId),
+                        // RoomsGalleryImage(
+                        //     roomReferenceId: widget.roomReferenceId),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.width / 3.5,
+                          width: MediaQuery.of(context).size.width,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: roomGalleryImages.length,
+                            itemBuilder: (context, index) {
+                              return InkWell(
+                                onTap: () => setState(() {
+                                  mainImage = roomGalleryImages[index]["image"];
+                                }),
+                                child: Container(
+                                  margin: const EdgeInsets.only(right: 10),
+                                  width:
+                                      MediaQuery.of(context).size.width / 3.5,
+                                  height:
+                                      MediaQuery.of(context).size.width / 3.5,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(5),
+                                    child: CachedNetworkImage(
+                                      imageUrl: roomGalleryImages[index]
+                                          ["image"],
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
 
                         // Description
                         const SizedBox(height: 20.0),

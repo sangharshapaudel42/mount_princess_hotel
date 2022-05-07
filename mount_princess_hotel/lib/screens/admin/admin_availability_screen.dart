@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mount_princess_hotel/utils/utils.dart';
 import 'package:mount_princess_hotel/widgets/admin_navigation_drawer_widget.dart';
+import 'package:mount_princess_hotel/widgets/refresh_widget.dart';
+import 'package:telephony/telephony.dart';
 
 import '../../utils/colors.dart';
 
@@ -13,6 +15,7 @@ class AvailabilityPage extends StatefulWidget {
 }
 
 class _AvailabilityPageState extends State<AvailabilityPage> {
+  final Telephony telephony = Telephony.instance;
   late Future bookingStatusLoaded;
   bool isSwitchedStandard = true;
   bool isSwitchedDeluxe = true;
@@ -38,7 +41,9 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
   }
 
   // get booking status
-  getBookingStatusStreamSnapshots() async {
+  Future getBookingStatusStreamSnapshots() async {
+    // await Future.delayed(const Duration(microseconds: 10000));
+
     try {
       var data = await _bookingStatusQuery.get();
 
@@ -109,21 +114,30 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
                 _deluxeRoomTotalRooms != null &&
                 _standardRoomStatus!.isNotEmpty &&
                 _deluxeRoomStatus!.isNotEmpty
-            ? Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                color: Colors.grey[100],
-                // all fields
-                child: SingleChildScrollView(
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 10, left: 10, top: 30),
-                    padding: const EdgeInsets.only(right: 15, left: 15),
-                    color: Colors.white,
-                    child: Column(
-                      children: [
-                        availabilityWidget("Standard Room"),
-                        availabilityWidget("Deluxe Room"),
-                      ],
+            ? RefreshWidget(
+                onRefresh: getBookingStatusStreamSnapshots,
+                child: ListView.builder(
+                  itemCount: 1,
+                  physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics()),
+                  itemBuilder: (context, i) => Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    color: Colors.grey[100],
+                    // all fields
+                    child: SingleChildScrollView(
+                      child: Container(
+                        margin:
+                            const EdgeInsets.only(right: 10, left: 10, top: 30),
+                        padding: const EdgeInsets.only(right: 15, left: 15),
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            availabilityWidget("Standard Room"),
+                            availabilityWidget("Deluxe Room"),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),

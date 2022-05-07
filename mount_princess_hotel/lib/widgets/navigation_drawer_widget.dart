@@ -9,7 +9,7 @@ import 'package:mount_princess_hotel/screens/customer/rooms_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/gallery_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/packages_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/menus_screen.dart';
-import 'package:mount_princess_hotel/screens/customer/booking_status_screen.dart';
+import 'package:mount_princess_hotel/screens/customer/booking_history_screen.dart';
 import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
 import 'package:mount_princess_hotel/screens/welcome_screen.dart';
 
@@ -42,13 +42,13 @@ class NavigationDrawerWidget extends StatelessWidget {
             const SizedBox(height: 10),
             buildMenuItem(
               text: 'Rooms',
-              icon: Icons.room_service,
+              icon: Icons.meeting_room,
               onClicked: () => selectedItem(context, 2),
             ),
             const SizedBox(height: 10),
             buildMenuItem(
               text: 'Menus',
-              icon: Icons.menu,
+              icon: Icons.menu_book_outlined,
               onClicked: () => selectedItem(context, 3),
             ),
             const SizedBox(height: 10),

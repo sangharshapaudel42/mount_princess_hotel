@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +11,7 @@ import 'package:mount_princess_hotel/screens/login_screen.dart';
 import 'package:mount_princess_hotel/widgets/text_field_input.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
 import 'package:mount_princess_hotel/utils/utils.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
 
 class CustomerSignUp extends StatefulWidget {
   const CustomerSignUp({Key? key}) : super(key: key);
@@ -25,6 +28,22 @@ class _CustomerSignUpState extends State<CustomerSignUp> {
   bool _isLoading = false;
   // Initially password is obscure
   bool _isObscure = true;
+
+  // initilize
+  late TwilioFlutter twilioFlutter;
+
+  // g-digit random number
+  int code = Random().nextInt(900000) + 100000;
+
+  @override
+  void initState() {
+    twilioFlutter = TwilioFlutter(
+      accountSid: "ACd93747d0d38729e77ebbf0538c6c0a06",
+      authToken: "ed86ae256314451f8d9bcc9d8a5cc44f",
+      twilioNumber: "+19793169548",
+    );
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -95,8 +114,8 @@ class _CustomerSignUpState extends State<CustomerSignUp> {
                     flex: 2,
                   ),
                   // logo
-                  SvgPicture.asset(
-                    "assets/images/logo.svg",
+                  Image.asset(
+                    "assets/images/logo.jpg",
                     // color: Colors.white,
                     height: 80,
                     width: double.infinity,
@@ -177,13 +196,19 @@ class _CustomerSignUpState extends State<CustomerSignUp> {
 
                   // login button
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
+                      twilioFlutter.sendSMS(
+                        toNumber: "+977${_phoneNumberController.text}",
+                        messageBody: code.toString() +
+                            " is your verification code for the Hotel app.",
+                      );
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (context) => OTPScreen(
                                 name: _nameController.text,
                                 email: _emailController.text,
                                 password: _passwordController.text,
                                 phone: _phoneNumberController.text,
+                                verificationCode: code.toString(),
                               )));
                     },
                     child: Container(

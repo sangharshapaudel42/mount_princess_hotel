@@ -1,11 +1,11 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mount_princess_hotel/screens/admin/upcoming_booking.dart';
 import 'package:mount_princess_hotel/screens/admin/widgets/arrival_departure_button_widget.dart';
 import 'package:mount_princess_hotel/screens/admin/widgets/booking_indiviusal_card.dart';
+import 'package:mount_princess_hotel/widgets/refresh_widget.dart';
 import 'package:mount_princess_hotel/widgets/text_field_input.dart';
 
 import '../../utils/colors.dart';
@@ -23,8 +23,10 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
   List _allResults = [];
   List _resultsList = [];
   List _departureList = [];
+  List _stayOverList = [];
   String _chooseDate = "";
   bool _departureInfo = false;
+  bool _stayOverInfo = false;
 
   // this list is used to see all the arrivals on that day
   List numberOfArrivals = [];
@@ -32,8 +34,12 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
   // this list is used to see all the Departures on that day
   List numberOfDepartures = [];
 
+  // this list is used to see all the Stay Over on that day
+  List numberOfStayOver = [];
+
   int totalNumberOfArrivals = 0;
   int totalNumberOfDepartures = 0;
+  int totalNumberOfStayOver = 0;
 
   @override
   void initState() {
@@ -50,6 +56,9 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
   // number of arivals and departures on current or choosen dates
   numberOfArivalsDepartures() {
     for (var bookingInfoSnapshot in _allResults) {
+      var stayOverDateList = [];
+      String? date;
+
       // get the checkIn date
       Timestamp timestampCheckIn = bookingInfoSnapshot['checkIn'];
       DateTime dateTimeCheckIn = timestampCheckIn.toDate();
@@ -62,50 +71,56 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
       String checkOutDate =
           DateFormat('MM-dd-yyyy').format(dateTimeCheckOut).toString();
 
+      // get the dates between check-in and check-ou
+      for (int i = 1;
+          i < dateTimeCheckOut.difference(dateTimeCheckIn).inDays;
+          i++) {
+        // first convert it to string('mm-dd-yyyy') then store in list.
+        stayOverDateList.add(DateFormat('MM-dd-yyyy')
+            .format(dateTimeCheckIn.add(Duration(days: i))));
+      }
+
+      // change the value of 'date' according to the conditions.
       // for a today's day
       if (_chooseDate == "") {
         String _todayDate = DateFormat('MM-dd-yyyy').format(DateTime.now());
 
-        // if either arrivals or departuers are present on today's day.
-        if (checkInDate.contains(_todayDate) ||
-            checkOutDate.contains(_todayDate)) {
-          // for today's arrivals
-          if (checkInDate.contains(_todayDate)) {
-            // add arrivals to numberOfArrivals list
-            numberOfArrivals.add(bookingInfoSnapshot);
-            setState(() {
-              // change the count to the list size
-              totalNumberOfArrivals = numberOfArrivals.length;
-            });
-
-            // for today's departures
-          } else if (checkOutDate.contains(_todayDate)) {
-            // add departures to numberOfDepartures list
-            numberOfDepartures.add(bookingInfoSnapshot);
-            setState(() {
-              // change the count to the list size
-              totalNumberOfDepartures = numberOfDepartures.length;
-            });
-          }
-        }
+        // if date is not choosen then 'date' is today's date.
+        date = _todayDate;
 
         // for choosen day
       } else {
-        // if choosen day has either arrivals or departues
-        if (checkInDate.contains(_chooseDate) ||
-            checkOutDate.contains(_chooseDate)) {
-          // if choosen day has any arrivals
-          if (checkInDate.contains(_chooseDate)) {
-            numberOfArrivals.add(bookingInfoSnapshot);
-            setState(() {
-              totalNumberOfArrivals = numberOfArrivals.toSet().length;
-            });
-          } else if (checkOutDate.contains(_chooseDate)) {
-            numberOfDepartures.add(bookingInfoSnapshot);
-            setState(() {
-              totalNumberOfDepartures = numberOfDepartures.toSet().length;
-            });
-          }
+        date = _chooseDate;
+      }
+
+      // null check for date
+      if (date != null) {
+        // for today's arrivals
+        if (checkInDate.contains(date)) {
+          // add arrivals to numberOfArrivals list
+          numberOfArrivals.add(bookingInfoSnapshot);
+          setState(() {
+            // change the count to the list size
+            totalNumberOfArrivals = numberOfArrivals.length;
+          });
+        }
+        // for today's departures
+        if (checkOutDate.contains(date)) {
+          // add departures to numberOfDepartures list
+          numberOfDepartures.add(bookingInfoSnapshot);
+          setState(() {
+            // change the count to the list size
+            totalNumberOfDepartures = numberOfDepartures.length;
+          });
+        }
+        // for today's stay overs
+        if (stayOverDateList.contains(date)) {
+          // add stay over to numberOfStayOver list
+          numberOfStayOver.add(bookingInfoSnapshot);
+          setState(() {
+            // change the count to the list size
+            totalNumberOfStayOver = numberOfStayOver.length;
+          });
         }
       }
     }
@@ -117,6 +132,8 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
     var showResults = [];
 
     for (var bookingInfoSnapshot in _allResults) {
+      var stayOverDateList = [];
+
       // check in date
       Timestamp timestampCheckIn = bookingInfoSnapshot['checkIn'];
       DateTime dateTimeCheckIn = timestampCheckIn.toDate();
@@ -132,52 +149,83 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
       // today's date
       String _todayDate = DateFormat('MM-dd-yyyy').format(DateTime.now());
 
-      // if date is choose
-      // display the today's arrival info
-      if (_chooseDate == "" && _departureInfo == false) {
-        if (checkInDate.contains(_todayDate)) {
-          showResults.add(bookingInfoSnapshot);
+      // get the dates between check-in and check-ou
+      for (int i = 1;
+          i < dateTimeCheckOut.difference(dateTimeCheckIn).inDays;
+          i++) {
+        // first convert it to string('mm-dd-yyyy') then store in list.
+        stayOverDateList.add(DateFormat('MM-dd-yyyy')
+            .format(dateTimeCheckIn.add(Duration(days: i))));
+      }
+
+      // in initial state. i.e. no date has been choosen.
+      if (_chooseDate == "") {
+        // for check-in
+        if (_departureInfo == false && _stayOverInfo == false) {
+          // checking if checkIn date for that booking info is eqaul to today's date
+          if (checkInDate.contains(_todayDate)) {
+            showResults.add(bookingInfoSnapshot);
+          }
+
+          // for check-out
+        } else if (_departureInfo == true && _stayOverInfo == false) {
+          if (checkOutDate.contains(_todayDate)) {
+            showResults.add(bookingInfoSnapshot);
+          }
+
+          // for stay-over
+        } else if (_departureInfo == false && _stayOverInfo == true) {
+          if (stayOverDateList.contains(_todayDate)) {
+            showResults.add(bookingInfoSnapshot);
+          }
         }
-        // arrival's info according to user's choice date.
-      } else if (_chooseDate != "" && _departureInfo == false) {
-        if (checkInDate.contains(_chooseDate)) {
-          showResults.add(bookingInfoSnapshot);
+        // if date is choosen.
+      } else if (_chooseDate != "") {
+        // for check-in
+        if (_departureInfo == false && _stayOverInfo == false) {
+          // checking if checkIn date for that booking info is eqaul to today's date
+          if (checkInDate.contains(_chooseDate)) {
+            showResults.add(bookingInfoSnapshot);
+          }
+
+          // for check-out
+        } else if (_departureInfo == true && _stayOverInfo == false) {
+          if (checkOutDate.contains(_chooseDate)) {
+            showResults.add(bookingInfoSnapshot);
+          }
+          // for stay-over
+        } else if (_departureInfo == false && _stayOverInfo == true) {
+          if (stayOverDateList.contains(_chooseDate)) {
+            showResults.add(bookingInfoSnapshot);
+          }
         }
-        // display the today's departure's info
-      } else if (_departureInfo == true && _chooseDate == "") {
-        if (checkOutDate.contains(_todayDate)) {
-          showResults.add(bookingInfoSnapshot);
-        }
-        // departure's info according to user's choice date.
-      } else if (_departureInfo == true && _chooseDate != "") {
-        if (checkOutDate.contains(_chooseDate)) {
-          showResults.add(bookingInfoSnapshot);
-        }
-        // if nothing is choose then all the results will be displayed.
-      } else {
-        showResults = List.from(_allResults);
       }
     }
     setState(() {
       // arrivals info
-      if (_departureInfo == false) {
+      if (_departureInfo == false && _stayOverInfo == false) {
         _resultsList = showResults;
         // departures info
-      } else {
+      } else if (_departureInfo == true && _stayOverInfo == false) {
         _departureList = showResults;
+        // for stay-over
+      } else if (_departureInfo == false && _stayOverInfo == true) {
+        _stayOverList = showResults;
       }
     });
   }
 
   // get all the Booking info of all users.
-  getUsersPastTripsStreamSnapshots() async {
-    var data = await FirebaseFirestore.instance.collection('Booking').get();
+  Future getUsersPastTripsStreamSnapshots() async {
+    var data = await FirebaseFirestore.instance
+        .collection('Booking')
+        .where("bookingCancel", isEqualTo: false)
+        .get();
     setState(() {
       _allResults = data.docs;
     });
     numberOfArivalsDepartures();
     searchResultsList();
-    return "complete";
   }
 
   @override
@@ -187,7 +235,7 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
           backgroundColor: backgroundColor,
           title: const Text('Bookings'),
           centerTitle: true,
-          // search all the guests
+          // search the guests
           actions: [
             IconButton(
               icon: const Icon(Icons.search),
@@ -222,14 +270,17 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
                         // change to false because once we change the date first we
                         // want to see arrival date.
                         _departureInfo = false;
+                        _stayOverInfo = false;
 
                         // reseting all the values to null.
                         // So the previous day's result would not affect the current
                         // choosen day.
                         numberOfArrivals = [];
                         numberOfDepartures = [];
+                        numberOfStayOver = [];
                         totalNumberOfArrivals = 0;
                         totalNumberOfDepartures = 0;
+                        totalNumberOfStayOver = 0;
 
                         // calling numberOfArivalsDepartures() so that we could
                         // display number of arrivals and departues on that day.
@@ -242,23 +293,33 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
                     },
                   ),
                 ),
-                // when there is no arrivals and no departures
-                numberOfArrivals.isEmpty && numberOfDepartures.isEmpty
+                // when there is no arrivals and no departures and stay overs
+                numberOfArrivals.isEmpty &&
+                        numberOfDepartures.isEmpty &&
+                        numberOfStayOver.isEmpty
                     // if there is no booking in that day
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
                               height: MediaQuery.of(context).size.height / 8),
-                          Text(
-                            "No guests arriving or departing this day",
-                            style: TextStyle(
-                                fontSize: 18, color: Colors.grey[800]),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0, right: 8),
+                            child: Text(
+                              "No guests arriving or departing or staying over this day.",
+                              style: TextStyle(
+                                  fontSize: 18, color: Colors.grey[800]),
+                            ),
                           ),
                           const SizedBox(height: 20),
-                          const InkWell(
-                            onTap: null,
-                            child: Text(
+                          InkWell(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const UpcomingBooking(),
+                              ),
+                            ),
+                            child: const Text(
                               "VIEW UPCOMING BOOKINGS",
                               style: TextStyle(
                                   fontSize: 22,
@@ -287,70 +348,111 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
                                   top: 5, right: 5, left: 5),
                               child: Row(
                                 children: [
-                                  // arrival
+                                  // arrival header
                                   InkWell(
                                     onTap: () {
                                       setState(() {
                                         _departureInfo = false;
+                                        _stayOverInfo = false;
                                         searchResultsList();
                                       });
                                     },
                                     // widget
                                     child: arrivalsDepartures(context,
-                                        "Arrivals", totalNumberOfArrivals),
+                                        "Arrivals", numberOfArrivals.length),
                                   ),
 
                                   const Spacer(),
-                                  // departure
+                                  // departure header
                                   InkWell(
                                     onTap: () {
                                       setState(() {
                                         _departureInfo = true;
+                                        _stayOverInfo = false;
+                                        searchResultsList();
+                                      });
+                                    },
+                                    child: arrivalsDepartures(
+                                        context,
+                                        "Departures",
+                                        numberOfDepartures.length),
+                                  ),
+                                  const Spacer(),
+                                  // stay-over header
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _departureInfo = false;
+                                        _stayOverInfo = true;
                                         searchResultsList();
                                       });
                                     },
                                     child: arrivalsDepartures(context,
-                                        "Departures", totalNumberOfDepartures),
+                                        "Stay over", numberOfStayOver.length),
                                   ),
                                 ],
                               ),
                             ),
+                            // arrivals, departures & stay over records
                             Expanded(
-                              child: _departureInfo == false
-                                  // arrivals records
-                                  ? numberOfArrivals.isNotEmpty
-                                      // if presence of arrivals
+                              // stay over records
+                              child: (_departureInfo == false &&
+                                      _stayOverInfo == true)
+                                  ? numberOfStayOver.isNotEmpty
+                                      // if presence of stay-over
                                       ? ListView.builder(
-                                          itemCount: _resultsList.length,
-                                          itemBuilder: (BuildContext context,
-                                                  int index) =>
-                                              buildBookingInfoCard(
-                                                  context, _resultsList[index]))
-                                      // if no arrivals
+                                          itemCount: _stayOverList.length,
+                                          itemBuilder:
+                                              (BuildContext context, int index) =>
+                                                  buildBookingInfoCard(context,
+                                                      _stayOverList[index]))
+                                      // if no stay overs
                                       : const Padding(
                                           padding: EdgeInsets.only(top: 40.0),
                                           child: Text(
-                                            "No guests arriving this day",
+                                            "No guest staying over this day",
                                             style: TextStyle(fontSize: 20),
                                           ),
                                         )
+
                                   // departure records
-                                  : numberOfDepartures.isNotEmpty
-                                      // if presence of depatures
-                                      ? ListView.builder(
-                                          itemCount: _departureList.length,
-                                          itemBuilder: (BuildContext context,
-                                                  int index) =>
-                                              buildBookingInfoCard(context,
-                                                  _departureList[index]))
-                                      // if no depatures
-                                      : const Padding(
-                                          padding: EdgeInsets.only(top: 40.0),
-                                          child: Text(
-                                            "No guests departing this day",
-                                            style: TextStyle(fontSize: 20),
-                                          ),
-                                        ),
+                                  : (_departureInfo == true &&
+                                          _stayOverInfo == false)
+                                      ? numberOfDepartures.isNotEmpty
+                                          // if presence of depatures
+                                          ? ListView.builder(
+                                              itemCount: _departureList.length,
+                                              itemBuilder: (BuildContext context,
+                                                      int index) =>
+                                                  buildBookingInfoCard(context,
+                                                      _departureList[index]))
+                                          // if no depatures
+                                          : const Padding(
+                                              padding:
+                                                  EdgeInsets.only(top: 40.0),
+                                              child: Text(
+                                                "No guests departing this day",
+                                                style: TextStyle(fontSize: 20),
+                                              ),
+                                            )
+
+                                      // arrivals records
+                                      : numberOfArrivals.isNotEmpty
+                                          // if presence of arrivals
+                                          ? ListView.builder(
+                                              itemCount: _resultsList.length,
+                                              itemBuilder: (BuildContext context,
+                                                      int index) =>
+                                                  buildBookingInfoCard(context, _resultsList[index]))
+                                          // if no arrivals
+                                          : const Padding(
+                                              padding:
+                                                  EdgeInsets.only(top: 40.0),
+                                              child: Text(
+                                                "No guests arriving this day",
+                                                style: TextStyle(fontSize: 20),
+                                              ),
+                                            ),
                             )
                           ],
                         ),
@@ -364,6 +466,9 @@ class _AdminBookingPageState extends State<AdminBookingPage> {
 
 class MySearchDelegate extends SearchDelegate {
   List allresults;
+
+  @override
+  String get searchFieldLabel => 'Search Guest Name...';
 
   MySearchDelegate({required this.allresults});
 
@@ -405,6 +510,14 @@ class MySearchDelegate extends SearchDelegate {
       }
     }
 
+    if (query != "") {
+      // upload the new search query to the database.
+      FirebaseFirestore.instance
+          .collection("BookingSearchHistory")
+          .doc(query)
+          .set({"search": query});
+    }
+
     return query != ""
         ? Padding(
             padding: const EdgeInsets.only(top: 10.0),
@@ -418,5 +531,78 @@ class MySearchDelegate extends SearchDelegate {
 
   // no suggestions
   @override
-  Widget buildSuggestions(BuildContext context) => Container();
+  Widget buildSuggestions(BuildContext context) {
+    var _bookingSearchHistoryDocs =
+        FirebaseFirestore.instance.collection("BookingSearchHistory");
+
+    return StreamBuilder(
+      stream: _bookingSearchHistoryDocs.snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Container();
+        }
+
+        List<QueryDocumentSnapshot> docs =
+            (snapshot.data! as QuerySnapshot).docs;
+
+        List searchList = [];
+
+        docs.forEach((item) {
+          searchList.add(item["search"]);
+        });
+
+        return ListView.builder(
+            itemCount: searchList.length,
+            itemBuilder: (context, index) {
+              return InkWell(
+                onTap: () {
+                  query = searchList[index];
+
+                  buildResults(context);
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 12,
+                  padding: const EdgeInsets.only(right: 20, left: 10),
+                  margin: const EdgeInsets.only(top: 5),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    border: Border(bottom: BorderSide(color: Colors.grey)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.history,
+                        color: Colors.grey,
+                        size: 30,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Text(
+                          searchList[index],
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                      ),
+                      const Spacer(),
+                      // delete the seach history
+                      InkWell(
+                        onTap: () async {
+                          await FirebaseFirestore.instance
+                              .collection("BookingSearchHistory")
+                              .doc(searchList[index])
+                              .delete();
+                        },
+                        child: const Icon(
+                          Icons.close,
+                          size: 30,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            });
+      },
+    );
+  }
 }

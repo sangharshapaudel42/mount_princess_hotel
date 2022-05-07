@@ -13,6 +13,7 @@ class BookingMethods {
     required DateTime checkIn,
     required DateTime checkOut,
     required DateTime bookingDate,
+    required String bookingDateString,
     required String roomType,
     required int person,
     required String name,
@@ -20,6 +21,12 @@ class BookingMethods {
     required String phoneNumber,
     required int numberOfRooms,
     required double totalPrice,
+    required bool bookingCancel,
+    required String uid,
+    required String checkInString,
+    required String checkOutString,
+    required String bookingCancelDate,
+    required String note,
   }) async {
     String res = "Some error Occurred";
     try {
@@ -35,6 +42,7 @@ class BookingMethods {
         model.Booking _booking = model.Booking(
           checkIn: checkIn,
           bookingDate: bookingDate,
+          bookingDateString: bookingDateString,
           checkOut: checkOut,
           roomType: roomType,
           person: person,
@@ -43,6 +51,12 @@ class BookingMethods {
           phoneNumber: phoneNumber,
           numberOfRooms: numberOfRooms,
           totalPrice: totalPrice,
+          bookingCancel: bookingCancel,
+          uid: uid,
+          checkInString: checkInString,
+          checkOutString: checkOutString,
+          bookingCancelDate: bookingCancelDate,
+          note: note,
         );
 
         // adding booking in our database

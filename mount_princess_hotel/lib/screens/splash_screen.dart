@@ -22,8 +22,8 @@ class SplashPage extends StatelessWidget {
         child: Stack(
           children: [
             Align(
-              child: SvgPicture.asset(
-                "assets/images/logo.svg",
+              child: Image.asset(
+                "assets/images/logo.jpg",
                 // color: Colors.white,
                 height: 80,
                 width: double.infinity,

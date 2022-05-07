@@ -42,17 +42,20 @@ class _RoomsGalleryImageState extends State<RoomsGalleryImage> {
             scrollDirection: Axis.horizontal,
             itemCount: images.length,
             itemBuilder: (context, index) {
-              return Container(
-                margin: const EdgeInsets.only(right: 10),
-                width: MediaQuery.of(context).size.width / 3.5,
-                height: MediaQuery.of(context).size.width / 3.5,
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(5)),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: CachedNetworkImage(
-                    imageUrl: images[index],
-                    fit: BoxFit.fill,
+              return InkWell(
+                onTap: () {},
+                child: Container(
+                  margin: const EdgeInsets.only(right: 10),
+                  width: MediaQuery.of(context).size.width / 3.5,
+                  height: MediaQuery.of(context).size.width / 3.5,
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(5)),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: CachedNetworkImage(
+                      imageUrl: images[index],
+                      fit: BoxFit.fill,
+                    ),
                   ),
                 ),
               );
