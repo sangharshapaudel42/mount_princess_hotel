@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:pinch_zoom_image_updated/pinch_zoom_image_updated.dart';
+// import 'package:pinch_zoom_image_updated/pinch_zoom_image_updated.dart';
 
 class GalleryDetail extends StatelessWidget {
   final String galleryCategoryName;
@@ -33,7 +33,15 @@ class GalleryDetail extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.0),
             ),
             child: Center(
-              child: PinchZoomImage(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: CachedNetworkImage(
+                    imageUrl: imageUrls[index],
+                    fit: BoxFit.fill,
+                    maxHeightDiskCache:
+                        (MediaQuery.of(context).size.height / 2).round()),
+              ),
+              /*child: PinchZoomImage(
                 image: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: CachedNetworkImage(
@@ -50,7 +58,7 @@ class GalleryDetail extends StatelessWidget {
                 onZoomEnd: () {
                   print("zoom ended.");
                 },
-              ),
+              ),*/
             ),
           );
         },

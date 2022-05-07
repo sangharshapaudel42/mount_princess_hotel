@@ -13,6 +13,7 @@ class BookingMethods {
     required DateTime checkIn,
     required DateTime checkOut,
     required DateTime bookingDate,
+    required String bookingDateString,
     required String roomType,
     required int person,
     required String name,
@@ -41,6 +42,7 @@ class BookingMethods {
         model.Booking _booking = model.Booking(
           checkIn: checkIn,
           bookingDate: bookingDate,
+          bookingDateString: bookingDateString,
           checkOut: checkOut,
           roomType: roomType,
           person: person,

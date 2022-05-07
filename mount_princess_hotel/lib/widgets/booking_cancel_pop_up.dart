@@ -1,17 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mount_princess_hotel/resources/send_email.dart';
 import 'package:mount_princess_hotel/utils/utils.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
 
 class CancelBookingPopUpDialog extends StatefulWidget {
   final String bookingId;
   final String roomType;
   final int noOfRooms;
+  final String name;
+  final String checkIn;
+  final String phoneNumber;
   const CancelBookingPopUpDialog({
     Key? key,
     required this.bookingId,
     required this.roomType,
     required this.noOfRooms,
+    required this.name,
+    required this.checkIn,
+    required this.phoneNumber,
   }) : super(key: key);
 
   @override
@@ -24,6 +32,19 @@ class _CancelBookingPopUpDialogState extends State<CancelBookingPopUpDialog> {
   final _bookingStatusQuery = FirebaseFirestore.instance
       .collection('BookingStatus')
       .doc("booking_status");
+
+  late TwilioFlutter twilioFlutter;
+
+  @override
+  void initState() {
+    super.initState();
+
+    twilioFlutter = TwilioFlutter(
+      accountSid: "ACd93747d0d38729e77ebbf0538c6c0a06",
+      authToken: "ed86ae256314451f8d9bcc9d8a5cc44f",
+      twilioNumber: "+19793169548",
+    );
+  }
 
   // changing "bookingCancel" to true in 'Booking'
   // changing "..BookedRooms" and "..TotalRooms" in 'BookingStatus'
@@ -142,6 +163,24 @@ class _CancelBookingPopUpDialogState extends State<CancelBookingPopUpDialog> {
                           Navigator.pop(context);
                           showSnackBar(context,
                               "You have succesfully canceled booking.");
+
+                          twilioFlutter.sendSMS(
+                            // hotel owner phone number.
+                            toNumber: "+9779861963866",
+                            messageBody:
+                                "BOOKING CANCEL \n${widget.noOfRooms}x ${widget.roomType}. Arrival on ${widget.checkIn} by ${widget.name.toUpperCase()} \n${widget.phoneNumber} ",
+                          );
+
+                          sendEmail(
+                            context: context,
+                            name: "",
+                            phoneNumber: "",
+                            email: "",
+                            subject:
+                                "Booking Cancel for ${widget.checkIn} for ${widget.noOfRooms} nights",
+                            message:
+                                "Booked by: ${widget.name.toUpperCase()} \nNumber Of Rooms: ${widget.noOfRooms}x \nRoom Type: ${widget.roomType}. \nArrival on ${widget.checkIn} \nPhone Number: ${widget.phoneNumber}",
+                          );
                         }
                       },
                     ),

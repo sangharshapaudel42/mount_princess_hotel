@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mount_princess_hotel/resources/send_email.dart';
 import 'package:mount_princess_hotel/utils/utils.dart';
 import 'package:mount_princess_hotel/widgets/booking_cancel_pop_up.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:twilio_flutter/twilio_flutter.dart';
 
 // Activity New Booking widget
 Widget buildBookingCancelWidget(
@@ -18,6 +20,9 @@ Widget buildBookingCancelWidget(
   DateTime dateTimeCheckOut = timestampCheckOut.toDate();
   String checkOutDate = DateFormat.yMMMEd().format(dateTimeCheckOut);
 
+  // today date
+  DateTime todayDate = DateTime.now();
+
   // get the bookingDate date
   Timestamp timestampBookingDate = data['bookingDate'];
   DateTime dateTimeBookingDate = timestampBookingDate.toDate();
@@ -31,6 +36,10 @@ Widget buildBookingCancelWidget(
 
   // total price
   double price = data["totalPrice"];
+
+  String roomType = data["roomType"];
+
+  String name = data["name"];
 
   var size = MediaQuery.of(context).size;
 
@@ -123,6 +132,8 @@ Widget buildBookingCancelWidget(
                   ),
                   onPressed: () async {
                     final String? note = _noteController!.text;
+                    String res = "";
+
                     if (note != null) {
                       try {
                         // add/update note of the booking
@@ -130,13 +141,17 @@ Widget buildBookingCancelWidget(
                           "note": note,
                         });
 
-                        // Hide the bottom sheet
-                        Navigator.of(context).pop();
+                        res = "success";
 
                         _noteController = null;
                       } catch (err) {
                         print(err.toString());
                       }
+                    }
+
+                    if (res == "success") {
+                      // Hide the bottom sheet
+                      Navigator.of(context).pop();
                     }
                   },
                 ),
@@ -481,7 +496,8 @@ Widget buildBookingCancelWidget(
                           ? InkWell(
                               onTap: () => addNote(data),
                               child: Container(
-                                margin: const EdgeInsets.only(top: 10),
+                                margin:
+                                    const EdgeInsets.only(top: 10, right: 5),
                                 color: const Color.fromARGB(255, 11, 190, 11),
                                 // color: const Color.fromARGB(255, 12, 12, 231),
                                 padding: const EdgeInsets.all(8.0),
@@ -502,22 +518,29 @@ Widget buildBookingCancelWidget(
                             )
                           : const SizedBox(height: 0),
                       // booking cancel icon
-                      IconButton(
-                        icon: const Icon(Icons.free_cancellation_outlined),
-                        color: Colors.black,
-                        iconSize: 35,
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                CancelBookingPopUpDialog(
-                              bookingId: data.id,
-                              roomType: data["roomType"],
-                              noOfRooms: data["numberOfRooms"],
-                            ),
-                          );
-                        },
-                      ),
+                      // dont show cancel icon if checkOut has already gone.
+                      dateTimeCheckOut.difference(todayDate).inDays >= 0
+                          ? IconButton(
+                              icon:
+                                  const Icon(Icons.free_cancellation_outlined),
+                              color: Colors.black,
+                              iconSize: 35,
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      CancelBookingPopUpDialog(
+                                    bookingId: data.id,
+                                    roomType: data["roomType"],
+                                    noOfRooms: data["numberOfRooms"],
+                                    name: data["name"],
+                                    checkIn: checkInDate,
+                                    phoneNumber: data["phoneNumber"],
+                                  ),
+                                );
+                              },
+                            )
+                          : const SizedBox(height: 0)
                     ],
                   ),
                 ),

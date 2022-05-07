@@ -1,13 +1,22 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mount_princess_hotel/resources/auth_method.dart';
+import 'package:mount_princess_hotel/resources/forgot_password_page.dart';
+import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
+import 'package:mount_princess_hotel/screens/customer/customer_signup_screen.dart';
+import 'package:mount_princess_hotel/screens/customer/phoneVerificationScreen.dart';
 
 import 'package:mount_princess_hotel/widgets/text_field_input.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
 import 'package:mount_princess_hotel/utils/utils.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -25,6 +34,22 @@ class _LoginState extends State<Login> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // initilize twilio
+  late TwilioFlutter twilioFlutter;
+
+  // g-digit random number
+  int code = Random().nextInt(900000) + 100000;
+
+  @override
+  void initState() {
+    twilioFlutter = TwilioFlutter(
+      accountSid: "ACd93747d0d38729e77ebbf0538c6c0a06",
+      authToken: "ed86ae256314451f8d9bcc9d8a5cc44f",
+      twilioNumber: "+19793169548",
+    );
+    super.initState();
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -32,15 +57,89 @@ class _LoginState extends State<Login> {
     _passwordController.dispose();
   }
 
+  // called after click of login button
   void loginUser() async {
     setState(() {
       _isLoading = true;
     });
 
-    String res = await AuthMethods().loginUser(
+    String res = "Some error Occured.";
+
+    try {
+      // check if email and password are empty or not.
+      if (_emailController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty) {
+        // sign in if given user exists
+        final finalUser = await _auth.signInWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+
+        if (finalUser != null) {
+          final User user = _auth.currentUser!;
+          final userID = user.uid;
+          print(userID);
+
+          DocumentSnapshot doc = await FirebaseFirestore.instance
+              .collection('Users')
+              .doc(userID)
+              .get();
+          print(doc['role']);
+
+          // if role is admin then navigate it to the phone verification code
+          // and verify the user and if owner then only login else decline.
+          if (doc['role'] == "admin") {
+            twilioFlutter.sendSMS(
+              // toNumber: "+977${_phoneNumberController.text}",
+              toNumber: "+9779861963866",
+              messageBody: code.toString() +
+                  " is your verification code for the Hotel app.",
+            );
+
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => OTPScreen(
+                      name: "owner-account-ho",
+                      email: _emailController.text,
+                      password: _passwordController.text,
+                      phone: "+9779861963866",
+                      verificationCode: code.toString(),
+                    )));
+
+            // if the role is customer then navigate to BookingPage();
+          } else {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => const BookingPage(),
+            ));
+          }
+          res = "Success";
+        }
+      } else {
+        res = "Please enter all the fields";
+      }
+    }
+    // if wants to costumize the error given by the firebase
+    on FirebaseAuthException catch (e) {
+      if (e.code == "wrong-password") {
+        res = "Wrong password.";
+      } else if (e.code == "user-not-found") {
+        res = "User not found.";
+      } else if (e.code == "invalid-email") {
+        res = "Invalid Email.";
+      }
+    } catch (err) {
+      print(err.toString());
+    }
+
+    /*String res = await AuthMethods().loginUser(
         email: _emailController.text,
         password: _passwordController.text,
         context: context);
+
+    if (res == "Success") {
+      // customer/admin login successfull
+    } else {
+      showSnackBar(context, res);
+    }*/
 
     if (res == "Success") {
       // customer/admin login successfull
@@ -76,13 +175,14 @@ class _LoginState extends State<Login> {
                 flex: 2,
               ),
               // logo
-              SvgPicture.asset(
-                "assets/images/logo.svg",
+              // SvgPicture.asset(
+              Image.asset(
+                "assets/images/logo.jpg",
                 // color: Colors.white,
                 height: 80,
                 width: double.infinity,
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 25),
 
               // text field input for login
               Container(
@@ -100,7 +200,7 @@ class _LoginState extends State<Login> {
                         ),
 
                         const SizedBox(
-                          height: 24,
+                          height: 20,
                         ),
 
                         // text field input for password
@@ -134,7 +234,7 @@ class _LoginState extends State<Login> {
                         ),
 
                         const SizedBox(
-                          height: 24,
+                          height: 20,
                         ),
 
                         // login button
@@ -165,22 +265,65 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         const SizedBox(
-                          height: 12,
+                          height: 2,
                         ),
 
                         // Forgot password
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Container(
-                              child: Text(
-                                'Forgot Password?',
-                                style: GoogleFonts.roboto(
-                                    fontSize: 17, color: Colors.white),
+                              child: InkWell(
+                                onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ForgotPasswordpage(),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Forgot Password?',
+                                  style: GoogleFonts.roboto(
+                                    decoration: TextDecoration.underline,
+                                    fontSize: 17,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 8),
                             )
                           ],
+                        ),
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            children: <TextSpan>[
+                              const TextSpan(
+                                text: "No account?",
+                                style: TextStyle(
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              // after clicking to resend send code and verify.
+                              TextSpan(
+                                text: " Sign Up",
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.of(context)
+                                        .pushReplacement(MaterialPageRoute(
+                                      builder: (context) =>
+                                          const CustomerSignUp(),
+                                    ));
+                                  },
+                                style: const TextStyle(
+                                  fontSize: 19.0,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

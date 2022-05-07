@@ -42,13 +42,13 @@ class NavigationDrawerWidget extends StatelessWidget {
             const SizedBox(height: 10),
             buildMenuItem(
               text: 'Rooms',
-              icon: Icons.room_service,
+              icon: Icons.meeting_room,
               onClicked: () => selectedItem(context, 2),
             ),
             const SizedBox(height: 10),
             buildMenuItem(
               text: 'Menus',
-              icon: Icons.menu,
+              icon: Icons.menu_book_outlined,
               onClicked: () => selectedItem(context, 3),
             ),
             const SizedBox(height: 10),

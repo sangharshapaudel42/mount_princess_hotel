@@ -4,6 +4,7 @@ class Booking {
   final DateTime checkIn;
   final DateTime checkOut;
   final DateTime bookingDate;
+  final String bookingDateString;
   final String roomType;
   final int person;
   final String name;
@@ -22,6 +23,7 @@ class Booking {
     required this.checkIn,
     required this.checkOut,
     required this.bookingDate,
+    required this.bookingDateString,
     required this.roomType,
     required this.person,
     required this.name,
@@ -44,6 +46,7 @@ class Booking {
       checkIn: snapshot["checkIn"],
       checkOut: snapshot["checkOut"],
       bookingDate: snapshot["bookingDate"],
+      bookingDateString: snapshot["bookingDateString"],
       roomType: snapshot["roomType"],
       person: snapshot["person"],
       name: snapshot["name"],
@@ -64,6 +67,7 @@ class Booking {
       : checkIn = snapshot["checkIn"],
         checkOut = snapshot["checkOut"],
         bookingDate = snapshot["bookingDate"],
+        bookingDateString = snapshot["bookingDateString"],
         roomType = snapshot["roomType"],
         person = snapshot["person"],
         name = snapshot["name"],
@@ -82,6 +86,7 @@ class Booking {
         "checkIn": checkIn,
         "checkOut": checkOut,
         "bookingDate": bookingDate,
+        "bookingDateString": bookingDateString,
         "roomType": roomType,
         "person": person,
         "name": name,

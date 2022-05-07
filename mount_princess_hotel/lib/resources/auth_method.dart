@@ -6,12 +6,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mount_princess_hotel/screens/admin/admin_booking_screen.dart';
 import 'package:mount_princess_hotel/screens/admin/admin_home_page.dart';
 import 'package:mount_princess_hotel/screens/customer/booking_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
+
+import '../screens/customer/phoneVerificationScreen.dart';
 
 class AuthMethods {
   // creating the firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // creating the auth instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
   ///////////////// Sign Up user /////////////////
   Future<String> signUpUser({
@@ -96,14 +101,25 @@ class AuthMethods {
               .get();
           print(doc['role']);
 
+          // //get the token and store it by creating the collection
+          // String? tokenRef = await _fcm.getToken();
+
+          // final refToken = FirebaseFirestore.instance
+          //     .collection('Users')
+          //     .doc(userID)
+          //     .collection('tokens')
+          //     .doc(tokenRef);
+
+          // await refToken.set({"token": tokenRef});
+
           if (doc['role'] == "admin") {
             Navigator.of(context).pushReplacement(MaterialPageRoute(
               builder: (context) => const AdminBookingPage(),
             ));
           } else {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => const BookingPage(),
-            ));
+            // Navigator.of(context).pushReplacement(MaterialPageRoute(
+            //   builder: (context) => const BookingPage(),
+            // ));
           }
         }
       } else {
