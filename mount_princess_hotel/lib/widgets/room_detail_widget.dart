@@ -49,14 +49,15 @@ class _RoomDetailWidgetState extends State<RoomDetailWidget> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Stack(
           children: <Widget>[
             SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 2.3,
+              width: size.width,
+              height: size.height / 2.3,
               child: CachedNetworkImage(
                 // changing the mainImage to galleryImage after click.
                 imageUrl: mainImage == "" ? widget.image : mainImage,
@@ -65,14 +66,13 @@ class _RoomDetailWidgetState extends State<RoomDetailWidget> {
             ),
             Container(
               // this is responsiable for the curve effect
-              margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.36),
+              margin: EdgeInsets.only(top: size.height * 0.36),
               width: double.infinity,
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(50)),
               // inside curve part
               child: Padding(
-                padding: EdgeInsets.all(MediaQuery.of(context).size.width / 17),
+                padding: EdgeInsets.all(size.width / 17),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   // name, description part
@@ -80,8 +80,8 @@ class _RoomDetailWidgetState extends State<RoomDetailWidget> {
                     // red line
                     Align(
                       child: Container(
-                        width: MediaQuery.of(context).size.width / 2.8,
-                        height: MediaQuery.of(context).size.width / 60,
+                        width: size.width / 2.8,
+                        height: size.width / 60,
                         decoration: BoxDecoration(
                             color: Colors.red[50],
                             borderRadius: BorderRadius.circular(10)),
@@ -142,10 +142,8 @@ class _RoomDetailWidgetState extends State<RoomDetailWidget> {
                                 }),
                                 child: Container(
                                   margin: const EdgeInsets.only(right: 10),
-                                  width:
-                                      MediaQuery.of(context).size.width / 3.5,
-                                  height:
-                                      MediaQuery.of(context).size.width / 3.5,
+                                  width: size.width / 3.5,
+                                  height: size.width / 3.5,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5)),
                                   child: ClipRRect(
@@ -180,7 +178,7 @@ class _RoomDetailWidgetState extends State<RoomDetailWidget> {
                             fontSize: 16.0,
                           ),
                         ),
-                        const SizedBox(height: 10.0),
+                        SizedBox(height: size.height / 38),
                       ],
                     )
                   ],

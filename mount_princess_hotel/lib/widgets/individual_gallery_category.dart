@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,8 @@ class IndividualGalleryCategory extends StatefulWidget {
 class _IndividualGalleryCategoryState extends State<IndividualGalleryCategory> {
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
     // One category container
     return StreamBuilder(
         stream: FirebaseFirestore.instance
@@ -46,20 +49,21 @@ class _IndividualGalleryCategoryState extends State<IndividualGalleryCategory> {
               Row(
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 5.0),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: size.height / 75,
+                    ),
                     child: Text(
                       widget.galleryImageCategory,
                       // widget.galleryImageCategory,
                       style: const TextStyle(
                         // color: Colors.white,
-                        fontSize: 25.0,
+                        fontSize: 20.0,
                       ),
                     ),
                   ),
                   const Spacer(),
                   Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
+                    padding: EdgeInsets.only(right: size.height / 65),
                     child: InkWell(
                       onTap: () {
                         Navigator.push(
@@ -76,7 +80,7 @@ class _IndividualGalleryCategoryState extends State<IndividualGalleryCategory> {
                         "View all",
                         style: TextStyle(
                           color: Colors.blue,
-                          fontSize: 25.0,
+                          fontSize: 20.0,
                         ),
                       ),
                     ),
@@ -87,7 +91,7 @@ class _IndividualGalleryCategoryState extends State<IndividualGalleryCategory> {
                 child: CarouselSlider.builder(
                     itemCount: images.length,
                     options: CarouselOptions(
-                      height: MediaQuery.of(context).size.height / 2.5,
+                      height: MediaQuery.of(context).size.height / 3,
                       viewportFraction: 1,
                       enableInfiniteScroll: false,
                     ),
@@ -98,49 +102,54 @@ class _IndividualGalleryCategoryState extends State<IndividualGalleryCategory> {
                       return buildImage(urlImage, newIndex, images.length);
                     }),
               ),
-              const SizedBox(height: 5),
+              SizedBox(height: MediaQuery.of(context).size.height / 160),
               const Divider(color: Colors.black, thickness: 1),
-              const SizedBox(height: 5),
+              SizedBox(height: MediaQuery.of(context).size.height / 160),
             ],
           );
         });
   }
 
-  Widget buildImage(String urlImage, int newIndex, int totalImage) => Container(
-        margin: const EdgeInsets.symmetric(horizontal: 3),
-        color: Colors.transparent,
-        child: Stack(
-          children: <Widget>[
-            Center(
-              child: Image.network(
-                urlImage,
-                fit: BoxFit.cover,
-              ),
+  Widget buildImage(String urlImage, int newIndex, int totalImage) {
+    var size = MediaQuery.of(context).size;
+
+    return Container(
+      // margin: const EdgeInsets.symmetric(horizontal: 5),
+      color: Colors.transparent,
+      child: Stack(
+        children: <Widget>[
+          Center(
+            child: CachedNetworkImage(
+              imageUrl: urlImage,
+              fit: BoxFit.cover,
             ),
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 10, right: 15),
-                child: Container(
-                  height: 40,
-                  width: 60,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.grey[900],
-                  ),
-                  child: Center(
-                    child: Text(
-                      '$newIndex/$totalImage',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
+          ),
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: EdgeInsets.only(
+                  top: size.height / 40, right: size.height / 45),
+              child: Container(
+                height: size.height / 30,
+                width: size.height / 20,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.grey[900],
+                ),
+                child: Center(
+                  child: Text(
+                    '$newIndex/$totalImage',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
                     ),
                   ),
                 ),
               ),
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -16,8 +16,6 @@ class RoomDetailPage extends StatefulWidget {
 }
 
 class _RoomDetailPageState extends State<RoomDetailPage> {
-  final String image = "assets/images/single_room.jfif";
-
   StreamBuilder createCard() {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance

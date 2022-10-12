@@ -89,12 +89,12 @@ class _LoginState extends State<Login> {
           // if role is admin then navigate it to the phone verification code
           // and verify the user and if owner then only login else decline.
           if (doc['role'] == "admin") {
-            twilioFlutter.sendSMS(
-              // toNumber: "+977${_phoneNumberController.text}",
-              toNumber: "+9779861963866",
-              messageBody: code.toString() +
-                  " is your verification code for the Hotel app.",
-            );
+            // twilioFlutter.sendSMS(
+            //   // toNumber: "+977${_phoneNumberController.text}",
+            //   toNumber: "+9779861963866",
+            //   messageBody: code.toString() +
+            //       " is your verification code for the Hotel app.",
+            // );
 
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => OTPScreen(
@@ -158,183 +158,187 @@ class _LoginState extends State<Login> {
       borderSide: Divider.createBorderSide(context),
     );
 
+    var size = MediaQuery.of(context).size;
+
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: Container(
-          color: backgroundColor,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 32,
-          ),
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Flexible(
-                child: Container(),
-                flex: 2,
-              ),
-              // logo
-              // SvgPicture.asset(
-              Image.asset(
-                "assets/images/logo.jpg",
-                // color: Colors.white,
-                height: 80,
-                width: double.infinity,
-              ),
-              const SizedBox(height: 25),
+        child: SingleChildScrollView(
+          child: Container(
+            width: size.width,
+            height: size.height - 22,
+            color: backgroundColor,
+            padding: EdgeInsets.symmetric(
+              horizontal: size.width / 13,
+            ),
+            // width: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Container(),
+                  flex: 2,
+                ),
+                // logo
+                // SvgPicture.asset(
+                Image.asset(
+                  "assets/images/logo.jpg",
+                  // color: Colors.white,
+                  height: size.height / 8.5,
+                  width: double.infinity,
+                ),
+                SizedBox(height: size.height / 20),
 
-              // text field input for login
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                child: SingleChildScrollView(
-                  child: Container(
-                    child: Column(
-                      children: [
-                        TextFieldInput(
-                          hintText: "Enter your email",
-                          textInputType: TextInputType.emailAddress,
-                          textEditingController: _emailController,
-                          icon: Icons.person,
-                          color: Colors.white,
-                        ),
+                // text field input for login
+                Container(
+                  padding: EdgeInsets.all(size.height / 80),
+                  child: SingleChildScrollView(
+                    child: Container(
+                      child: Column(
+                        children: [
+                          TextFieldInput(
+                            hintText: "Enter your email",
+                            textInputType: TextInputType.emailAddress,
+                            textEditingController: _emailController,
+                            icon: Icons.person,
+                            color: Colors.white,
+                          ),
 
-                        const SizedBox(
-                          height: 20,
-                        ),
+                          SizedBox(height: size.height / 28),
 
-                        // text field input for password
-                        TextField(
-                          controller: _passwordController,
-                          style: const TextStyle(fontSize: 20),
-                          obscureText: _isObscure,
-                          keyboardType: TextInputType.text,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.lock,
-                                color: Colors.grey.shade700, size: 25),
-                            hintText: "Enter your password",
-                            hintStyle: const TextStyle(fontSize: 20),
-                            fillColor: Colors.white,
-                            border: inputBorder,
-                            focusedBorder: inputBorder,
-                            enabledBorder: inputBorder,
-                            filled: true,
-                            contentPadding: const EdgeInsets.all(8),
-                            suffixIcon: IconButton(
-                              icon: Icon(_isObscure
-                                  ? Icons.visibility
-                                  : Icons.visibility_off),
-                              onPressed: () {
-                                setState(() {
-                                  _isObscure = !_isObscure;
-                                });
-                              },
+                          // text field input for password
+                          TextField(
+                            controller: _passwordController,
+                            style: const TextStyle(fontSize: 20),
+                            obscureText: _isObscure,
+                            keyboardType: TextInputType.text,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.lock,
+                                  color: Colors.grey.shade700, size: 25),
+                              hintText: "Enter your password",
+                              hintStyle: const TextStyle(fontSize: 20),
+                              fillColor: Colors.white,
+                              border: inputBorder,
+                              focusedBorder: inputBorder,
+                              enabledBorder: inputBorder,
+                              filled: true,
+                              contentPadding: EdgeInsets.all(size.height / 80),
+                              suffixIcon: IconButton(
+                                icon: Icon(_isObscure
+                                    ? Icons.visibility
+                                    : Icons.visibility_off),
+                                onPressed: () {
+                                  setState(() {
+                                    _isObscure = !_isObscure;
+                                  });
+                                },
+                              ),
                             ),
                           ),
-                        ),
 
-                        const SizedBox(
-                          height: 20,
-                        ),
+                          SizedBox(height: size.height / 28),
 
-                        // login button
-                        InkWell(
-                          onTap: loginUser,
-                          child: Container(
-                            child: _isLoading
-                                ? const Center(
-                                    child: CircularProgressIndicator(
+                          // login button
+                          InkWell(
+                            onTap: loginUser,
+                            child: Container(
+                              child: _isLoading
+                                  ? const Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : Text(
+                                      'Log in',
+                                      style: GoogleFonts.roboto(
+                                          fontSize: 25, color: Colors.white),
+                                    ),
+                              width: double.infinity,
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: size.height / 63),
+                              decoration: const ShapeDecoration(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(6)),
+                                ),
+                                color: buttonBlueColor,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 2,
+                          ),
+
+                          // Forgot password
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                child: InkWell(
+                                  onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ForgotPasswordpage(),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Forgot Password?',
+                                    style: GoogleFonts.roboto(
+                                      decoration: TextDecoration.underline,
+                                      fontSize: 17,
                                       color: Colors.white,
                                     ),
-                                  )
-                                : Text(
-                                    'Log in',
-                                    style: GoogleFonts.roboto(
-                                        fontSize: 25, color: Colors.white),
-                                  ),
-                            width: double.infinity,
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(6)),
-                              ),
-                              color: buttonBlueColor,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 2,
-                        ),
-
-                        // Forgot password
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              child: InkWell(
-                                onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ForgotPasswordpage(),
                                   ),
                                 ),
-                                child: Text(
-                                  'Forgot Password?',
-                                  style: GoogleFonts.roboto(
-                                    decoration: TextDecoration.underline,
-                                    fontSize: 17,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                              )
+                            ],
+                          ),
+                          RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              children: <TextSpan>[
+                                const TextSpan(
+                                  text: "No account?",
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
                                 ),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                            )
-                          ],
-                        ),
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            children: <TextSpan>[
-                              const TextSpan(
-                                text: "No account?",
-                                style: TextStyle(
-                                  fontSize: 17.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                // after clicking to resend send code and verify.
+                                TextSpan(
+                                  text: " Sign Up",
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.of(context)
+                                          .pushReplacement(MaterialPageRoute(
+                                        builder: (context) =>
+                                            const CustomerSignUp(),
+                                      ));
+                                    },
+                                  style: const TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.blue,
+                                  ),
                                 ),
-                              ),
-                              // after clicking to resend send code and verify.
-                              TextSpan(
-                                text: " Sign Up",
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    Navigator.of(context)
-                                        .pushReplacement(MaterialPageRoute(
-                                      builder: (context) =>
-                                          const CustomerSignUp(),
-                                    ));
-                                  },
-                                style: const TextStyle(
-                                  fontSize: 19.0,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.blue,
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Flexible(
-                child: Container(),
-                flex: 2,
-              ),
-            ],
+                Flexible(
+                  child: Container(),
+                  flex: 2,
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -25,6 +25,8 @@ class RoomsScreenResources extends StatefulWidget {
 class _RoomsScreenResourcesState extends State<RoomsScreenResources> {
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -40,9 +42,13 @@ class _RoomsScreenResourcesState extends State<RoomsScreenResources> {
 
       // previous design
       child: Container(
-        margin: const EdgeInsets.only(right: 15, left: 15, bottom: 20),
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height / 3,
+        margin: EdgeInsets.only(
+          right: size.height / 35,
+          left: size.height / 35,
+          bottom: size.height / 33,
+        ),
+        width: size.width,
+        height: size.height / 3.5,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           boxShadow: const [
@@ -69,7 +75,7 @@ class _RoomsScreenResourcesState extends State<RoomsScreenResources> {
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
-                height: MediaQuery.of(context).size.height / 13,
+                height: size.height / 15,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.only(
@@ -86,7 +92,7 @@ class _RoomsScreenResourcesState extends State<RoomsScreenResources> {
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: EdgeInsets.all(size.height / 70),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Row(
@@ -94,7 +100,7 @@ class _RoomsScreenResourcesState extends State<RoomsScreenResources> {
                         Text(
                           widget.name!,
                           style: const TextStyle(
-                            fontSize: 25,
+                            fontSize: 23,
                             color: Colors.white,
                           ),
                         ),
@@ -103,7 +109,7 @@ class _RoomsScreenResourcesState extends State<RoomsScreenResources> {
                           'Price: \$' + widget.price!.toString(),
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 25.0,
+                            fontSize: 23,
                           ),
                         ),
                       ],

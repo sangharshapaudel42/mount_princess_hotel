@@ -11,6 +11,8 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Container(
         color: Colors.black,
@@ -33,32 +35,32 @@ class WelcomePage extends StatelessWidget {
                       child: Image.asset(
                         "assets/images/logo.jpg",
                         // color: Colors.white,
-                        height: 100,
+                        height: size.height / 8,
                         width: double.infinity,
                       ),
                       alignment: Alignment.center,
                     ),
                   ),
-                  const SizedBox(height: 30),
-                  const Text(
+                  SizedBox(height: size.height / 25),
+                  Text(
                     'Welcome',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 40,
+                      fontSize: size.height / 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
+                  SizedBox(height: size.height / 70),
+                  Text(
                     'Stay With Us & Relax',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
+                      fontSize: size.height / 38,
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  SizedBox(height: size.height / 25),
                   ThemeButton(
                     label: 'Customer Sign Up',
                     onClick: () {
@@ -70,7 +72,7 @@ class WelcomePage extends StatelessWidget {
                       );
                     },
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: size.height / 70),
                   ThemeButton(
                     label: "Login",
                     labelColor: backgroundColor,

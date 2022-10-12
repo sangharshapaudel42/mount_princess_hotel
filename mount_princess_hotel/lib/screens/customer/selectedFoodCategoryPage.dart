@@ -59,9 +59,9 @@ class _SelectedFoodCategoryState extends State<SelectedFoodCategory> {
             itemCount: docs.length,
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: MediaQuery.of(context).size.width / 2,
-              childAspectRatio: 0.9,
+              childAspectRatio: 1,
               crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
+              mainAxisSpacing: 5,
             ),
             itemBuilder: (context, index) {
               return FoodItemContainer(

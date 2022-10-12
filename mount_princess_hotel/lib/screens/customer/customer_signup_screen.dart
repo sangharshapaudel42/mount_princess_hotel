@@ -54,154 +54,118 @@ class _CustomerSignUpState extends State<CustomerSignUp> {
     _nameController.dispose();
   }
 
-  void signUpUser() async {
-    // set loading to true
-    setState(() {
-      _isLoading = true;
-    });
-
-    // signup user using our authmethodds
-    String res = await AuthMethods().signUpUser(
-      email: _emailController.text,
-      password: _passwordController.text,
-      name: _nameController.text,
-      phoneNumber: _phoneNumberController.text,
-    );
-    // if string returned is sucess, user has been created
-    if (res == "success") {
-      setState(() {
-        _isLoading = false;
-      });
-      // navigate to the home screen
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const BookingPage()),
-      );
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-      // show the error
-      showSnackBar(context, res);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final inputBorder = OutlineInputBorder(
       borderSide: Divider.createBorderSide(context),
     );
 
+    var size = MediaQuery.of(context).size;
+
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: Container(
-          color: backgroundColor,
-          // color: Colors.red,
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width / 13,
-          ),
-          width: double.infinity,
-          child: SingleChildScrollView(
-            child: Container(
-              // color: Colors.blue,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height - 20,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Flexible(
-                    child: Container(),
-                    flex: 2,
-                  ),
-                  // logo
-                  Image.asset(
-                    "assets/images/logo.jpg",
-                    // color: Colors.white,
-                    height: 80,
-                    width: double.infinity,
-                  ),
-                  const SizedBox(height: 50),
+        child: SingleChildScrollView(
+          child: Container(
+            width: size.width,
+            height: size.height - 22,
+            color: backgroundColor,
+            padding: EdgeInsets.symmetric(
+              horizontal: size.width / 13,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Container(),
+                  flex: 2,
+                ),
+                // logo
+                Image.asset(
+                  "assets/images/logo.jpg",
+                  // color: Colors.white,
+                  height: size.height / 8.5,
+                  width: double.infinity,
+                ),
+                SizedBox(height: size.height / 15),
 
-                  // text field input for signup
-                  TextFieldInput(
-                    hintText: "Enter your Full Name",
-                    textInputType: TextInputType.name,
-                    textEditingController: _nameController,
-                    icon: Icons.person,
-                    color: Colors.white,
-                  ),
+                // text field input for signup
+                TextFieldInput(
+                  hintText: "Enter your Full Name",
+                  textInputType: TextInputType.name,
+                  textEditingController: _nameController,
+                  icon: Icons.person,
+                  color: Colors.white,
+                ),
 
-                  const SizedBox(
-                    height: 24,
-                  ),
+                SizedBox(height: size.height / 28),
 
-                  TextFieldInput(
-                    hintText: "Enter your email",
-                    textInputType: TextInputType.emailAddress,
-                    textEditingController: _emailController,
-                    icon: Icons.email,
-                    color: Colors.white,
-                  ),
+                TextFieldInput(
+                  hintText: "Enter your email",
+                  textInputType: TextInputType.emailAddress,
+                  textEditingController: _emailController,
+                  icon: Icons.email,
+                  color: Colors.white,
+                ),
 
-                  const SizedBox(
-                    height: 24,
-                  ),
+                SizedBox(height: size.height / 28),
 
-                  // text field input for password
-                  TextField(
-                    controller: _passwordController,
-                    style: const TextStyle(fontSize: 20),
-                    obscureText: _isObscure,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.lock,
-                          color: Colors.grey.shade700, size: 25),
-                      hintText: "Enter your password",
-                      hintStyle: const TextStyle(fontSize: 20),
-                      fillColor: Colors.white,
-                      border: inputBorder,
-                      focusedBorder: inputBorder,
-                      enabledBorder: inputBorder,
-                      filled: true,
-                      contentPadding: const EdgeInsets.all(8),
-                      suffixIcon: IconButton(
-                        icon: Icon(_isObscure
-                            ? Icons.visibility
-                            : Icons.visibility_off),
-                        onPressed: () {
-                          setState(() {
-                            _isObscure = !_isObscure;
-                          });
-                        },
-                      ),
+                // text field input for password
+                TextField(
+                  controller: _passwordController,
+                  style: const TextStyle(fontSize: 20),
+                  obscureText: _isObscure,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    prefixIcon:
+                        Icon(Icons.lock, color: Colors.grey.shade700, size: 25),
+                    hintText: "Enter your password",
+                    hintStyle: const TextStyle(fontSize: 20),
+                    fillColor: Colors.white,
+                    border: inputBorder,
+                    focusedBorder: inputBorder,
+                    enabledBorder: inputBorder,
+                    filled: true,
+                    contentPadding: EdgeInsets.all(size.height / 80),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                          _isObscure ? Icons.visibility : Icons.visibility_off),
+                      onPressed: () {
+                        setState(() {
+                          _isObscure = !_isObscure;
+                        });
+                      },
                     ),
                   ),
+                ),
 
-                  const SizedBox(
-                    height: 24,
-                  ),
+                SizedBox(height: size.height / 28),
 
-                  // text field input for password
-                  TextFieldInput(
-                    hintText: "Enter your phone number",
-                    textInputType: TextInputType.phone,
-                    textEditingController: _phoneNumberController,
-                    icon: Icons.phone,
-                    color: Colors.white,
-                  ),
+                // text field input for password
+                TextFieldInput(
+                  hintText: "Enter your phone number",
+                  textInputType: TextInputType.phone,
+                  textEditingController: _phoneNumberController,
+                  icon: Icons.phone,
+                  color: Colors.white,
+                ),
 
-                  const SizedBox(
-                    height: 24,
-                  ),
+                SizedBox(height: size.height / 28),
 
-                  // login button
-                  InkWell(
-                    onTap: () async {
-                      twilioFlutter.sendSMS(
-                        toNumber: "+977${_phoneNumberController.text}",
-                        messageBody: code.toString() +
-                            " is your verification code for the Hotel app.",
-                      );
+                // login button
+                InkWell(
+                  onTap: () async {
+                    // send code and redirect only if all the fields are entered.
+                    if (_nameController.text.isNotEmpty &&
+                        _emailController.text.isNotEmpty &&
+                        _passwordController.text.isNotEmpty &&
+                        _phoneNumberController.text.isNotEmpty &&
+                        code.toString().isNotEmpty) {
+                      // twilioFlutter.sendSMS(
+                      //   toNumber: "+977${_phoneNumberController.text}",
+                      //   messageBody: code.toString() +
+                      //       " is your verification code for the Hotel app.",
+                      // );
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (context) => OTPScreen(
                                 name: _nameController.text,
@@ -210,72 +174,70 @@ class _CustomerSignUpState extends State<CustomerSignUp> {
                                 phone: _phoneNumberController.text,
                                 verificationCode: code.toString(),
                               )));
-                    },
-                    child: Container(
-                      child: _isLoading
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            )
-                          : Text(
-                              'Sign Up',
-                              style: GoogleFonts.roboto(
-                                  fontSize: 25, color: Colors.white),
+                    }
+                  },
+                  child: Container(
+                    child: _isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
                             ),
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: const ShapeDecoration(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(6)),
-                        ),
-                        color: buttonBlueColor,
+                          )
+                        : Text(
+                            'Sign Up',
+                            style: GoogleFonts.roboto(
+                                fontSize: 25, color: Colors.white),
+                          ),
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(vertical: size.height / 63),
+                    decoration: const ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
                       ),
+                      color: buttonBlueColor,
                     ),
                   ),
-                  const SizedBox(
-                    height: 12,
-                  ),
+                ),
+                SizedBox(height: size.height / 45),
 
-                  // Forgot password
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
+                // Forgot password
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      child: Text(
+                        "Already have an account?",
+                        style: GoogleFonts.roboto(
+                            fontSize: 17, color: Colors.white),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: size.height / 80),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const Login(),
+                        ));
+                      },
+                      child: Container(
                         child: Text(
-                          "Already have an account?",
+                          " Login",
                           style: GoogleFonts.roboto(
-                              fontSize: 17, color: Colors.white),
+                              fontSize: 17,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding:
+                            EdgeInsets.symmetric(vertical: size.height / 80),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) => const Login(),
-                          ));
-                        },
-                        child: Container(
-                          child: Text(
-                            " Login",
-                            style: GoogleFonts.roboto(
-                                fontSize: 17,
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Flexible(
-                    child: Container(),
-                    flex: 2,
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+                Flexible(
+                  child: Container(),
+                  flex: 2,
+                ),
+              ],
             ),
           ),
         ),

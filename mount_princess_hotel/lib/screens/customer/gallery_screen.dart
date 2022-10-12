@@ -5,8 +5,6 @@ import 'package:mount_princess_hotel/widgets/individual_gallery_category.dart';
 import 'package:mount_princess_hotel/widgets/navigation_drawer_widget.dart';
 import 'package:mount_princess_hotel/utils/colors.dart';
 
-import 'package:mount_princess_hotel/resources/gallery_screen_resources.dart';
-
 class Gallery extends StatefulWidget {
   const Gallery({Key? key}) : super(key: key);
 
@@ -39,12 +37,6 @@ class _GalleryState extends State<Gallery> {
           child: ListView.builder(
             itemCount: galleryImageCategory.length,
             itemBuilder: (context, index) {
-              // return GalleryResources(
-              //   galleryImageCategory: galleryImageCategory[index],
-              //   galleryImageCategoryList: galleryImageCategory,
-              //   galleryImageCategoryLength: galleryImageCategory.length,
-              // );
-
               // sending the id of gallery category
               return IndividualGalleryCategory(
                 galleryImageCategory: galleryImageCategory[index],
@@ -70,7 +62,7 @@ class _GalleryState extends State<Gallery> {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                const SizedBox(height: 10),
+                SizedBox(height: MediaQuery.of(context).size.height / 90),
                 createCard(),
               ],
             ),

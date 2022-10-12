@@ -132,55 +132,6 @@ class _BookingPageState extends State<BookingPage> {
     });
   }
 
-  // widget for drop down menu
-  // Widget dropDown(
-  //   BuildContext context,
-  //   final List<String> valueTypes,
-  //   String? selectedValueType,
-  //   String? dropDownType,
-  // ) {
-  //   return Center(
-  //     child: Container(
-  //       height: MediaQuery.of(context).size.height / 14,
-  //       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-  //       decoration: BoxDecoration(
-  //         borderRadius: BorderRadius.circular(5),
-  //         color: Colors.white,
-  //       ),
-  //       child: DropdownButtonHideUnderline(
-  //         child: DropdownButton<String>(
-  //           value: selectedValueType,
-  //           iconSize: 36,
-  //           icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
-  //           isExpanded: true,
-  //           items: valueTypes
-  //               .map((valueType) => DropdownMenuItem<String>(
-  //                     value: valueType,
-  //                     child: Center(
-  //                       child: Text(
-  //                         valueType,
-  //                         style: TextStyle(
-  //                             fontSize: 25,
-  //                             fontWeight: FontWeight.w600,
-  //                             color: Colors.grey[600]),
-  //                       ),
-  //                     ),
-  //                   ))
-  //               .toList(),
-  //           onChanged: (valueType) => setState(() {
-  //             selectedValueType = valueType;
-  //             if (dropDownType == "room-type") {
-  //               _roomTypeDropDown = valueType!;
-  //             } else if (dropDownType == "persons") {
-  //               _personsDropDown = valueType!;
-  //             }
-  //           }),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     // current user uid.
@@ -211,9 +162,13 @@ class _BookingPageState extends State<BookingPage> {
           : Container(
               height: size.height,
               width: size.width,
-              margin: const EdgeInsets.only(
-                  left: 10, right: 10, top: 20, bottom: 10),
-              padding: const EdgeInsets.only(left: 10, right: 10),
+              margin: EdgeInsets.only(
+                  left: size.width / 40,
+                  right: size.width / 40,
+                  top: size.width / 20,
+                  bottom: size.width / 40),
+              padding: EdgeInsets.only(
+                  left: size.width / 40, right: size.width / 40),
               decoration: BoxDecoration(
                 color: backgroundColor,
                 borderRadius: BorderRadius.circular(20),
@@ -222,31 +177,31 @@ class _BookingPageState extends State<BookingPage> {
                 child: Column(
                   children: [
                     //////////////// Check In ////////////////
-                    const SizedBox(height: 20),
+                    SizedBox(height: size.height / 38),
                     Padding(
                       padding: EdgeInsets.only(right: size.width / 1.55),
                       child: const Text(
                         "Check In",
                         style: TextStyle(
-                            fontSize: 25,
+                            fontSize: 22,
                             color: Colors.white,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: size.height / 68),
                     // widget for "Check In"
 
                     // check-in button
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        minimumSize: Size.fromHeight(size.height / 14),
+                        minimumSize: Size.fromHeight(size.height / 16),
                         primary: Colors.white,
                       ),
                       child: FittedBox(
                         child: Text(
                           getText("Select Date", "check-in", _checkInDate),
                           style:
-                              TextStyle(fontSize: 25, color: Colors.grey[600]),
+                              TextStyle(fontSize: 22, color: Colors.grey[600]),
                         ),
                       ),
                       onPressed: () => pickDate(context, "check-in"),
@@ -256,30 +211,30 @@ class _BookingPageState extends State<BookingPage> {
                     //////////////// Check In ////////////////
 
                     //////////////// Check Out ////////////////
-                    const SizedBox(height: 20),
+                    SizedBox(height: size.height / 38),
                     Padding(
                       padding: EdgeInsets.only(right: size.width / 1.7),
                       child: const Text(
                         "Check Out",
                         style: TextStyle(
-                            fontSize: 25,
+                            fontSize: 22,
                             color: Colors.white,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: size.height / 68),
 
                     // check-out button
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        minimumSize: Size.fromHeight(size.height / 14),
+                        minimumSize: Size.fromHeight(size.height / 16),
                         primary: Colors.white,
                       ),
                       child: FittedBox(
                         child: Text(
                           getText("Select Date", "check-out", _checkOutDate),
                           style:
-                              TextStyle(fontSize: 25, color: Colors.grey[600]),
+                              TextStyle(fontSize: 22, color: Colors.grey[600]),
                         ),
                       ),
                       onPressed: () => pickDate(context, "check-out"),
@@ -290,18 +245,19 @@ class _BookingPageState extends State<BookingPage> {
                     //////////////// Check Out ////////////////
 
                     //////////////// Room Type ////////////////
-                    const SizedBox(height: 20),
+                    SizedBox(height: size.height / 38),
+
                     Padding(
                       padding: EdgeInsets.only(right: size.width / 1.8),
                       child: const Text(
                         "Room Type",
                         style: TextStyle(
-                            fontSize: 25,
+                            fontSize: 22,
                             color: Colors.white,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: size.height / 68),
 
                     // dropDown(context, const ['Standard Room', 'Deluxe Room'],
                     //     'Standard Room', "room-type"),
@@ -309,7 +265,7 @@ class _BookingPageState extends State<BookingPage> {
                     // rooms dropdown button
                     Center(
                       child: Container(
-                        height: MediaQuery.of(context).size.height / 14,
+                        height: MediaQuery.of(context).size.height / 16,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 2),
                         decoration: BoxDecoration(
@@ -330,7 +286,7 @@ class _BookingPageState extends State<BookingPage> {
                                         child: Text(
                                           valueType,
                                           style: TextStyle(
-                                              fontSize: 25,
+                                              fontSize: 22,
                                               fontWeight: FontWeight.w600,
                                               color: Colors.grey[600]),
                                         ),
@@ -353,23 +309,24 @@ class _BookingPageState extends State<BookingPage> {
                     //////////////// Room Type ////////////////
 
                     //////////////// Persons ////////////////
-                    const SizedBox(height: 20),
+                    SizedBox(height: size.height / 38),
+
                     Padding(
                       padding: EdgeInsets.only(right: size.width / 1.5),
                       child: const Text(
                         "Person",
                         style: TextStyle(
-                            fontSize: 25,
+                            fontSize: 22,
                             color: Colors.white,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: size.height / 68),
 
                     // drop down menu for persons
                     Center(
                       child: Container(
-                        height: MediaQuery.of(context).size.height / 14,
+                        height: MediaQuery.of(context).size.height / 16,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 2),
                         decoration: BoxDecoration(
@@ -390,7 +347,7 @@ class _BookingPageState extends State<BookingPage> {
                                         child: Text(
                                           valueType,
                                           style: TextStyle(
-                                              fontSize: 25,
+                                              fontSize: 22,
                                               fontWeight: FontWeight.w600,
                                               color: Colors.grey[600]),
                                         ),
@@ -409,11 +366,11 @@ class _BookingPageState extends State<BookingPage> {
                     //////////////// Persons ////////////////
 
                     //////////////// Reserve ////////////////
-                    const SizedBox(height: 30),
+                    SizedBox(height: size.height / 24),
 
                     MaterialButton(
                       // height: 50,
-                      height: size.height / 13,
+                      height: size.height / 15,
                       minWidth: MediaQuery.of(context).size.width / 2,
                       color: const Color(0xff024DB8),
                       shape: RoundedRectangleBorder(
@@ -424,7 +381,7 @@ class _BookingPageState extends State<BookingPage> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
-                          fontSize: 25,
+                          fontSize: 22,
                         ),
                       ),
                       onPressed: () async {
@@ -500,7 +457,7 @@ class _BookingPageState extends State<BookingPage> {
                         }
                       },
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: size.height / 68),
                   ],
                 ),
               ),

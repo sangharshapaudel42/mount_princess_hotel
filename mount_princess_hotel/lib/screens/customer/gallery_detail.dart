@@ -39,7 +39,7 @@ class GalleryDetail extends StatelessWidget {
                     imageUrl: imageUrls[index],
                     fit: BoxFit.fill,
                     maxHeightDiskCache:
-                        (MediaQuery.of(context).size.height / 2).round()),
+                        (MediaQuery.of(context).size.height / 2.5).round()),
               ),
               /*child: PinchZoomImage(
                 image: ClipRRect(

@@ -22,6 +22,8 @@ class TextFieldInput extends StatelessWidget {
     final inputBorder = OutlineInputBorder(
       borderSide: Divider.createBorderSide(context),
     );
+
+    var size = MediaQuery.of(context).size;
     // final focusedBorder = OutlineInputBorder(
     //   borderSide: BorderSide(color: Colors.blue, width: 5.0),
     // );
@@ -37,7 +39,7 @@ class TextFieldInput extends StatelessWidget {
         focusedBorder: inputBorder,
         enabledBorder: inputBorder,
         filled: true,
-        contentPadding: const EdgeInsets.all(8),
+        contentPadding: EdgeInsets.all(size.height / 80),
       ),
       keyboardType: textInputType,
       obscureText: isPass,

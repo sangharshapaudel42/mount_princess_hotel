@@ -295,6 +295,8 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
     return AlertDialog(
       backgroundColor: Colors.transparent,
       contentPadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -302,8 +304,8 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
       // to get choose room price for calculating totalPrice
       content: Container(
         // height: MediaQuery.of(context).size.height / 1.5,
-        width: MediaQuery.of(context).size.width,
-        padding: const EdgeInsets.only(top: 25),
+        width: size.width,
+        padding: EdgeInsets.only(top: size.height / 35),
         decoration: BoxDecoration(
           color: const Color(0xFF000000).withOpacity(0.5),
           borderRadius: BorderRadius.circular(15),
@@ -329,7 +331,7 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
                   icon: Icons.person,
                   color: Colors.white,
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: size.height / 38),
 
                 // Email
                 TextFieldInput(
@@ -339,7 +341,7 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
                   icon: Icons.email,
                   color: Colors.white,
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: size.height / 38),
 
                 // Phone Number
                 TextFieldInput(
@@ -349,7 +351,7 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
                   icon: Icons.phone,
                   color: Colors.white,
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: size.height / 38),
 
                 // Number of Rooms
                 TextFieldInput(
@@ -379,7 +381,7 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
 
                 // Total Price
                 MaterialButton(
-                  height: 50,
+                  height: MediaQuery.of(context).size.width / 8.5,
                   minWidth: MediaQuery.of(context).size.width,
                   color: Colors.white,
                   disabledColor: Colors.white,
@@ -392,7 +394,7 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
                     style: TextStyle(
                       // fontWeight: FontWeight.bold,
                       color: Colors.grey[800],
-                      fontSize: 25,
+                      fontSize: 22,
                     ),
                   ),
                   onPressed: null,
@@ -402,11 +404,11 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
                   //   });
                   // },
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: size.height / 38),
 
                 // Submit
                 MaterialButton(
-                    height: MediaQuery.of(context).size.width / 7.5,
+                    height: MediaQuery.of(context).size.width / 8.5,
                     minWidth: MediaQuery.of(context).size.width / 2,
                     color: Colors.blue,
                     shape: RoundedRectangleBorder(
@@ -417,7 +419,7 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontSize: 25,
+                        fontSize: 22,
                       ),
                     ),
                     onPressed: () {
@@ -440,7 +442,8 @@ class _BuildPopDialogState extends State<BuildPopDialog> {
                     }
                     // onPressed: () {},
                     ),
-                const SizedBox(height: 20),
+                SizedBox(height: size.height / 38),
+
                 // show this container only if "showSnackBarPopUp" or
                 //"deluxeRoomShowSnackBar" or "standardRoomShowSnackBar" is true.
                 // hides if false

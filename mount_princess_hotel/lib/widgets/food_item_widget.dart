@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mount_princess_hotel/screens/admin/updates/deleteImagePopUp.dart';
 import 'package:mount_princess_hotel/screens/admin/updates/update_food_item.dart';
@@ -42,14 +43,13 @@ class _FoodItemContainerState extends State<FoodItemContainer> {
         children: [
           Flexible(
             child: Container(
+              // color: Colors.blue,
               constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height / 5),
+                  maxHeight: MediaQuery.of(context).size.height / 7),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
-                child: Image(
-                  image: NetworkImage(
-                    widget.image,
-                  ),
+                child: CachedNetworkImage(
+                  imageUrl: widget.image,
                   fit: BoxFit.cover,
                 ),
               ),
